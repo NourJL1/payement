@@ -1,0 +1,1454 @@
+<div class="flex flex-col bg-white rounded-xl shadow-lg mb-6 overflow-hidden">
+    <!-- Header Section -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <h1 class="text-xl font-semibold text-gray-800">Profiling Management</h1>
+    </div>
+
+    <!-- Tabs Section -->
+    <div class="flex border-b border-gray-200">
+        <button
+            class="tab-button px-6 py-3 text-sm font-medium text-primary border-b-2 border-primary transition-colors"
+            (click)="showTab('users')" id="users">Users</button>
+        <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('profiles')"
+            id="profiles">Profiles</button>
+        <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('modules')"
+            id="modules">Modules</button>
+        <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('options')"
+            id="options">Menu Options</button>
+    </div>
+</div>
+
+<!-- Notification Area for Success and Error Messages -->
+<div *ngIf="successMessage" class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100]">
+    {{ successMessage }}
+    <button (click)="clearMessage()" class="ml-2 text-white hover:text-gray-200">
+        <i class="ri-close-line"></i>
+    </button>
+</div>
+<div *ngIf="errorMessage" class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100]">
+    {{ errorMessage }}
+    <button (click)="clearMessage()" class="ml-2 text-white hover:text-gray-200">
+        <i class="ri-close-line"></i>
+    </button>
+</div>
+
+<!-- users content -->
+<div id="tab-users" class="tab-content">
+    <!-- Header Section -->
+    <div
+        class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white rounded-xl shadow-lg mb-6">
+        <div class="mb-4 sm:mb-0">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Users Management
+            </h2>
+        </div>
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+            <button
+                class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-download-2-line mr-2"></i> Export Data
+            </button>
+            <button (click)="toggleForm('user-form')" id="newSchemaBtn"
+                class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-add-line mr-2"></i> New User
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+            <!-- Search -->
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="ri-search-line text-gray-400"></i>
+                </div>
+                <input type="text" placeholder="Search..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+            </div>
+            <div class="w-full sm:w-auto">
+                <div class="relative">
+                    <select
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+                        <option value="">All Profiles</option>
+                        <option value="">ADMIN</option>
+                        <option value="">EMPLOYEE</option>
+                        <option value="">ACCOUNTANT</option>
+                        <option value="">DATA ANALYST</option>
+                        <!-- <option *ngFor="let status of statuses" [value]="status">
+                            {{ status.ctsLabe }}
+                        </option> -->
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Code
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Identifier
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Username
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Name
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Profile
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50 transition duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">1</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">USE-2507100000-ABCD</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">john</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">JOHN DOE</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">ADMIN</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex items-center justify-end space-x-3">
+                                <button (click)="toggleForm('user-details')"
+                                    class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                                    <i class="ri-eye-line text-lg"></i>
+                                </button>
+                                <button
+                                    class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                    <i class="ri-edit-line text-lg"></i>
+                                </button>
+                                <button
+                                    class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                    <i class="ri-delete-bin-line text-lg"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <div class="flex items-center text-sm text-gray-500">
+                <span>Showing 1-10 of ...</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled>
+                    <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                    <i class="ri-arrow-right-s-line"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- profiles content -->
+<div id="tab-profiles" class="tab-content hidden">
+    <!-- Header Section -->
+    <div
+        class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white rounded-xl shadow-lg mb-6">
+        <div class="mb-4 sm:mb-0">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Users Profiles Management
+            </h2>
+        </div>
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+            <button
+                class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-download-2-line mr-2"></i> Export Data
+            </button>
+            <button (click)="toggleForm('profile-form')" id="newSchemaBtn"
+                class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-add-line mr-2"></i> New Profile
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+            <!-- Search -->
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="ri-search-line text-gray-400"></i>
+                </div>
+                <input type="text" placeholder="Search..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+            </div>
+            <!-- <div class="w-full sm:w-auto">
+                <div class="relative">
+                    <select
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+                        <option value="">All Profiles</option>
+                        <option value="">ADMIN</option>
+                        <option value="">EMPLOYEE</option>
+                        <option value="">ACCOUNTANT</option>
+                        <option value="">DATA ANALYST</option>
+                        <option *ngFor="let status of statuses" [value]="status">
+                            {{ status.ctsLabe }}
+                        </option>
+                    </select>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Code
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Identifier
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Label
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50 transition duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">1</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">UPR-2507100000-ABCD</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">ADMIN</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex items-center justify-end space-x-3">
+                                <button (click)="toggleForm('profile-details')"
+                                    class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                                    <i class="ri-eye-line text-lg"></i>
+                                </button>
+                                <button
+                                    class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                    <i class="ri-edit-line text-lg"></i>
+                                </button>
+                                <button
+                                    class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                    <i class="ri-delete-bin-line text-lg"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <div class="flex items-center text-sm text-gray-500">
+                <span>Showing 1-10 of ...</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled>
+                    <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                    <i class="ri-arrow-right-s-line"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modules content -->
+<div id="tab-modules" class="tab-content hidden">
+    <!-- Header Section -->
+    <div
+        class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white rounded-xl shadow-lg mb-6">
+        <div class="mb-4 sm:mb-0">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Modules Management
+            </h2>
+        </div>
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+            <button
+                class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-download-2-line mr-2"></i> Export Data
+            </button>
+            <button (click)="toggleForm('module-form')" id="newSchemaBtn"
+                class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-add-line mr-2"></i> New Module
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+            <!-- Search -->
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="ri-search-line text-gray-400"></i>
+                </div>
+                <input type="text" placeholder="Search..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+            </div>
+            <!-- <div class="w-full sm:w-auto">
+                <div class="relative">
+                    <select
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+                        <option value="">All Profiles</option>
+                        <option value="">ADMIN</option>
+                        <option value="">EMPLOYEE</option>
+                        <option value="">ACCOUNTANT</option>
+                        <option value="">DATA ANALYST</option>
+                        <option *ngFor="let status of statuses" [value]="status">
+                            {{ status.ctsLabe }}
+                        </option>
+                    </select>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Code
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Identifier
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Label
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Logo
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Order
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50 transition duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">1</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">MOD-2507100000-ABCD</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">ACCOUNTING</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">
+                                <i class="ri-calculator-line ri-lg"></i>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">3</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex items-center justify-end space-x-3">
+                                <!-- <button (click)="toggleForm('module-details')"
+                                    class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                                    <i class="ri-eye-line text-lg"></i>
+                                </button> -->
+                                <button
+                                    class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                    <i class="ri-edit-line text-lg"></i>
+                                </button>
+                                <button
+                                    class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                    <i class="ri-delete-bin-line text-lg"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <div class="flex items-center text-sm text-gray-500">
+                <span>Showing 1-10 of ...</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled>
+                    <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                    <i class="ri-arrow-right-s-line"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- options content -->
+<div id="tab-options" class="tab-content hidden">
+    <!-- Header Section -->
+    <div
+        class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white rounded-xl shadow-lg mb-6">
+        <div class="mb-4 sm:mb-0">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Modules Menu Options Management
+            </h2>
+        </div>
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+            <button
+                class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-download-2-line mr-2"></i> Export Data
+            </button>
+            <button (click)="toggleForm('option-form')" id="newSchemaBtn"
+                class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-add-line mr-2"></i> New Option
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+            <!-- Search -->
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="ri-search-line text-gray-400"></i>
+                </div>
+                <input type="text" placeholder="Search..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+            </div>
+            <div class="w-full sm:w-auto">
+                <div class="relative">
+                    <select
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+                        <option value="">All Modules</option>
+                        <option value="">WALLETS</option>
+                        <option value="">ACCOUNTING</option>
+                        <option value="">CUSTOMERS</option>
+                        <option value="">PRODUCTS</option>
+                        <!-- <option *ngFor="let status of statuses" [value]="status">
+                            {{ status.ctsLabe }}
+                        </option> -->
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Code
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Identifier
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Label
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Module
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50 transition duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">1</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">MOP-2507100000-ABCD</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">Fee rule</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">ACCOUNTING</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex items-center justify-end space-x-3">
+                                <button (click)="toggleForm('option-details')"
+                                    class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                                    <i class="ri-eye-line text-lg"></i>
+                                </button>
+                                <button
+                                    class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                    <i class="ri-edit-line text-lg"></i>
+                                </button>
+                                <button
+                                    class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                    <i class="ri-delete-bin-line text-lg"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <div class="flex items-center text-sm text-gray-500">
+                <span>Showing 1-10 of ...</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled>
+                    <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                    <i class="ri-arrow-right-s-line"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isAnyModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[50]">
+    <!-- user details -->
+    <div *ngIf="isUserDetailsVisible" id="user-details-modal" class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">Customer Details</h3>
+            <button id="close-customer-detail" class="text-gray-400 hover:text-gray-500">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i (click)="closeForm('user-details')" class="ri-close-line ri-lg"></i>
+                </div>
+            </button>
+        </div>
+        <div class="p-6 custom-scrollbar" style="height: calc(90vh - 130px)">
+            <div class="flex flex-col md:flex-row md:space-x-6">
+                <div class="mb-6 md:mb-0 md:w-1/3">
+                    <!-- customer main info -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-center mb-4">
+                            <div
+                                class="w-20 h-20 mx-auto bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary">
+                                <i class="ri-contacts-line ri-2x"></i>
+                            </div>
+                            <h4 class="text-lg font-semibold mt-2">
+                                JOHN DOE
+                            </h4>
+                            <p class="text-sm text-gray-500">
+                                john
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-2/3 h-[90vh] flex flex-col">
+                    <div class="overflow-y-auto">
+                        <!-- basic info -->
+                        <div id="details-tab-basic-info" class="details-tab-content">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Customer Information Column -->
+                                <div>
+                                    <h5 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
+                                        <i class="ri-user-3-line text-gray-500 mr-2"></i>
+                                        User Information
+                                    </h5>
+
+                                    <div class="space-y-4">
+                                        <div class="flex items-start">
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">User Code</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    101
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Identifier</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    USR-2507171214-AB12
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Full Name</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    John Doe
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Username</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    john
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Additional Details Column -->
+                                <div>
+                                    <h5 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
+                                        <i class="ri-information-line text-gray-500 mr-2"></i>
+                                        Additional Details
+                                    </h5>
+
+                                    <div class="space-y-4">
+                                        <div class="flex items-start">
+                                            <i class="ri-mail-line text-gray-400 text-sm mr-3 mt-0.5"></i>
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Email</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    john&#64;uib.com
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <i class="ri-phone-line text-gray-400 text-sm mr-3 mt-0.5"></i>
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Phone</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    +21612345678
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <i class="ri-map-pin-line text-gray-400 text-sm mr-3 mt-0.5"></i>
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Fax</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    98765432
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <h5 class="text-sm font-semibold text-gray-700 mb-3">Profile</h5>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="flex items-center">
+                                    <div
+                                        class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-500">
+                                        <i class="ri-user-3-line ri-lg"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium">ADMIN</div>
+                                        <div class="text-xs text-gray-500">Profile ID: UPR-2507100000-ABCD</div>
+                                        <div class="flex items-center mt-1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+                <button (click)="closeForm('user-details')" id="close-customer-detail-btn"
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+        <!-- user form -->
+        <div *ngIf="isUserFormVisible" id="user-modal"
+            class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Add New User</h3>
+                <button (click)="closeForm('user-form')" id="close-user-form" class="text-gray-400 hover:text-gray-500">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-close-line ri-lg"></i>
+                    </div>
+                </button>
+            </div>
+
+            <form ngNativeValidate id="UserForm" class="p-6 space-y-8 overflow-y-auto">
+                <!-- Personal Information Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-5">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">Personal Information</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="form-field">
+                            <label class="form-label flex items-center">
+                                Login
+                                <span class="text-primary ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="text" id="USE_LOGI" name="USE_LOGI" required class="form-input pl-10">
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label flex items-center">
+                                First Name
+                                <span class="text-primary ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="text" id="USE_FIRS_NAME" name="USE_FIRS_NAME" required
+                                    class="form-input pl-10">
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Middle Name</label>
+                            <div class="relative">
+                                <input type="text" id="USE_MIDD_NAME" name="USE_MIDD_NAME" class="form-input pl-10">
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label flex items-center">
+                                Last Name
+                                <span class="text-primary ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="text" id="USE_LAST_NAME" name="USE_LAST_NAME" required
+                                    class="form-input pl-10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Information Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-5">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">Professional Information</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="form-field">
+                            <label class="form-label">Profile</label>
+                            <div class="relative">
+                                <select id="USE_UPR_CODE" name="USE_UPR_CODE" class="form-input pl-10">
+                                    <option value="">Select Profile</option>
+                                    <option value="Administrator">Administrator</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="Supervisor">Supervisor</option>
+                                    <option value="Employee">Employee</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Function</label>
+                            <div class="relative">
+                                <input type="text" id="USE_FUNC" name="USE_FUNC" class="form-input pl-10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-5">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">Contact Information</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="form-field">
+                            <label class="form-label">Phone</label>
+                            <div class="relative">
+                                <input type="tel" id="USE_PHONE" name="USE_PHONE" class="form-input pl-10">
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Fax</label>
+                            <div class="relative">
+                                <input type="tel" id="USE_FAX" name="USE_FAX" class="form-input pl-10">
+                            </div>
+                        </div>
+
+                        <div class="form-field md:col-span-2">
+                            <label class="form-label flex items-center">
+                                Email
+                                <span class="text-primary ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="email" id="USE_MAIL" name="USE_MAIL" required class="form-input pl-10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-5">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">Security</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="form-field">
+                            <label class="form-label flex items-center">
+                                Password
+                                <span class="text-primary ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="password" name="password" required class="form-input pl-10">
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label flex items-center">
+                                Confirm Password
+                                <span class="text-primary ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="confirmPassword" name="confirmPassword" required
+                                    class="form-input pl-10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                    <button (click)="closeForm('user-form')" id="cancel-user-form"
+                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                        Cancel
+                    </button>
+                    <button type="submit" form="UserForm" id="submit-user-form"
+                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                        Add User
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- profile details -->
+        <div *ngIf="isProfileDetailsVisible" id="profile-details-modal"
+            class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Profile Details</h3>
+                <button id="close-customer-detail" class="text-gray-400 hover:text-gray-500">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i (click)="closeForm('profile-details')" class="ri-close-line ri-lg"></i>
+                    </div>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-8 overflow-y-auto">
+                <!-- Basic Information Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-5">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">Basic Information</h4>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between py-2 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Profile Code</span>
+                            <span class="text-sm font-medium text-gray-900">10101</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Full Denomination</span>
+                            <span class="text-sm font-medium text-gray-900">UPR-2507100000-ABCD</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Profile Name</span>
+                            <span class="text-sm font-medium text-gray-900">ADMIN</span>
+                        </div>
+                        <div class="flex justify-between py-2">
+                            <span class="text-sm font-medium text-gray-500">Created On</span>
+                            <span class="text-sm font-medium text-gray-900">17-07-25</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permissions Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-5">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">System Permissions</h4>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">VIEW BANK</span>
+                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
+                                Enabled
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">VIEW BRANCH</span>
+                            <span class="text-sm font-medium" [class.text-primary]="false" [class.text-gray-400]="true">
+                                Disabled
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">VIEW CHILD</span>
+                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
+                                Enabled / Disabled
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">VIEW CUSTOMER - MERCHANT</span>
+                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
+                                Enabled / Disabled
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">GRANT</span>
+                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
+                                Enabled / Disabled
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">CRYP PAN</span>
+                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
+                                Enabled / Disabled
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Associated Modules Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center">
+                            <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                            <h4 class="text-lg font-semibold text-gray-900">Assigned Modules</h4>
+                        </div>
+                        <span class="text-xs text-gray-500">6 modules</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i _ngcontent-ng-c3705239543="" class="ri-calculator-line ri-lg"></i>
+                                <!-- <i *ngIf="module.mod_logo" class="{{ module.mod_logo }} text-gray-600 mr-3"></i> -->
+                                <span class="text-sm font-medium text-gray-700">accounting</span>
+                                <span class="text-xs text-gray-500">Order: 1</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i _ngcontent-ng-c3054506934="" class="ri-wallet-3-line ri-lg"></i>
+                                <!-- <i *ngIf="module.mod_logo" class="{{ module.mod_logo }} text-gray-600 mr-3"></i> -->
+                                <span class="text-sm font-medium text-gray-700">wallets</span>
+                                <span class="text-xs text-gray-500">Order: 2</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i _ngcontent-ng-c3054506934="" class="ri-contacts-line ri-lg"></i>
+                                <!-- <i *ngIf="module.mod_logo" class="{{ module.mod_logo }} text-gray-600 mr-3"></i> -->
+                                <span class="text-sm font-medium text-gray-700">customers</span>
+                                <span class="text-xs text-gray-500">Order: 3</span>
+                            </div>
+                        </div>
+                    </div><!-- 
+                <ng-template #noModules>
+                    <div class="text-center py-4 text-gray-400 text-sm">
+                        No modules assigned to this profile
+                    </div>
+                </ng-template> -->
+                </div>
+            </div>
+
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+                <button (click)="closeForm('profile-details')" id="close-customer-detail-btn"
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                    Close
+                </button>
+            </div>
+        </div>
+
+        <!-- add/edit profile -->
+        <div *ngIf="isProfileFormVisible" id="create-profile-modal"
+            class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Create New Profile</h3>
+                <button (click)="closeForm('profile-form')" id="close-create-profile"
+                    class="text-gray-400 hover:text-gray-500">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-close-line ri-lg"></i>
+                    </div>
+                </button>
+            </div>
+
+            <form ngNativeValidate #profileForm="ngForm" class="p-6 space-y-8 overflow-y-auto">
+                <!-- Basic Information Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-5">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">Basic Information</h4>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div class="form-field">
+                            <label class="form-label flex items-center">
+                                Profile Name
+                                <span class="text-primary ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input class="form-input pl-10" name="profileName" type="text" required
+                                    placeholder="e.g. Administrator Profile">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permissions Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-5">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">System Permissions</h4>
+                    </div>
+
+                    <div class="space-y-2">
+                        <!-- Permission Toggles - Compact Style -->
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">VIEW BANK</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="viewBank" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">VIEW BRANCH</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="viewBranch" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">VIEW CHILD</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="viewChild" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">VIEW CUSTOMER - MERCHANT</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="viewCustomerMerchant" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">GRANT</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="grant" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">CRYP PAN</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="crypPan" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                    <button (click)="closeForm('profile-form')" id="cancel-create-profile"
+                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                        Cancel
+                    </button>
+                    <button type="submit" form="profileForm" id="submit-create-profile"
+                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                        Create Profile
+                    </button>
+                </div>
+            </form>
+
+        </div>
+
+        <!-- module details -->
+        <!-- <div *ngIf="isModuleDetailsVisible" id="module-details-modal"
+        class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
+    </div> -->
+
+        <!-- add/edit module -->
+        <div *ngIf="isModuleFormVisible" id="create-module-modal"
+            class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Add New Module</h3>
+                <button (click)="closeForm('module-form')" class="text-gray-400 hover:text-gray-500">
+                    <i class="ri-close-line ri-lg"></i>
+                </button>
+            </div>
+
+            <form ngNativeValidate class="p-6 space-y-6 overflow-y-auto">
+                <!-- Module Information Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-5">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">Module Details</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-5">
+                        <!-- Label Field -->
+                        <div class="form-field">
+                            <label class="form-label flex items-center">
+                                Label
+                                <span class="text-primary ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input class="form-input pl-10" name="label" type="text" required>
+                            </div>
+                        </div>
+
+                        <!-- Logo Selection -->
+                        <div class="form-field">
+                            <label class="form-label">Logo</label>
+                            <div class="relative">
+                                <select class="form-input pl-10" name="logo">
+                                    <option value="">Select a logo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Order Field -->
+                        <div class="form-field">
+                            <label class="form-label flex items-center">
+                                Order
+                                <span class="text-primary ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input class="form-input pl-10" name="order" type="number" min="1" required>
+                            </div>
+                        </div>
+
+                        <!-- Access Toggle -->
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">ACCESS</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="access" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                    <button (click)="closeForm('module-form')"
+                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                        Add Module
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- option details -->
+        <div *ngIf="isOptionDetailsVisible" id="option-details-modal"
+            class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Profile Details</h3>
+                <button id="close-customer-detail" class="text-gray-400 hover:text-gray-500">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i (click)="closeForm('option-details')" class="ri-close-line ri-lg"></i>
+                    </div>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-8 overflow-y-auto">
+                <!-- Basic Information Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-5">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">Basic Information</h4>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between py-2 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Option Code</span>
+                            <span class="text-sm font-medium text-gray-900">222</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-100">
+                            <span class="text-sm font-medium text-gray-500">Label</span>
+                            <span class="text-sm font-medium text-gray-900">Fee rule</span>
+                        </div><!-- 
+                    <div class="flex justify-between py-2">
+                        <span class="text-sm font-medium text-gray-500">Associated Form</span>
+                        <span class="text-sm font-medium text-gray-900">{{ selectedOption.map_form_name || 'None'
+                            }}</span>
+                    </div> -->
+                    </div>
+                </div>
+
+                <!-- Access Permissions Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center">
+                            <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                            <h4 class="text-lg font-semibold text-gray-900">Access Permissions</h4>
+                        </div>
+                        <span class="text-xs text-gray-500">3 active</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">VIEW ACCESS</span>
+                            <span class="text-sm font-medium" [class.text-primary]="true">
+                                Enabled
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">INSERT</span>
+                            <span class="text-sm font-medium" [class.text-gray-400]="false">
+                                Disabled
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">UPDATE</span>
+                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
+                                {{ true ? 'Enabled' : 'Disabled' }}
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">DELETE</span>
+                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
+                                {{ false ? 'Enabled' : 'Disabled' }}
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">EDIT</span>
+                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
+                                {{ false ? 'Enabled' : 'Disabled' }}
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">PRINT</span>
+                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
+                                {{ true ? 'Enabled' : 'Disabled' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Associated Profiles Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center">
+                            <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                            <h4 class="text-lg font-semibold text-gray-900">Assigned Profiles</h4>
+                        </div>
+                        <span class="text-xs text-gray-500">3 profiles</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">ADMIN</span>
+                            <span class="text-xs text-gray-500">Code: 101</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">ACCOUNTANT</span>
+                            <span class="text-xs text-gray-500">Code: 222</span>
+                        </div>
+                    </div>
+                    <ng-template #noProfiles>
+                        <div class="text-center py-4 text-gray-400 text-sm">
+                            No profiles have access to this option
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+                <button (click)="closeForm('option-details')" id="close-customer-detail-btn"
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                    Close
+                </button>
+            </div>
+        </div>
+
+        <!-- add/edit option -->
+        <div *ngIf="isOptionFormVisible" id="create-option-modal"
+            class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Add New Module</h3>
+                <button (click)="closeForm('option-form')" class="text-gray-400 hover:text-gray-500">
+                    <i class="ri-close-line ri-lg"></i>
+                </button>
+            </div>
+
+            <form ngNativeValidate class="p-6 space-y-6 overflow-y-auto">
+                <!-- Module Information Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-5">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">Menu Option Details</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-5">
+                        <!-- Label Field -->
+                        <div class="form-field">
+                            <label class="form-label flex items-center">
+                                Label
+                                <span class="text-primary ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input class="form-input pl-10" name="label" type="text" required>
+                            </div>
+                        </div>
+
+                        <!-- Logo Selection -->
+                        <div class="form-field">
+                            <label class="form-label">Module</label>
+                            <div class="relative">
+                                <select class="form-input pl-10" name="logo">
+                                    <option value="">Select a logo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                    <button (click)="closeForm('option-form')"
+                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                        Add Module
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>

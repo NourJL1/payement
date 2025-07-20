@@ -1,0 +1,39 @@
+/* App Container Styling */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the content takes the full height of the screen */
+  background-color: #f8f9fa; /* Light background color for the whole app */
+  font-family: 'Arial', sans-serif;
+}
+
+/* Footer Section Styling */
+.app-footer {
+  background-color: #343a40; /* Dark footer background */
+  color: white; /* White text */
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+/* App-wide Typography */
+body {
+  margin: 0;
+  padding: 0;
+  /*box-sizing: border-box;*/
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  color: #333333; /* Darker text color */
+}
+
+/* Responsive Styling */
+/* @media (max-width: 768px) {
+  .app-main-content {
+    padding: 15px;
+    margin: 10px;
+    width: 95%;
+  }  
+} */

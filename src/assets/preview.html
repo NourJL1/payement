@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Secure Document Viewer</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #f0f0f0;
+    }
+    #viewer-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #toolbar {
+      padding: 8px;
+      background: #333;
+      color: white;
+      text-align: center;
+    }
+    #close-btn {
+      position: absolute;
+      right: 10px;
+      background: #555;
+      color: white;
+      border: none;
+      padding: 2px 8px;
+      cursor: pointer;
+    }
+    #content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #444;
+    }
+    object, img, video {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="viewer-container">
+    <div id="toolbar">
+      <span id="filename">Document Viewer</span>
+      <button id="close-btn">X</button>
+    </div>
+    <div id="content">
+      <!-- Content will be inserted here -->
+    </div>
+  </div>
+
+  <script>
+    // Disable all right-click menus
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    
+    // Disable keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      // Only allow arrow keys, Tab, and Escape
+      const allowedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab', 'Escape'];
+      if (!allowedKeys.includes(e.key) || e.ctrlKey || e.metaKey || e.altKey) {
+        e.preventDefault();
+      }
+      
+      // Close on Escape
+      if (e.key === 'Escape') {
+        window.close();
+      }
+    });
+
+    // Close button
+    document.getElementById('close-btn').addEventListener('click', () => window.close());
+
+    // Get URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const fileUrl = urlParams.get('url');
+    const fileName = urlParams.get('name');
+    const fileType = urlParams.get('type');
+
+    if (fileName) {
+      document.getElementById('filename').textContent = fileName;
+    }
+
+    // Display content based on type
+    const contentDiv = document.getElementById('content');
+    
+    if (fileUrl) {
+      if (fileType.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = fileUrl;
+        contentDiv.appendChild(img);
+      } 
+      else if (fileType === 'application/pdf') {
+        const object = document.createElement('object');
+        object.data = fileUrl;
+        object.type = 'application/pdf';
+        object.width = '100%';
+        object.height = '100%';
+        contentDiv.appendChild(object);
+      }
+      else if (fileType.startsWith('video/')) {
+        const video = document.createElement('video');
+        video.src = fileUrl;
+        video.controls = true;
+        video.autoplay = true;
+        contentDiv.appendChild(video);
+      }
+      else {
+        // For other types (Word, Excel), show as embedded object
+        const iframe = document.createElement('iframe');
+        iframe.src = fileUrl;
+        iframe.width = '100%';
+        iframe.height = '100%';
+        contentDiv.appendChild(iframe);
+      }
+    } else {
+      contentDiv.innerHTML = '<p>No document to display</p>';
+    }
+  </script>
+</body>
+</html>

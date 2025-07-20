@@ -1,0 +1,216 @@
+<div class="overview-page">
+    <!-- Welcome Banner -->
+    <div class="bg-gradient-to-r from-primary to-primary-dark shadow-lg shadow-lg rounded-xl p-6 mb-8 text-white">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold mb-2">Welcome back, {{wallet?.customer?.fullName}}!</h1>
+                <p class="text-primary-light">Here's what's happening with your {{wallet?.walletType?.wtyLabe}} today
+                </p>
+            </div>
+            <button
+                class="mt-4 md:mt-0 bg-white text-primary px-6 py-2 shadow-lg shadow-lg rounded-lg font-medium hover:bg-opacity-90 transition-all">
+                Quick Transfer
+            </button>
+        </div>
+    </div>
+
+    <!-- Balance Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Available Balance -->
+        <div class="bg-white shadow-lg shadow-lg rounded-xl shadow-sm p-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-500 text-sm font-medium">Available Balance</p>
+                    <h2 class="text-2xl font-bold mt-1">{{wallet?.walEffBal }}</h2>
+                </div>
+                <div class="bg-primary bg-opacity-10 p-2 shadow-lg rounded-lg">
+                    <i class="ri-wallet-3-line text-primary text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-between items-center">
+                <span class="text-sm text-gray-500">Last updated: {{wallet?.lastUpdatedDate | date:'medium' }}</span>
+                <button class="text-primary text-sm font-medium hover:underline">View details</button>
+            </div>
+        </div>
+
+        <!-- Logical Balance -->
+        <div class="bg-white shadow-lg rounded-xl shadow-sm p-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-500 text-sm font-medium">Pending Transactions</p>
+                    <h2 class="text-2xl font-bold mt-1">{{wallet?.walLogicBalance }}</h2>
+                </div>
+                <div class="bg-blue-100 p-2 shadow-lg rounded-lg">
+                    <i class="ri-exchange-line text-blue-500 text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button class="w-full bg-blue-50 text-blue-600 py-2 shadow-lg rounded-lg text-sm font-medium hover:bg-blue-100">
+                    Review Transactions
+                </button>
+            </div>
+        </div>
+
+        <!-- Specific Balance -->
+        <div class="bg-white shadow-lg rounded-xl shadow-sm p-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-500 text-sm font-medium">{{wallet?.walletCategory?.wcaLabe || 'Category'}}
+                        Balance</p>
+                    <h2 class="text-2xl font-bold mt-1">{{wallet?.walSpecificBalance }}</h2>
+                </div>
+                <div class="bg-green-100 p-2 shadow-lg rounded-lg">
+                    <i class="ri-secure-payment-line text-green-500 text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button
+                    class="w-full bg-green-50 text-green-600 py-2 shadow-lg rounded-lg text-sm font-medium hover:bg-green-100">
+                    Manage Category
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-8">
+        <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <button
+                class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
+                <div class="bg-primary bg-opacity-10 p-3 shadow-lg rounded-full mb-2">
+                    <i class="ri-send-plane-line text-primary text-xl"></i>
+                </div>
+                <span class="text-sm font-medium">Send Money</span>
+            </button>
+            <button
+                class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
+                <div class="bg-purple-100 p-3 shadow-lg rounded-full mb-2">
+                    <i class="ri-bank-card-line text-purple-500 text-xl"></i>
+                </div>
+                <span class="text-sm font-medium">Add Card</span>
+            </button>
+            <button
+                class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
+                <div class="bg-blue-100 p-3 shadow-lg rounded-full mb-2">
+                    <i class="ri-qr-code-line text-blue-500 text-xl"></i>
+                </div>
+                <span class="text-sm font-medium">Pay with QR</span>
+            </button>
+            <button
+                class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
+                <div class="bg-green-100 p-3 shadow-lg rounded-full mb-2">
+                    <i class="ri-history-line text-green-500 text-xl"></i>
+                </div>
+                <span class="text-sm font-medium">History</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="mb-8">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Recent Transactions</h3>
+            <a href="/wallet/transactions" class="text-primary text-sm font-medium hover:underline">View All</a>
+        </div>
+        <div class="bg-white shadow-lg rounded-xl shadow-sm overflow-hidden">
+            <div *ngFor="let operation of wallet?.walletOperations?.slice(0, 5)"
+                class="border-b border-gray-100 last:border-0">
+                <div class="p-4 flex items-center">
+                    <div class="mr-4">
+                        <div [ngClass]="{
+              'bg-green-100 text-green-500': operation.wopAmount > 0,
+              'bg-red-100 text-red-500': operation.wopAmount <= 0
+            }" class="p-3 shadow-lg rounded-full">
+                            <i [ngClass]="{
+                'ri-arrow-down-line': operation.wopAmount > 0,
+                'ri-arrow-up-line': operation.wopAmount <= 0
+              }" class="text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="font-medium">{{operation.wopLabel}}</div>
+                        <div class="text-sm text-gray-500">{{operation.wopTimestamps | date:'medium'}}</div>
+                    </div>
+                    <div [ngClass]="{
+            'text-green-500': operation.wopAmount > 0,
+            'text-red-500': operation.wopAmount <= 0
+          }" class="font-semibold">
+                        {{operation.wopAmount > 0 ? '+' : ''}}{{operation.wopAmount | currency}}
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!wallet?.walletOperations?.length" class="p-8 text-center text-gray-500">
+                No recent transactions found
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards & Accounts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Linked Cards -->
+        <div>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Linked Cards</h3>
+                <button class="text-primary text-sm font-medium hover:underline">Manage</button>
+            </div>
+            <div class="bg-white shadow-lg rounded-xl shadow-sm p-6">
+                <div *ngIf="wallet?.cardList?.cards?.length; else noCards">
+                    <div *ngFor="let card of wallet?.cardList?.cards" class="mb-4 last:mb-0">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 p-2 shadow-lg shadow-lg rounded-lg mr-3">
+                                <i class="ri-bank-card-line text-blue-500"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium">**** **** **** {{card.carNumb?.substring(12,15)}}</div>
+                                <div class="text-sm text-gray-500">Expires {{card.carExpiryDate | date:'medium' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #noCards>
+                    <div class="text-center py-4">
+                        <i class="ri-bank-card-line text-3xl text-gray-300 mb-2"></i>
+                        <p class="text-gray-500">No cards linked to your wallet</p>
+                        <button class="mt-3 text-primary font-medium text-sm hover:underline">
+                            Add a payment card
+                        </button>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+
+        <!-- Bank Accounts -->
+        <div>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Bank Accounts</h3>
+                <button class="text-primary text-sm font-medium hover:underline">Manage</button>
+            </div>
+            <div class="bg-white shadow-lg shadow-lg rounded-xl shadow-sm p-6">
+                <div *ngIf="wallet?.accountList?.accounts?.length; else noAccounts">
+                    <div *ngFor="let account of wallet?.accountList?.accounts" class="mb-4 last:mb-0">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 p-2 shadow-lg shadow-lg rounded-lg mr-3">
+                                <i class="ri-bank-line text-blue-500"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium">{{account.accIden}}</div>
+                                <div class="text-sm text-gray-500">{{account.accRib}} • {{account.bank?.banCorpName}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #noAccounts>
+                    <div class="text-center py-4">
+                        <i class="ri-bank-line text-3xl text-gray-300 mb-2"></i>
+                        <p class="text-gray-500">No bank accounts linked</p>
+                        <button class="mt-3 text-primary font-medium text-sm hover:underline">
+                            Link a bank account
+                        </button>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>

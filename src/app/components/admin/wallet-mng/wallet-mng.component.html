@@ -1,0 +1,2412 @@
+<div class="flex flex-col bg-white rounded-xl shadow-lg mb-6 overflow-hidden">
+  <!-- Header Section -->
+  <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+    <h1 class="text-xl font-semibold text-gray-800">Wallet Management</h1>
+  </div>
+
+  <!-- Tabs Section -->
+  <div class="flex border-b border-gray-200">
+    <button class="tab-button px-6 py-3 text-sm font-medium text-primary border-b-2 border-primary transition-colors"
+      (click)="showTab('overview')" id="overview">Overview</button>
+    <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('wallets')"
+      id="wallets">Wallets</button>
+    <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('settings')"
+      id="settings">Settings</button>
+    <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('cards')"
+      id="cards">Cards</button>
+    <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('accounts')"
+      id="cards">Accounts</button>
+  </div>
+</div>
+
+<!-- Notification Area for Success and Error Messages -->
+<div *ngIf="successMessage" class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100]">
+  {{ successMessage }}
+  <button (click)="clearMessage()" class="ml-2 text-white hover:text-gray-200">
+    <i class="ri-close-line"></i>
+  </button>
+</div>
+<div *ngIf="errorMessage" class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100]">
+  {{ errorMessage }}
+  <button (click)="clearMessage()" class="ml-2 text-white hover:text-gray-200">
+    <i class="ri-close-line"></i>
+  </button>
+</div>
+
+<!-- Dashboard Content -->
+<div id="tab-overview" class="tab-content">
+  <!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+  
+  <!-- Total Wallets -->
+  <div class="bg-white rounded-lg shadow-lg p-5 text-gray-800 transform hover:scale-105 transition-all duration-300">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="text-sm font-medium text-gray-600">Total Wallets</div>
+        <div class="text-2xl font-bold mt-1">{{ walletCount }}</div>
+        <div class="text-xs text-gray-500 mt-1">Updated {{ lastUpdated | date:'short' }}</div>
+      </div>
+      <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full">
+        <i class="ri-wallet-3-line ri-xl text-blue-600"></i>
+      </div>
+    </div>
+    <div class="mt-4 flex items-center text-xs">
+      <span class="flex items-center bg-blue-100 px-2 py-1 rounded-full text-blue-600">
+        <i class="ri-arrow-up-s-line"></i>
+        <span class="ml-1">12.5%</span>
+      </span>
+      <span class="ml-2 text-gray-500">Since last month</span>
+    </div>
+    <div class="mt-3 h-1 bg-gray-200 rounded-full">
+      <div class="h-1 bg-blue-500 rounded-full" style="width: 75%"></div>
+    </div>
+  </div>
+
+  <!-- Pending Wallets -->
+  <div class="bg-white rounded-lg shadow-lg p-5 text-gray-800 transform hover:scale-105 transition-all duration-300">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="text-sm font-medium text-gray-600">Pending Wallets</div>
+        <div class="text-2xl font-bold mt-1">{{pendingWalletCount}}</div>
+        <div class="text-xs text-gray-500 mt-1">Last updated: 1 min ago</div>
+      </div>
+      <div class="w-12 h-12 flex items-center justify-center bg-yellow-100 rounded-full">
+        <i class="ri-time-line ri-xl text-yellow-500"></i>
+      </div>
+    </div>
+    <div class="mt-4 flex items-center text-xs">
+      <span class="flex items-center bg-yellow-100 px-2 py-1 rounded-full text-yellow-600">
+        <i class="ri-arrow-up-s-line"></i>
+        <span class="ml-1">8.3%</span>
+      </span>
+      <span class="ml-2 text-gray-500">Since last month</span>
+    </div>
+    <div class="mt-3 h-1 bg-gray-200 rounded-full">
+      <div class="h-1 bg-yellow-500 rounded-full" style="width: 83%"></div>
+    </div>
+  </div>
+
+  <!-- Active Wallets -->
+  <div class="bg-white rounded-lg shadow-lg p-5 text-gray-800 transform hover:scale-105 transition-all duration-300">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="text-sm font-medium text-gray-600">Active Wallets</div>
+        <div class="text-2xl font-bold mt-1">{{ activeWalletCount }}</div>
+        <div class="text-xs text-gray-500 mt-1">Real-time data</div>
+      </div>
+      <div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-full">
+        <i class="ri-check-line ri-xl text-green-600"></i>
+      </div>
+    </div>
+    <div class="mt-4 flex items-center text-xs">
+      <span class="flex items-center bg-green-100 px-2 py-1 rounded-full text-green-600">
+        <i class="ri-arrow-up-s-line"></i>
+        <span class="ml-1">5.2%</span>
+      </span>
+      <span class="ml-2 text-gray-500">Since last month</span>
+    </div>
+    <div class="mt-3 h-1 bg-gray-200 rounded-full">
+      <div class="h-1 bg-green-500 rounded-full" style="width: 92%"></div>
+    </div>
+  </div>
+
+</div>
+
+  <!-- Charts Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="bg-white rounded shadow p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">Wallet Distribution</h3>
+        <div class="dropdown">
+          <button class="flex items-center text-sm text-gray-500 hover:text-gray-700">
+            <span>This Month</span>
+            <div class="w-5 h-5 flex items-center justify-center ml-1">
+              <i class="ri-arrow-down-s-line"></i>
+            </div>
+          </button>
+          <div class="dropdown-content">
+            <a href="#" class="text-sm">This Week</a>
+            <a href="#" class="text-sm">This Month</a>
+            <a href="#" class="text-sm">This Year</a>
+            <a href="#" class="text-sm">Custom Range</a>
+          </div>
+        </div>
+      </div>
+      <div id="wallet-distribution-chart" class="h-64"></div>
+    </div>
+    <div class="bg-white rounded shadow p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">Balance Trends</h3>
+        <div class="dropdown">
+          <button class="flex items-center text-sm text-gray-500 hover:text-gray-700">
+            <span>Last 30 Days</span>
+            <div class="w-5 h-5 flex items-center justify-center ml-1">
+              <i class="ri-arrow-down-s-line"></i>
+            </div>
+          </button>
+          <div class="dropdown-content">
+            <a href="#" class="text-sm">Last 7 Days</a>
+            <a href="#" class="text-sm">Last 30 Days</a>
+            <a href="#" class="text-sm">Last 90 Days</a>
+            <a href="#" class="text-sm">Custom Range</a>
+          </div>
+        </div>
+      </div>
+      <div id="balance-trends-chart" class="h-64"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Wallet Management Section -->
+<div id="tab-wallets" class="tab-content hidden">
+  <!-- Header Section -->
+  <div
+    class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white rounded-xl shadow mb-6">
+    <div class="mb-4 sm:mb-0">
+      <h2 class="text-2xl font-semibold text-gray-800">
+        Wallet Management
+      </h2>
+    </div>
+    <div class="flex items-center space-x-3 w-full sm:w-auto">
+      <button
+        class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-sm">
+        <i class="ri-download-2-line mr-2"></i> Export Data
+      </button>
+      <!--<button (click)="toggleForm('create-wallet')"
+        class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-sm">
+        <i class="ri-add-line mr-2"></i> New Wallet
+      </button>-->
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-lg shadow p-4 mb-6">
+    <div class="flex flex-col md:flex-row gap-4">
+      <!-- Search -->
+      <div class="relative flex-grow">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="ri-search-line text-gray-400"></i>
+        </div>
+        <!-- Search Input -->
+        <input type="text" placeholder="Search..." [(ngModel)]="searchTerm" name="searchTerm" (input)="applyFilters()"
+          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+      </div>
+      <div class="w-full sm:w-auto">
+        <div class="relative">
+          <!-- Status Filter -->
+          <select [(ngModel)]="selectedStatus" name="selectedStatus" (ngModelChange)="applyFilters()"
+            class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+            <option [ngValue]="undefined">All Statuses</option>
+            <option *ngFor="let status of walletStatuses" [ngValue]="status">
+              {{ status.wstLabe }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="w-full sm:w-auto">
+        <div class="relative">
+          <!-- Type Filter -->
+          <select [(ngModel)]="selectedWalletType" name="selectedWalletType" (ngModelChange)="applyFilters()"
+            class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+            <option [ngValue]="undefined">All Types</option>
+            <option *ngFor="let type of walletTypesList" [ngValue]="type">
+              {{ type.wtyLabe }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="w-full sm:w-auto">
+        <div class="relative">
+          <select [(ngModel)]="selectedCategory" name="selectedCategory" (ngModelChange)="applyFilters()"
+            class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+            <option [ngValue]="undefined">All Categories</option>
+            <option *ngFor="let category of walletCategories" [ngValue]="category">
+              {{ category.wcaLabe }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="bg-white rounded-xl shadow overflow-hidden">
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+          <tr class="border-b border-gray-200">
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Identifier
+            </th>
+
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Name
+            </th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Created at
+            </th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Status
+            </th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Type
+            </th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Category
+            </th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Fin Id
+            </th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <ng-container *ngIf="filteredWallets!.length > 0; else noData">
+            <tr *ngFor="let wallet of filteredWallets" class="hover:bg-gray-50 transition duration-150 cursor-pointer">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ wallet.walIden }}</div>
+              </td>
+
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ wallet.walLabe }}</div>
+              </td>
+
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ wallet.createdAt | date:'dd-MM-yyyy HH:mm:ss' }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full" [ngClass]="{
+                  'bg-green-100 text-green-800': wallet.walletStatus!.wstLabe === 'ACTIVE',
+                  'bg-yellow-100 text-yellow-800': wallet.walletStatus!.wstLabe === 'PENDING',
+                  'bg-red-100 text-red-800': wallet.walletStatus!.wstLabe === 'INACTIVE'
+                }">
+                  {{ wallet.walletStatus!.wstLabe }}
+                </span>
+              </td>
+
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ wallet.walletType!.wtyLabe }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-500">{{ wallet.walletCategory!.wcaLabe}}</div>
+              </td>
+
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-500">{{ wallet.walFinId}}</div>
+              </td>
+
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex items-center justify-end space-x-3">
+                  <button (click)="selectedWallet = wallet; toggleForm('wallet-details')"
+                    class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                    <i class="ri-eye-line text-lg"></i>
+                  </button>
+                    
+                    <button (click)="deleteWallet(wallet)"
+                        class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                        <i class="ri-delete-bin-line text-lg"></i>
+                    </button>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+          <ng-template #noData>
+            <tr>
+              <td colspan="100%" class="py-8 text-center">
+                <div class="flex flex-col items-center justify-center space-y-2">
+                  <p class="text-sm text-gray-400">The table is currently empty</p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+      <div class="flex items-center text-sm text-gray-500">
+        <span>Showing 1-10 of ...</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <button
+          class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled>
+          <i class="ri-arrow-left-s-line"></i>
+        </button>
+        <button
+          class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+        <button
+          class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+        <button
+          class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+        <button
+          class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+          <i class="ri-arrow-right-s-line"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Section -->
+<div id="tab-settings" class="tab-content hidden space-y-6">
+  <!-- Settings Tabs -->
+  <div class="mb-6 flex flex-wrap gap-2">
+    <button id="settings-status" (click)="showTab('status', 'settings')"
+      class="settings-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white font-medium text-primary border-b-2 border-primary transition-colors">
+      Status</button>
+    <button id="settings-type" (click)="showTab('type', 'settings')"
+      class="settings-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
+      Type</button>
+    <button id="settings-category" (click)="showTab('category', 'settings')"
+      class="settings-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
+      Category</button>
+  </div>
+  <!-- Wallet Status Content -->
+  <div id="settings-tab-status" class="settings-tab-content">
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="relative flex-grow">
+          <h2 class="text-2xl font-semibold text-gray-800">
+            Wallet Status Management
+          </h2>
+        </div>
+        <!-- Search -->
+        <div class="relative flex-grow">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ri-search-line text-gray-400"></i>
+          </div>
+          <input type="text" placeholder="Search..." [(ngModel)]="statusSearchTerm" name="statusSearchTerm" (input)="searchStatus()"
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+        </div>
+        <button id="btn-add-status" (click)="toggleForm('wallet-status')"
+          class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+          <i class="ri-add-line mr-1"></i> Add Status
+        </button>
+      </div>
+    </div>
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Status Code
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Status Identifier
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Status Label
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <ng-container *ngIf="filteredStatuses!.length > 0; else noData">
+              <tr *ngFor="let status of filteredStatuses" class="hover:bg-gray-50 transition duration-150">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ status.wstCode }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ status.wstIden }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ status.wstLabe }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex items-center justify-end space-x-3">
+                    <button (click)="editStatus(status)"
+                      class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                      <i class="ri-edit-line text-lg"></i>
+                    </button>
+                    <button (click)="deleteStatus(status.wstCode)"
+                      class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                      <i class="ri-delete-bin-line text-lg"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+            </ng-container>
+            <ng-template #noData>
+              <tr>
+                <td colspan="100%" class="py-8 text-center">
+                  <div class="flex flex-col items-center justify-center space-y-2">
+                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-500">
+          <span>Showing 1-{{walletStatuses.length}} of {{walletStatuses.length}} statuses</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Wallet Type Content -->
+  <div id="settings-tab-type" class="settings-tab-content hidden">
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="relative flex-grow">
+          <h2 class="text-2xl font-semibold text-gray-800">
+            Wallet Type Management
+          </h2>
+        </div>
+        <!-- Search -->
+        <div class="relative flex-grow">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ri-search-line text-gray-400"></i>
+          </div>
+          <input type="text" placeholder="Search..." [(ngModel)]="typeSearchTerm" name="typeSearchTerm" (input)="searchType()"
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+        </div>
+        <button id="btn-add-type" (click)="toggleForm('wallet-type')"
+          class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+          <i class="ri-add-line mr-1"></i> Add Type
+        </button>
+      </div>
+    </div>
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Type Code
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Type Identifier
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Type Label
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <ng-container *ngIf="filteredWalletTypes!.length > 0; else noData">
+              <tr *ngFor="let type of filteredWalletTypes" class="hover:bg-gray-50 transition duration-150">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ type.wtyCode }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ type.wtyIden }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ type.wtyLabe }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex items-center justify-end space-x-3">
+                    <button (click)="editWalletType(type)"
+                      class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                      <i class="ri-edit-line text-lg"></i>
+                    </button>
+                    <button (click)="deleteWalletType(type.wtyCode)"
+                      class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                      <i class="ri-delete-bin-line text-lg"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-template #noData>
+              <tr>
+                <td colspan="100%" class="py-8 text-center">
+                  <div class="flex flex-col items-center justify-center space-y-2">
+                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-500">
+          <span>Showing 1-{{walletTypesList.length}} of {{walletTypesList.length}} wallet types</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Wallet Category Content -->
+  <div id="settings-tab-category" class="settings-tab-content hidden">
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="relative flex-grow">
+          <h2 class="text-2xl font-semibold text-gray-800">
+            Wallet Category Management
+          </h2>
+        </div>
+        <!-- Search -->
+        <div class="relative flex-grow">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ri-search-line text-gray-400"></i>
+          </div>
+          <input type="text" placeholder="Search..." [(ngModel)]="categorySearchTerm" name="categorySearchTerm" (input)="searchCategory()"
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+        </div>
+        <button id="btn-add-category" (click)="toggleForm('wallet-category')"
+          class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+          <i class="ri-add-line mr-1"></i> Add Category
+        </button>
+      </div>
+    </div>
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Category Code
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Category Identifier
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Category Label
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <ng-container *ngIf="filteredWalletCategories!.length > 0; else noData">
+              <tr *ngFor="let category of filteredWalletCategories" class="hover:bg-gray-50 transition duration-150">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ category.wcaCode }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ category.wcaIden }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ category.wcaLabe }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex items-center justify-end space-x-3">
+                    <button (click)="editCategory(category)"
+                      class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                      <i class="ri-edit-line text-lg"></i>
+                    </button>
+                    <button (click)="deleteCategory(category.wcaCode!)"
+                      class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                      <i class="ri-delete-bin-line text-lg"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-template #noData>
+              <tr>
+                <td colspan="100%" class="py-8 text-center">
+                  <div class="flex flex-col items-center justify-center space-y-2">
+                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-500">
+          <span>Showing 1-{{walletCategories.length}} of {{walletCategories.length}} categories</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cards Section -->
+<div id="tab-cards" class="tab-content hidden space-y-6">
+  <!-- Cards Tabs -->
+  <div class="mb-6 flex flex-wrap gap-2">
+    <button id="cards-overview" (click)="showTab('overview', 'cards')"
+      class="cards-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white font-medium text-primary border-b-2 border-primary transition-colors">
+      Cards Overview</button>
+    <button id="cards-type" (click)="showTab('type', 'cards')"
+      class="cards-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
+      Cards Type</button>
+    <button id="cards-list" (click)="showTab('list', 'cards')"
+      class="cards-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
+      Card List</button>
+  </div>
+  <!-- Cards Content -->
+  <div id="cards-tab-overview" class="cards-tab-content">
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="relative flex-grow">
+          <h2 class="text-2xl font-semibold text-gray-800">
+            Cards Management
+          </h2>
+        </div>
+        <!-- Search -->
+        <div class="relative flex-grow">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ri-search-line text-gray-400"></i>
+          </div>
+          <input type="text" placeholder="Search cards..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+        </div>
+        <button id="btn-add-card" (click)="toggleForm('create-card')"
+          class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+          <i class="ri-add-line mr-1"></i> Add Card
+        </button>
+      </div>
+    </div>
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Label
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Expiry Date
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                List
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Type
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                EMV
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <ng-container *ngIf="cardsList!.length > 0; else noData">
+              <tr *ngFor="let card of cardsList" class="hover:bg-gray-50 transition duration-150">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ card.carLabe || card.carIden }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">{{ formatDate(card.carExpiryDate) }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ card.cardList?.cliLabe || 'N/A' }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ card.cardType?.ctypLabe || 'N/A' }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ card.carEmvData || 'N/A' }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex items-center justify-end space-x-3">
+                    <button (click)="editCard(card)"
+                      class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                      <i class="ri-edit-line text-lg"></i>
+                    </button>
+                    <button (click)="deleteCard(card.carCode)"
+                      class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                      <i class="ri-delete-bin-line text-lg"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-template #noData>
+              <tr>
+                <td colspan="100%" class="py-8 text-center">
+                  <div class="flex flex-col items-center justify-center space-y-2">
+                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-500">
+          <span>Showing 1-10 of ...</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Type Content -->
+  <div id="cards-tab-type" class="cards-tab-content hidden">
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="relative flex-grow">
+          <h2 class="text-2xl font-semibold text-gray-800">
+            Card Type Management
+          </h2>
+        </div>
+        <!-- Search -->
+        <div class="relative flex-grow">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ri-search-line text-gray-400"></i>
+          </div>
+          <input type="text" placeholder="Search card types..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+        </div>
+        <button id="btn-add-card-type" (click)="toggleForm('card-type')"
+          class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+          <i class="ri-add-line mr-1"></i> Add Card Type
+        </button>
+      </div>
+    </div>
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Type Code
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Type Identifier
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Type Label
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <ng-container *ngIf="cardTypesList!.length > 0; else noData">
+              <tr *ngFor="let cardType of cardTypesList" class="hover:bg-gray-50 transition duration-150">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ cardType.ctypCode }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ cardType.ctypIden }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ cardType.ctypLabe }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex items-center justify-end space-x-3">
+                    <button (click)="editCardType(cardType)"
+                      class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                      <i class="ri-edit-line text-lg"></i>
+                    </button>
+                    <button (click)="deleteCardType(cardType.ctypCode)"
+                      class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                      <i class="ri-delete-bin-line text-lg"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-template #noData>
+              <tr>
+                <td colspan="100%" class="py-8 text-center">
+                  <div class="flex flex-col items-center justify-center space-y-2">
+                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-500">
+          <span>Showing 1-10 of {{cardTypesList.length}} card types</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card List Content -->
+  <div id="cards-tab-list" class="cards-tab-content hidden">
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="relative flex-grow">
+          <h2 class="text-2xl font-semibold text-gray-800">
+            Card List Management
+          </h2>
+        </div>
+        <!-- Search -->
+        <div class="relative flex-grow">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ri-search-line text-gray-400"></i>
+          </div>
+          <input type="text" placeholder="Search card lists..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+        </div>
+        <button id="btn-add-card-list" (click)="toggleForm('card-list')"
+          class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+          <i class="ri-add-line mr-1"></i> Add Card List
+        </button>
+      </div>
+    </div>
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                List Code
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                List Identifier
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                List Label
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <ng-container *ngIf="cardListsList!.length > 0; else noData">
+              <tr *ngFor="let cardList of cardListsList" class="hover:bg-gray-50 transition duration-150">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ cardList.cliCode }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ cardList.cliIden }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ cardList.cliLabe }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex items-center justify-end space-x-3">
+                    <button (click)="editCardList(cardList)"
+                      class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                      <i class="ri-edit-line text-lg"></i>
+                    </button>
+                    <button (click)="deleteCardList(cardList.cliCode)"
+                      class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                      <i class="ri-delete-bin-line text-lg"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-template #noData>
+              <tr>
+                <td colspan="100%" class="py-8 text-center">
+                  <div class="flex flex-col items-center justify-center space-y-2">
+                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-500">
+          <span>Showing 1-10 of {{cardListsList.length}} lists</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Account Section -->
+<div id="tab-accounts" class="tab-content hidden space-y-6">
+  <!-- account Tabs -->
+  <div class="mb-6 flex flex-wrap gap-2">
+    <button id="accounts-overview" (click)="showTab('overview', 'accounts')"
+      class="accounts-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white font-medium text-primary border-b-2 border-primary transition-colors">
+      Accounts Overview</button>
+    <button id="accounts-type" (click)="showTab('type', 'accounts')"
+      class="accounts-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
+      Accounts Type</button>
+    <button id="accounts-list" (click)="showTab('list', 'accounts')"
+      class=" accounts-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
+      Accounts List</button>
+  </div>
+  <!-- accounts Content-->
+  <div id="accounts-tab-overview" class="accounts-tab-content">
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="relative flex-grow">
+          <h2 class="text-2xl font-semibold text-gray-800">
+            Accounts Management
+          </h2>
+        </div>
+        <!-- Search -->
+        <div class="relative flex-grow">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ri-search-line text-gray-400"></i>
+          </div>
+          <input type="text" placeholder="Search accounts..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+        </div>
+        <button id="btn-add-account" (click)="toggleForm('create-account')"
+          class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+          <i class="ri-add-line mr-1"></i> Add Account
+        </button>
+      </div>
+    </div>
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Code
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Bank
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                List
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Type
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr class="hover:bg-gray-50 transition duration-150">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">1</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">UIB</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">CHEKINGS</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">...</div>
+              </td>
+              <!-- <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex items-center justify-end space-x-3">
+                            <button (click)="editAccount(account)"
+                                class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                <i class="ri-edit-line text-lg"></i>
+                            </button>
+                            <button (click)="deleteAccount(account.accCode)"
+                                class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                <i class="ri-delete-bin-line text-lg"></i>
+                            </button>
+                        </div>
+                    </td> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-500">
+          <span>Showing 1-5 of ...</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- account Type Content-->
+  <div id="accounts-tab-type" class="accounts-tab-content hidden">
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="relative flex-grow">
+          <h2 class="text-2xl font-semibold text-gray-800">
+            Account Type Management
+          </h2>
+        </div>
+        <!-- Search -->
+        <div class="relative flex-grow">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ri-search-line text-gray-400"></i>
+          </div>
+          <input type="text" placeholder="Search account types..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+        </div>
+        <button id="btn-add-account" (click)="toggleForm('account-type')"
+          class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+          <i class="ri-add-line mr-1"></i> Add Account Type
+        </button>
+      </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Type Code
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Type Identifier
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Type Label
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <ng-container *ngIf="accountTypesList!.length > 0; else noData">
+              <tr *ngFor="let accountType of accountTypesList" class="hover:bg-gray-50 transition duration-150">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ accountType.atyCode }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ accountType.atyIden }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ accountType.atyLabe }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex items-center justify-end space-x-3">
+                    <button (click)="editAccountType(accountType)"
+                      class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                      <i class="ri-edit-line text-lg"></i>
+                    </button>
+                    <button (click)="deleteAccountType(accountType.atyCode)"
+                      class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                      <i class="ri-delete-bin-line text-lg"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-template #noData>
+              <tr>
+                <td colspan="100%" class="py-8 text-center">
+                  <div class="flex flex-col items-center justify-center space-y-2">
+                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-500">
+          <span>Showing 1-10 of {{accountTypesList.length}} account types</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- account List Content-->
+  <div id="accounts-tab-list" class="accounts-tab-content hidden">
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="relative flex-grow">
+          <h2 class="text-2xl font-semibold text-gray-800">
+            Account List Management
+          </h2>
+        </div>
+        <!-- Search -->
+        <div class="relative flex-grow">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ri-search-line text-gray-400"></i>
+          </div>
+          <input type="text" placeholder="Search account lists..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+        </div>
+        <button id="btn-add-account" (click)="toggleForm('account-list')"
+          class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+          <i class="ri-add-line mr-1"></i> Add Account List
+        </button>
+      </div>
+    </div>
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                List Code
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                List Identifier
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                List Label
+              </th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr class="hover:bg-gray-50 transition duration-150">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">1</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">1</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">SAVINGS</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <!-- <div class="flex items-center justify-end space-x-3">
+                  <button (click)="editAccountList(accountList)"
+                    class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                    <i class="ri-edit-line text-lg"></i>
+                  </button>
+                  <button (click)="deleteAccountList(accountList.code)"
+                    class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                    <i class="ri-delete-bin-line text-lg"></i>
+                  </button>
+                </div> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-500">
+          <span>Showing 1-10 ...</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+<div *ngIf="isAnyModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[50] ">
+  
+  <!-- Wallet Detail Modal -->
+  <div *ngIf="isWalletDetailsVisible" id="wallet-detail-modal"
+    class="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-800">Wallet Details</h3>
+      <button id="close-wallet-detail" class="text-gray-400 hover:text-gray-500">
+        <div class="w-6 h-6 flex items-center justify-center">
+          <i (click)="closeForm('wallet-details')" class="ri-close-line ri-lg"></i>
+        </div>
+      </button>
+    </div>
+    <!-- basic info-->
+    <div class="p-6 custom-scrollbar" style="height: calc(90vh - 130px);">
+      <div class="flex flex-col md:flex-row md:space-x-6">
+        <div class="mb-6 md:mb-0">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-center mb-4">
+              <div
+                class="w-20 h-20 mx-auto bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary">
+                <i class="ri-wallet-3-line ri-2x"></i>
+              </div>
+              <h4 class="text-lg font-semibold mt-2">Wallet ID: {{selectedWallet.walIden}}</h4>
+
+            </div>
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-500">Status:</span>
+                <span class="text-sm font-medium px-2 rounded-full status-active">{{ selectedWallet.walletStatus!.wstLabe
+                  }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-500">Type:</span>
+                <span class="text-sm font-medium">{{ selectedWallet.walletType!.wtyLabe }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-500">Category:</span>
+                <span class="text-sm font-medium">{{ selectedWallet.walletCategory!.wcaLabe }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-500">Created:</span>
+                <span class="text-sm font-medium">{{ selectedWallet.createdAt | date:'dd-MM-yyy HH:mm:ss' }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-500">Last Updated:</span>
+                <span class="text-sm font-medium">{{ selectedWallet.lastUpdatedDate | date:'dd-MM-yyyy HH:mm:ss'
+                  }}</span>
+              </div>
+            </div>
+            <div class="mt-6 space-y-2">
+              <button
+                class="w-full px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 transition text-sm whitespace-nowrap">
+                Edit Wallet </button>
+              <button
+                class="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                Change Status </button>
+            </div>
+          </div>
+        </div>
+        <div class="md:w-2/3">
+          <div class="mb-6">
+            <div class="flex border-b border-gray-200">
+              <button class="details-tab-button  px-4 py-3 text-sm active font-medium text-primary"
+                id="details-basic-info" (click)="showTab('basic-info','details')"> Basic Info </button>
+              <button class="details-tab-button  px-4 py-3 text-sm text-gray-500" id="details-balance"
+                (click)="showTab('balance','details')"> Balance
+              </button>
+              <button class="details-tab-button px-4 py-3 text-sm text-gray-500" id="details-relationships"
+                (click)="showTab('relationships','details')"> Relationships </button>
+              <button class="details-tab-button px-4 py-3 text-sm text-gray-500" id="details-operations"
+                (click)="showTab('operations','details')">
+                Operations </button>
+            </div>
+          </div>
+          <div class="overflow-y-auto h-[400px]">
+            <div id="details-tab-basic-info" class="details-tab-content">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h5 class="text-sm font-semibold text-gray-700 mb-3">Wallet Information</h5>
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-xs text-gray-500 mb-1">Wallet Code</label>
+                      <div class="text-sm font-medium">{{ selectedWallet.walCode }}</div>
+                    </div>
+                    <div>
+                      <label class="block text-xs text-gray-500 mb-1">Identifier</label>
+                      <div class="text-sm font-medium">{{selectedWallet.walIden}}</div>
+                    </div>
+                    <div>
+                      <label class="block text-xs text-gray-500 mb-1">Label</label>
+                      <div class="text-sm font-medium">{{ selectedWallet.walLabe }}</div>
+                    </div>
+                    <div>
+                      <label class="block text-xs text-gray-500 mb-1">Wallet Key</label>
+                      <div class="text-sm font-medium">{{ selectedWallet.walKey }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h5 class="text-sm font-semibold text-gray-700 mb-3">Additional Details</h5>
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-xs text-gray-500 mb-1">Financial ID</label>
+                      <div class="text-sm font-medium">{{ selectedWallet.walFinId }}</div>
+                    </div>
+                    <div>
+                      <label class="block text-xs text-gray-500 mb-1">Creation Date</label>
+                      <div class="text-sm font-medium">{{ selectedWallet.createdAt | date:'dd-MM-yyy HH:mm:ss' }}</div>
+                    </div>
+                    <div>
+                      <label class="block text-xs text-gray-500 mb-1">Last Updated</label>
+                      <div class="text-sm font-medium">{{ selectedWallet.lastUpdatedDate | date:'dd-MM-yyyy HH:mm:ss' }}
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block text-xs text-gray-500 mb-1">Status</label>
+                      <div class="flex items-center">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full status-active mr-2">
+                          {{ selectedWallet.walletStatus!.wstLabe }} </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-6">
+                <h5 class="text-sm font-semibold text-gray-700 mb-3">Customer Information</h5>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-500">
+                      <i class="ri-user-3-line ri-lg"></i>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium">{{ selectedWallet.customer?.fullName }}</div>
+                      <div class="text-xs text-gray-500">Customer ID: {{ selectedWallet.customer?.cusIden }}</div>
+                      <div class="flex items-center mt-1">
+                        <div class="w-4 h-4 flex items-center justify-center text-gray-500 mr-1">
+                          <i class="ri-mail-line"></i>
+                        </div>
+                        <span class="text-xs">{{ selectedWallet.customer?.cusMailAddress }}</span>
+                        <div class="w-4 h-4 flex items-center justify-center text-gray-500 ml-3 mr-1">
+                          <i class="ri-phone-line"></i>
+                        </div>
+                        <span class="text-xs">{{ selectedWallet.customer?.cusPhoneNbr }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--balance-->
+            <div id="details-tab-balance" class="details-tab-content hidden">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                  <div class="text-sm text-gray-500 mb-1">Effective Balance</div>
+                  <div class="text-xl font-bold text-gray-800">{{ selectedWallet.walEffBal }}</div>
+
+                </div>
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                  <div class="text-sm text-gray-500 mb-1">Logical Balance</div>
+                  <div class="text-xl font-bold text-gray-800">{{ selectedWallet.walLogicBalance }}</div>
+
+                </div>
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                  <div class="text-sm text-gray-500 mb-1">Specific Balance</div>
+                  <div class="text-xl font-bold text-gray-800">{{ selectedWallet.walSpecificBalance }}</div>
+
+                </div>
+              </div>
+              <div class="mb-6">
+                <h5 class="text-sm font-semibold text-gray-700 mb-3">Balance History</h5>
+                <div id="balance-history-chart" class="h-64 border border-gray-200 rounded-lg"></div>
+              </div>
+              <div>
+                <h5 class="text-sm font-semibold text-gray-700 mb-3">Recent Balance Changes</h5>
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Date
+                        </th>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Type
+                        </th>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Amount </th>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Balance After </th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> 2023-05-21 14:32 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Deposit </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-green-500"> +$1,500.00 </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> $12,458.32 </td>
+                      </tr>
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> 2023-05-18 09:15 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                            Withdrawal </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500"> -$250.00 </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> $10,958.32 </td>
+                      </tr>
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> 2023-05-15 16:42 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                            Transfer </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500"> -$500.00 </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> $11,208.32 </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- relationships-->
+            <div id="details-tab-relationships" class="details-tab-content hidden">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h5 class="text-sm font-semibold text-gray-700 mb-3">Linked Cards</h5>
+                  <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <div class="p-4 bg-gray-50 border-b border-gray-200">
+                      <div class="flex items-center">
+                        <div class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-500 rounded">
+                          <i class="ri-bank-card-line"></i>
+                        </div>
+                        <div class="ml-3">
+                          <div class="text-sm font-medium">Visa Platinum</div>
+                          <div class="text-xs text-gray-500">**** **** **** 4582</div>
+                        </div>
+                        <div class="ml-auto">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Active </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <div class="flex justify-between mb-2">
+                        <span class="text-xs text-gray-500">Card Holder</span>
+                        <span class="text-xs font-medium">Michael Johnson</span>
+                      </div>
+                      <div class="flex justify-between mb-2">
+                        <span class="text-xs text-gray-500">Expiry Date</span>
+                        <span class="text-xs font-medium">05/25</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-xs text-gray-500">Linked Date</span>
+                        <span class="text-xs font-medium">2023-01-15</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h5 class="text-sm font-semibold text-gray-700 mb-3">Associated Accounts</h5>
+                  <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <div class="p-4 bg-gray-50 border-b border-gray-200">
+                      <div class="flex items-center">
+                        <div class="w-10 h-10 flex items-center justify-center bg-green-100 text-green-500 rounded">
+                          <i class="ri-bank-line"></i>
+                        </div>
+                        <div class="ml-3">
+                          <div class="text-sm font-medium">Checking Account</div>
+                          <div class="text-xs text-gray-500">AC-78542-001</div>
+                        </div>
+                        <div class="ml-auto">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Primary </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <div class="flex justify-between mb-2">
+                        <span class="text-xs text-gray-500">Account Number</span>
+                        <span class="text-xs font-medium">**** **** 4567</span>
+                      </div>
+                      <div class="flex justify-between mb-2">
+                        <span class="text-xs text-gray-500">Bank</span>
+                        <span class="text-xs font-medium">UIB Bank</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-xs text-gray-500">Linked Date</span>
+                        <span class="text-xs font-medium">2023-01-15</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-6">
+                <h5 class="text-sm font-semibold text-gray-700 mb-3">Operation Types</h5>
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Operation Type </th>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Code
+                        </th>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status </th>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Limit </th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> Deposit </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500"> DEP-001 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Enabled </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> $50,000 / day </td>
+                      </tr>
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> Withdrawal </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500"> WIT-001 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Enabled </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> $10,000 / day </td>
+                      </tr>
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> Transfer </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500"> TRF-001 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Enabled </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> $25,000 / day </td>
+                      </tr>
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> Payment </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500"> PAY-001 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Enabled </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> $15,000 / day </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!--operations-->
+            <div id="details-tab-operations" class="details-tab-content hidden">
+              <div class="mb-6">
+                <h5 class="text-sm font-semibold text-gray-700 mb-3">Recent Operations</h5>
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Date
+                        </th>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Operation </th>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Amount </th>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status </th>
+                        <th scope="col"
+                          class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Reference </th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> 2023-05-21 14:32 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Deposit </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-green-500"> +$1,500.00 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Completed </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500"> OP-78542-1 </td>
+                      </tr>
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> 2023-05-18 09:15 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                            Withdrawal </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500"> -$250.00 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Completed </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500"> OP-78542-2 </td>
+                      </tr>
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> 2023-05-15 16:42 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                            Transfer </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500"> -$500.00 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Completed </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500"> OP-78542-3 </td>
+                      </tr>
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> 2023-05-10 11:23 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                            Payment </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500"> -$120.50 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Completed </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500"> OP-78542-4 </td>
+                      </tr>
+                      <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900"> 2023-05-05 08:45 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            Fee </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500"> -$5.00 </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Completed </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500"> OP-78542-5 </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div>
+                <h5 class="text-sm font-semibold text-gray-700 mb-3">Operation Type Mappings</h5>
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                      <div class="flex items-center">
+                        <div class="w-8 h-8 flex items-center justify-center bg-green-100 text-green-500 rounded">
+                          <i class="ri-arrow-down-circle-line"></i>
+                        </div>
+                        <div class="ml-3">
+                          <div class="text-sm font-medium">Deposit</div>
+                          <div class="text-xs text-gray-500">DEP-001</div>
+                        </div>
+                      </div>
+                      <label class="custom-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                      <div class="flex items-center">
+                        <div class="w-8 h-8 flex items-center justify-center bg-red-100 text-red-500 rounded">
+                          <i class="ri-arrow-up-circle-line"></i>
+                        </div>
+                        <div class="ml-3">
+                          <div class="text-sm font-medium">Withdrawal</div>
+                          <div class="text-xs text-gray-500">WIT-001</div>
+                        </div>
+                      </div>
+                      <label class="custom-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                      <div class="flex items-center">
+                        <div class="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-500 rounded">
+                          <i class="ri-exchange-funds-line"></i>
+                        </div>
+                        <div class="ml-3">
+                          <div class="text-sm font-medium">Transfer</div>
+                          <div class="text-xs text-gray-500">TRF-001</div>
+                        </div>
+                      </div>
+                      <label class="custom-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                      <div class="flex items-center">
+                        <div class="w-8 h-8 flex items-center justify-center bg-purple-100 text-purple-500 rounded">
+                          <i class="ri-shopping-cart-line"></i>
+                        </div>
+                        <div class="ml-3">
+                          <div class="text-sm font-medium">Payment</div>
+                          <div class="text-xs text-gray-500">PAY-001</div>
+                        </div>
+                      </div>
+                      <label class="custom-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="mt-4 flex justify-end">
+                    <button
+                      class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 transition text-sm whitespace-nowrap">
+                      Update Mappings </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+      <button (click)="closeForm('wallet-details')" id="close-wallet-detail-btn"
+        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+        Close </button>
+    </div>
+  </div>
+  <!-- Add/Edit Status Modal -->
+  <div *ngIf="isWalletStatusVisible" id="add-status-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+      <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-medium text-gray-900">{{isStatusEditMode ? 'Edit Wallet Status' : 'Add Wallet Status'}}
+        </h3>
+        <button id="close-status-modal" (click)="closeForm('wallet-status')" class="text-gray-400 hover:text-gray-500">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-close-line"></i>
+          </div>
+        </button>
+      </div>
+      <div class="p-6">
+        <form ngNativeValidate id="add-status-form" (ngSubmit)="saveStatus()">
+          <div class="space-y-4">
+            <!-- <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Status Identifier</label>
+              <input type="text" [(ngModel)]="selectedStatus.wstIden" name="wstIden"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Identifier" required>
+            </div> -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Status Label</label>
+              <input type="text" [(ngModel)]="selectedStatus!.wstLabe" name="wstLabe"
+                (ngModelChange)="selectedStatus!.wstLabe = $event.toUpperCase()"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Label" required>
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end space-x-3">
+            <button type="button" (click)="closeForm('wallet-status')" id="cancel-add-status"
+              class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">Cancel</button>
+            <button type="submit"
+              class="px-4 py-2 bg-primary text-white rounded-button hover:bg-opacity-90 whitespace-nowrap">{{isStatusEditMode
+              ? 'Update' : 'Add'}} Status</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Add/Edit Wallet Type Modal -->
+  <div *ngIf="isWalletTypeVisible" id="add-type-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+      <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-medium text-gray-900">{{ isWalletTypeEditMode ? 'Edit Wallet Type' : 'Add Wallet Type'
+          }}</h3>
+        <button id="close-type-modal" (click)="closeForm('wallet-type')" class="text-gray-400 hover:text-gray-500">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-close-line"></i>
+          </div>
+        </button>
+      </div>
+      <div class="p-6">
+        <form ngNativeValidate id="add-type-form" (ngSubmit)="saveWalletType()">
+          <div class="space-y-4">
+            <!-- <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Type Identifier</label>
+              <input type="text" [(ngModel)]="newWalletType.wtyIden" name="wtyIden"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Identifier" required>
+            </div> -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Type Label</label>
+              <input type="text" [(ngModel)]="newWalletType!.wtyLabe" name="wtyLabe"
+                (ngModelChange)="newWalletType!.wtyLabe = $event.toUpperCase()"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Label" required>
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end space-x-3">
+            <button type="button" (click)="closeForm('wallet-type')" id="cancel-add-type"
+              class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">
+              Cancel
+            </button>
+            <button type="submit"
+              class="px-4 py-2 bg-primary text-white rounded-button hover:bg-opacity-90 whitespace-nowrap">
+              {{ isWalletTypeEditMode ? 'Update Type' : 'Add Type' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Add/Edit Category Modal -->
+  <div *ngIf="isWalletCategoryVisible" id="add-category-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+      <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-medium text-gray-900">{{isCategoryEditMode ? 'Edit Wallet Category' : 'Add Wallet
+          Category'}}</h3>
+        <button id="close-category-modal" (click)="closeForm('wallet-category')"
+          class="text-gray-400 hover:text-gray-500">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-close-line"></i>
+          </div>
+        </button>
+      </div>
+      <div class="p-6">
+        <form ngNativeValidate id="add-category-form" (ngSubmit)="saveCategory()">
+          <div class="space-y-4">
+            <!-- <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Category Identifier</label>
+              <input type="text" [(ngModel)]="selectedCategory.wcaIden" name="wcaIden"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Identifier" required>
+            </div> -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Category Label</label>
+              <input type="text" [(ngModel)]="selectedCategory!.wcaLabe" name="wcaLabe"
+                (ngModelChange)="selectedCategory!.wcaLabe = $event.toUpperCase()"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Label" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Financial Institution ID</label>
+              <input type="number" [(ngModel)]="selectedCategory!.wcaFinId" name="wcaFinId"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Financial Institution ID" required>
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end space-x-3">
+            <button type="button" (click)="closeForm('wallet-category')" id="cancel-add-category"
+              class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">Cancel</button>
+            <button type="submit"
+              class="px-4 py-2 bg-primary text-white rounded-button hover:bg-opacity-90 whitespace-nowrap">{{isCategoryEditMode
+              ? 'Update' : 'Add'}} Category</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Create Card Modal -->
+  <div *ngIf="isCardFormVisible" id="create-card-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800">{{ isCardEditMode ? 'Edit Card' : 'Create New Card' }}</h3>
+        <button (click)="closeForm('create-card')" id="close-create-card" class="text-gray-400 hover:text-gray-500">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-close-line ri-lg"></i>
+          </div>
+        </button>
+      </div>
+      <form ngNativeValidate id="create-card-form" class="p-6" (ngSubmit)="saveCard()">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Identifier</label>
+            <input type="text" [(ngModel)]="newCard.carIden" name="carIden" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+              placeholder="Identifier">
+          </div> -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Label</label>
+            <input type="text" [(ngModel)]="newCard.carLabe" name="carLabe" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+              placeholder="Label">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+            <input type="text" [(ngModel)]="newCard.carNumb" name="carNumb" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+              placeholder="Card Number">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date (DD-MM-YYYY)</label>
+            <input type="text" [ngModel]="formatDate(newCard.carExpiryDate)" name="carExpiryDate" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+              placeholder="DD-MM-YYYY" (ngModelChange)="newCard.carExpiryDate = parseDate($event)">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">List</label>
+            <select [(ngModel)]="newCard.cardList!.cliCode" name="cliCode" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+              <option value="" disabled selected>Pick a List</option>
+              <option *ngFor="let cardList of cardListsList" [value]="cardList.cliCode">{{ cardList.cliLabe ||
+                cardList.cliIden }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+            <select [(ngModel)]="newCard.cardType!.ctypCode" name="ctypCode" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+              <option value="" disabled selected>Pick a Type</option>
+              <option *ngFor="let cardType of cardTypesList" [value]="cardType.ctypCode">{{ cardType.ctypLabe ||
+                cardType.ctypIden }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">EMV Data</label>
+            <input type="text" [(ngModel)]="newCard.carEmvData" name="carEmvData"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+              placeholder="EMV Data (Optional)">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Wallet</label>
+            <select [(ngModel)]="newCard.cardList!.wallet!.walIden" name="walIden" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+              <option value="" disabled selected>Pick a Wallet</option>
+              <option *ngFor="let wallet of walletsList" [value]="wallet.walIden">{{ wallet.walLabe || wallet.walIden }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+          <button type="button" (click)="closeForm('create-card')" id="cancel-create-card"
+            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">Cancel</button>
+          <button type="submit" id="submit-create-card"
+            class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 transition text-sm whitespace-nowrap">{{
+            isCardEditMode ? 'Update Card' : 'Create Card' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Card Type Modal -->
+  <div *ngIf="isCardTypeVisible" id="add-type-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+      <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-medium text-gray-900">{{ isCardTypeEditMode ? 'Edit Card Type' : 'Add Card Type' }}</h3>
+        <button id="close-type-modal" (click)="closeForm('card-type')" class="text-gray-400 hover:text-gray-500">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-close-line"></i>
+          </div>
+        </button>
+      </div>
+      <div class="p-6">
+        <form ngNativeValidate id="add-type-form" (ngSubmit)="saveCardType()">
+          <div class="space-y-4">
+            <!-- <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Identifier</label>
+              <input type="text" [(ngModel)]="newCardType.ctypIden" name="ctypIden" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Identifier">
+            </div> -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Type Label</label>
+              <input type="text" [(ngModel)]="newCardType.ctypLabe" name="ctypLabe" required
+                (ngModelChange)="newCardType.ctypLabe = $event.toUpperCase()"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Label">
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end space-x-3">
+            <button type="button" (click)="closeForm('card-type')" id="cancel-add-type"
+              class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">Cancel</button>
+            <button type="submit" id="submit-add-type"
+              class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 whitespace-nowrap">{{
+              isCardTypeEditMode ? 'Update Type' : 'Add Type' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Add Card List Modal -->
+  <div *ngIf="isCardListVisible" id="add-list-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+      <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-medium text-gray-900">{{ isCardListEditMode ? 'Edit Card List' : 'Add Card List' }}</h3>
+        <button id="close-list-modal" (click)="closeForm('card-list')" class="text-gray-400 hover:text-gray-500">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-close-line"></i>
+          </div>
+        </button>
+      </div>
+      <div class="p-6">
+        <form ngNativeValidate id="add-list-form" (ngSubmit)="saveCardList()">
+          <div class="space-y-4">
+            <!-- <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Identifier</label>
+              <input type="text" [(ngModel)]="newCardList.cliIden" name="cliIden" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Identifier">
+            </div> -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">List Label</label>
+              <input type="text" [(ngModel)]="newCardList.cliLabe" name="cliLabe" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Label">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Wallet</label>
+              <select [(ngModel)]="newCardList.wallet!.walIden" name="walIden" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                <option value="" disabled selected>Pick a Wallet</option>
+                <option *ngFor="let wallet of walletsList" [value]="wallet.walIden">{{ wallet.walLabe || wallet.walIden
+                  }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end space-x-3">
+            <button type="button" (click)="closeForm('card-list')" id="cancel-add-list"
+              class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">Cancel</button>
+            <button type="submit" id="submit-add-list"
+              class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 whitespace-nowrap">{{
+              isCardListEditMode ? 'Update List' : 'Add List' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Create account Modal -->
+  <div *ngIf="isAccountFormVisible" id="create-card-modal" class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-800">Create New Account</h3>
+      <button (click)="closeForm('create-account')" id="close-create-wallet" class="text-gray-400 hover:text-gray-500">
+        <div class="w-6 h-6 flex items-center justify-center">
+          <i class="ri-close-line ri-lg"></i>
+        </div>
+      </button>
+    </div>
+    <form ngNativeValidate id="create-wallet-form" class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Identifier</label>
+          <input type="text" id="walLabe" name="walLabe"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+            placeholder="Identifier">
+        </div> -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Label</label>
+          <input type="text" id="walLabe" name="walLabe"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+            placeholder="Label">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">List</label>
+          <div class="relative">
+            <select id="walFinId" name="walFinId"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+              <option value="" disabled selected>Pick a List</option>
+              <option value="1">CHECKING</option>
+              <option value="2">SAVINGS</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+          <div class="relative">
+            <select id="customer" name="customer"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+              <option value="" disabled selected>pick a type</option>
+              <option value="1">BUSINESS</option>
+              <option value="2">INDIVIDUAL</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Bank</label>
+          <div class="relative">
+            <select id="walletStatus" name="walletStatus"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+              <option value="" disabled selected>pick a bank</option>
+              <option value="active">BAN-001</option>
+              <option value="inactive">BAN-002</option>
+              <option value="suspended">BAN-003</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Wallet</label>
+          <div class="relative">
+            <select id="walletStatus" name="walletStatus"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+              <option value="" disabled selected>pick a wallet</option>
+              <option value="active">WAL-001</option>
+              <option value="inactive">WAL-002</option>
+              <option value="suspended">WAL-003</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+      <button (click)="closeForm('create-account')" id="cancel-create-wallet"
+        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">Cancel</button>
+      <button id="submit-create-wallet"
+        class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 transition text-sm whitespace-nowrap">Create
+        Account</button>
+    </div>
+  </div>
+  <!-- Add/Edit Account Type Modal -->
+  <div *ngIf="isAccountTypeVisible" id="add-type-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+      <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-medium text-gray-900">{{ isAccountTypeEditMode ? 'Edit Account Type' : 'Add Account
+          Type' }}</h3>
+        <button id="close-type-modal" (click)="closeForm('account-type')" class="text-gray-400 hover:text-gray-500">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-close-line"></i>
+          </div>
+        </button>
+      </div>
+      <div class="p-6">
+        <form ngNativeValidate id="add-type-form" (ngSubmit)="saveAccountType()">
+          <div class="space-y-4">
+            <!-- <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Type Identifier</label>
+              <input type="text" id="atyIden" name="atyIden" [(ngModel)]="newAccountType.atyIden"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Type Identifier" required>
+            </div> -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Type Label</label>
+              <input type="text" id="atyLabe" name="atyLabe" [(ngModel)]="newAccountType.atyLabe"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Type Label" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Financial Institution ID</label>
+              <input type="number" id="atyFinId" name="atyFinId" [(ngModel)]="newAccountType.atyFinId"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Financial Institution ID" required>
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end space-x-3">
+            <button type="button" (click)="closeForm('account-type')" id="cancel-add-type"
+              class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">Cancel</button>
+            <button type="submit"
+              class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 whitespace-nowrap">
+              {{ isAccountTypeEditMode ? 'Update Type' : 'Add Type' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Add account list Modal -->
+  <div *ngIf="isAccountListVisible" id="add-type-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+      <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-medium text-gray-900">Add Account List</h3>
+        <button id="close-type-modal" (click)="closeForm('account-list')" class="text-gray-400 hover:text-gray-500">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-close-line"></i>
+          </div>
+        </button>
+      </div>
+      <div class="p-6">
+        <form ngNativeValidate id="add-type-form">
+          <div class="space-y-4">
+            <!-- <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Identifier</label>
+              <input type="text" id="walLabe" name="walLabe"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Identifier">
+            </div> -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">List Label</label>
+              <input type="text"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                placeholder="Label" required>
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end space-x-3">
+            <button type="button" (click)="closeForm('account-list')" id="cancel-add-type"
+              class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">Cancel</button>
+            <button type="submit"
+              class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 whitespace-nowrap">Add
+              List</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>

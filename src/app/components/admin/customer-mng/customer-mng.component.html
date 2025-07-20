@@ -1,0 +1,1711 @@
+<div class="flex flex-col bg-white rounded-xl shadow-lg mb-6 overflow-hidden">
+    <!-- Header Section -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <h1 class="text-xl font-semibold text-gray-800">Customer Management</h1>
+    </div>
+
+    <!-- Tabs Section -->
+    <div class="flex border-b border-gray-200">
+        <button
+            class="tab-button px-6 py-3 text-sm font-medium text-primary border-b-2 border-primary transition-colors"
+            (click)="showTab('overview')" id="overview">
+            Overview
+        </button>
+        <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('settings')"
+            id="settings">
+            Settings
+        </button>
+    </div>
+</div>
+
+<!-- Notification Area for Success and Error Messages -->
+<div *ngIf="successMessage" class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100]">
+    {{ successMessage }}
+    <button (click)="clearMessage()" class="ml-2 text-white hover:text-gray-200">
+        <i class="ri-close-line"></i>
+    </button>
+</div>
+<div *ngIf="errorMessage" class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100]">
+    {{ errorMessage }}
+    <button (click)="clearMessage()" class="ml-2 text-white hover:text-gray-200">
+        <i class="ri-close-line"></i>
+    </button>
+</div>
+
+<!-- overview content -->
+<div id="tab-overview" class="tab-content">
+    <!-- Header Section -->
+    <div
+        class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white rounded-xl shadow-lg mb-6">
+        <div class="mb-4 sm:mb-0">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Customer Management
+            </h2>
+        </div>
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+            <button
+                class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-download-2-line mr-2"></i> Export Data
+            </button>
+            <button (click)="toggleForm('customer-add')" id="newSchemaBtn"
+                class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-add-line mr-2"></i> New Customer
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+            <!-- Search -->
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="ri-search-line text-gray-400"></i>
+                </div>
+                <input type="text" placeholder="Search..." [(ngModel)]="customerSearchTerm" name="customerSearchTerm"
+                    (input)="filterCustomers()"
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+            </div>
+            <div class="w-full sm:w-auto">
+                <div class="relative">
+                    <select [(ngModel)]="selectedStatus" name="selectedStatus" (ngModelChange)="filterCustomers()"
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+                        <option [ngValue]="undefined">All Statuses</option>
+                        <option *ngFor="let status of statuses" [ngValue]="status">
+                            {{ status.ctsLabe }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="w-full sm:w-auto">
+                <div class="relative">
+                    <select [(ngModel)]="selectedCountry" name="selectedCountry"
+                        (ngModelChange)="onCountryChange(selectedCountry!); filterCustomers()"
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+                        <option [ngValue]="undefined">All Countries</option>
+                        <option *ngFor="let country of countries" [ngValue]="country">
+                            {{ country.ctrLabe }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="w-full sm:w-auto">
+                <div class="relative">
+                    <select [(ngModel)]="selectedCity" name="selectedCity" (ngModelChange)="filterCustomers()"
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+                        <option [ngValue]="undefined">All Cities</option>
+                        <option *ngFor="let city of citiesByCountry" [ngValue]="city">
+                            {{ city.ctyLabe }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Identifier
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Username
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Email
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Name
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Status
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <ng-container *ngIf="filteredCustomers!.length > 0; else noData">
+                        <tr *ngFor="let customer of filteredCustomers" class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ customer.cusIden }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ customer.username }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ customer.cusMailAddress }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ customer.fullName }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span
+                                    class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    {{ customer.status?.ctsLabe }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-3">
+                                    <button (click)="selectedCustomer = customer; toggleForm('customer-details')"
+                                        class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                                        <i class="ri-eye-line text-lg"></i>
+                                    </button>
+                                    <button (click)="editCustomer(customer)"
+                                        class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                        <i class="ri-edit-line text-lg"></i>
+                                    </button>
+                                    <button (click)="deleteCustomer(customer)"
+                                        class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                        <i class="ri-delete-bin-line text-lg"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="100%" class="py-8 text-center">
+                                <div class="flex flex-col items-center justify-center space-y-2">
+                                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <div class="flex items-center text-sm text-gray-500">
+                <span>Showing 1-10 of ...</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled>
+                    <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                    <i class="ri-arrow-right-s-line"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- settings content -->
+<div id="tab-settings" class="tab-content hidden">
+    <!-- Settings Tabs -->
+    <div class="mb-6 flex flex-wrap gap-2">
+        <button id="settings-status" (click)="showTab('status', 'settings')"
+            class="settings-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white font-medium text-primary border-b-2 border-primary transition-colors">
+            Customer Status</button>
+        <button id="settings-identityType" (click)="showTab('identityType', 'settings')"
+            class="settings-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
+            Identity Type</button>
+        <button id="settings-docType" (click)="showTab('docType', 'settings')"
+            class="settings-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
+            Document Type</button>
+        <button id="settings-country" (click)="showTab('country', 'settings')"
+            class="settings-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
+            Country</button>
+        <button id="settings-city" (click)="showTab('city', 'settings')"
+            class="settings-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
+            City</button>
+    </div>
+    <div class="overflow-hidden my-6">
+        <!-- Status -->
+        <div id="settings-tab-status" class="settings-tab-content">
+            <!-- Header Section -->
+            <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="relative flex-grow">
+                        <h2 class="text-2xl font-semibold text-gray-800">
+                            Customer Status Management
+                        </h2>
+                    </div>
+                    <!-- Search -->
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="ri-search-line text-gray-400"></i>
+                        </div>
+                        <input type="text" placeholder="Search..." [(ngModel)]="statusSearchTerm"
+                            name="statusSearchTerm" (input)="statusSearch()"
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+                    </div>
+                    <button id="btn-add-status" (click)="toggleForm('customer-status');"
+                        class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                        <i class="ri-add-line mr-1"></i> Add Status </button>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Code
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Identifier
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Label
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <ng-container *ngIf="filteredStatuses!.length > 0; else noData">
+                                <tr *ngFor="let status of filteredStatuses"
+                                    class="hover:bg-gray-50 transition duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">{{ status.ctsCode }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ status.ctsIden }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ status.ctsLabe }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex items-center justify-end space-x-3">
+                                            <button (click)="editStatus(status)"
+                                                class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                                <i class="ri-edit-line text-lg"></i>
+                                            </button>
+                                            <button (click)="deleteStatus(status)"
+                                                class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                                <i class="ri-delete-bin-line text-lg"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noData>
+                                <tr>
+                                    <td colspan="100%" class="py-8 text-center">
+                                        <div class="flex flex-col items-center justify-center space-y-2">
+                                            <p class="text-sm text-gray-400">The table is currently empty</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center text-sm text-gray-500">
+                        <span>Showing 1-10 of ...</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                            <i class="ri-arrow-left-s-line"></i>
+                        </button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                            <i class="ri-arrow-right-s-line"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- IdentityType -->
+        <div id="settings-tab-identityType" class="settings-tab-content hidden">
+            <!-- Header Section -->
+            <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="relative flex-grow">
+                        <h2 class="text-2xl font-semibold text-gray-800">
+                            Identity Type Management
+                        </h2>
+                    </div>
+                    <!-- Search -->
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="ri-search-line text-gray-400"></i>
+                        </div>
+                        <input type="text" placeholder="Search..." [(ngModel)]="idTypeSearchTerm"
+                            name="idTypeSearchTerm" (input)="idTypeSearch()"
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+                    </div>
+                    <button id="btn-add-identityType" (click)="toggleForm('customer-identityType')"
+                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                        <i class="ri-add-line mr-1"></i> Add Identity Type </button>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Code
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Identifier
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Label
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <ng-container *ngIf="filteredIdentityTypes!.length > 0; else noData">
+                                <tr *ngFor="let type of filteredIdentityTypes"
+                                    class="hover:bg-gray-50 transition duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">{{ type.citCode }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ type.citIden }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ type.citLabe }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex items-center justify-end space-x-3">
+                                            <button (click)="editIdentityType(type)"
+                                                class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                                <i class="ri-edit-line text-lg"></i>
+                                            </button>
+                                            <button (click)="deleteIdentityType(type)"
+                                                class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                                <i class="ri-delete-bin-line text-lg"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noData>
+                                <tr>
+                                    <td colspan="100%" class="py-8 text-center">
+                                        <div class="flex flex-col items-center justify-center space-y-2">
+                                            <p class="text-sm text-gray-400">The table is currently empty</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center text-sm text-gray-500">
+                        <span>Showing 1-10 of ...</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                            <i class="ri-arrow-left-s-line"></i>
+                        </button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                            <i class="ri-arrow-right-s-line"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- DocType -->
+        <div id="settings-tab-docType" class="settings-tab-content hidden">
+            <!-- Header Section -->
+            <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="relative flex-grow">
+                        <h2 class="text-2xl font-semibold text-gray-800">
+                            Document Type Management
+                        </h2>
+                    </div>
+                    <!-- Search -->
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="ri-search-line text-gray-400"></i>
+                        </div>
+                        <input type="text" placeholder="Search..." [(ngModel)]="docTypeSearchTerm"
+                            name="docTypeSearchTerm" (input)="docTypeSearch()"
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+                    </div>
+                    <button id="btn-add-docType" (click)="toggleForm('docType');"
+                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                        <i class="ri-add-line mr-1"></i> Add Type </button>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Code
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Identifier
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Label
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <ng-container *ngIf="filteredDocTypes!.length > 0; else noData">
+                                <tr *ngFor="let type of filteredDocTypes"
+                                    class="hover:bg-gray-50 transition duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">{{ type.dtyCode }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ type.dtyIden }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ type.dtyLabe }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex items-center justify-end space-x-3">
+                                            <button (click)="deleteDocType(type)"
+                                                class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                                <i class="ri-delete-bin-line text-lg"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noData>
+                                <tr>
+                                    <td colspan="100%" class="py-8 text-center">
+                                        <div class="flex flex-col items-center justify-center space-y-2">
+                                            <p class="text-sm text-gray-400">The table is currently empty</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center text-sm text-gray-500">
+                        <span>Showing 1-10 of ...</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                            <i class="ri-arrow-left-s-line"></i>
+                        </button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                            <i class="ri-arrow-right-s-line"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- country -->
+        <div id="settings-tab-country" class="settings-tab-content hidden">
+            <!-- Header Section -->
+            <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="relative flex-grow">
+                        <h2 class="text-2xl font-semibold text-gray-800">
+                            Country Management
+                        </h2>
+                    </div>
+                    <!-- Search -->
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="ri-search-line text-gray-400"></i>
+                        </div>
+                        <input type="text" placeholder="Search..." [(ngModel)]="countrySearchTerm"
+                            name="countrySearchTerm" (input)="countrySearch()"
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+                    </div>
+                    <button id="btn-add-country" (click)="toggleForm('country');"
+                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                        <i class="ri-add-line mr-1"></i> Add Country </button>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Code
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Identifier
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Label
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <ng-container *ngIf="filteredCountries!.length > 0; else noData">
+                                <tr *ngFor="let country of filteredCountries"
+                                    class="hover:bg-gray-50 transition duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">{{ country.ctrCode }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ country.ctrIden }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ country.ctrLabe }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex items-center justify-end space-x-3">
+                                            <button (click)="deleteCountry(country)"
+                                                class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                                <i class="ri-delete-bin-line text-lg"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noData>
+                                <tr>
+                                    <td colspan="100%" class="py-8 text-center">
+                                        <div class="flex flex-col items-center justify-center space-y-2">
+                                            <p class="text-sm text-gray-400">The table is currently empty</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center text-sm text-gray-500">
+                        <span>Showing 1-10 of ...</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                            <i class="ri-arrow-left-s-line"></i>
+                        </button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                            <i class="ri-arrow-right-s-line"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- city -->
+        <div id="settings-tab-city" class="settings-tab-content hidden">
+            <!-- Header Section -->
+            <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="relative flex-grow">
+                        <h2 class="text-2xl font-semibold text-gray-800">
+                            City Management
+                        </h2>
+                    </div>
+                    <!-- Search -->
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="ri-search-line text-gray-400"></i>
+                        </div>
+                        <input type="text" placeholder="Search..." [(ngModel)]="citySearchTerm" name="citySearchTerm"
+                            (input)="filterCities()"
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <div class="relative">
+                            <select [(ngModel)]="selectedCountry"
+                                (ngModelChange)="onCountryChange(selectedCountry!); filterCities()"
+                                class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+                                <option [ngValue]="undefined">select country</option>
+                                <option *ngFor="let country of countries" [ngValue]="country">
+                                    {{ country.ctrLabe }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <button id="btn-add-city" (click)="toggleForm('city');"
+                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                        <i class="ri-add-line mr-1"></i> Add City </button>
+                </div>
+            </div>
+            <!-- Table Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Status Code
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Identifier
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Label
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <ng-container *ngIf="filteredCities!.length > 0; else noData">
+                                <tr *ngFor="let city of filteredCities"
+                                    class="hover:bg-gray-50 transition duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ city.ctyCode }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ city.ctyIden }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">
+                                            {{ city.ctyLabe }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex items-center justify-end space-x-3">
+                                            <button (click)="deleteCity(city)"
+                                                class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                                <i class="ri-delete-bin-line text-lg"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noData>
+                                <tr>
+                                    <td colspan="100%" class="py-8 text-center">
+                                        <div class="flex flex-col items-center justify-center space-y-2">
+                                            <p class="text-sm text-gray-400">The table is currently empty</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center text-sm text-gray-500">
+                        <span>Showing 1-10 of ...</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                            <i class="ri-arrow-left-s-line"></i>
+                        </button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                            <i class="ri-arrow-right-s-line"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div *ngIf="isAnyModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[50]">
+    <!-- add customer -->
+    <div *ngIf="isAddCustomerVisible" id="create-customer-modal"
+        class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">
+                {{ selectedCustomer ? "Edit Customer Details" : "Add Customer" }}</h3>
+            <button (click)="closeForm('customer-add')" id="close-create-customer"
+                class="text-gray-400 hover:text-gray-500">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-close-line ri-lg"></i>
+                </div>
+            </button>
+        </div>
+        <form ngNativeValidate (ngSubmit)="selectedCustomer ? updateCustomer() : addCustomer()" #CustomerForm="ngForm"
+            id="create-customer-form" class="p-6 space-y-8 overflow-y-auto">
+            <!-- Personal Information Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Personal Information</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            First Name
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="customerForm.cusFirstName" name="cusFirstName"
+                                type="text" required>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label">Middle Name (Optional)</label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="customerForm.cusMidName" name="cusMidName"
+                                type="text">
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Last Name
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="customerForm.cusLastName" name="cusLastName"
+                                type="text" required>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Username
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="customerForm.username" name="username"
+                                (blur)="usernameExists()" type="text" required>
+                        </div>
+                        <div class="error-message" id="usernameRef"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Information Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Location Information</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Country
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <select class="form-input pl-10" [(ngModel)]="customerForm.country" name="country" required
+                                [compareWith]="compareBy('ctrCode')"
+                                (ngModelChange)="onCountryChange(customerForm.country!)">
+                                <option [ngValue]="undefined" disabled>Select country</option>
+                                <option *ngFor="let country of countries" [ngValue]="country">{{ country.ctrLabe }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            City
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <select class="form-input pl-10" [(ngModel)]="customerForm.city" name="city" required
+                                [compareWith]="compareBy('ctyCode')">
+                                <option [ngValue]="undefined" disabled selected>Select city</option>
+                                <option *ngFor="let city of citiesByCountry" [ngValue]="city">{{ city.ctyLabe }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-field md:col-span-2">
+                        <label class="form-label flex items-center">
+                            Address
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="customerForm.cusAddress" name="cusAddress"
+                                type="text" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Contact Information</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Email
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="customerForm.cusMailAddress"
+                                name="cusMailAddress" (blur)="emailExists()" type="email" required>
+                        </div>
+                        <div class="error-message" id="emailRef"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Phone Number
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <!-- Phone input would go here -->
+                        <div class="relative">
+                            <input class="form-input pl-10" type="tel" [(ngModel)]="customerForm.cusPhoneNbr"
+                                (blur)="phoneExists()" name="cusPhoneNumber" required>
+                        </div>
+                        <div class="error-message" id="phoneRef"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Section -->
+            <div *ngIf="!selectedCustomer" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Security</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Password
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10 pr-10" [(ngModel)]="customerForm.cusMotDePasse"
+                                #password="ngModel" name="cusMotDePasse" type="password" required minlength="6">
+                        </div>
+                        <div *ngIf="password.invalid && password.touched" class="error-message">
+                            <div *ngIf="password.errors?.['required']">Password is required</div>
+                            <div *ngIf="password.errors?.['minlength']">Minimum 6 characters</div>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Confirm Password
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10 pr-10" #confirm="ngModel" [(ngModel)]="confirmPassword" name="confirmPassword" type="password"
+                                [disabled]="!customerForm.cusMotDePasse" [required]="customerForm.cusMotDePasse != confirm.value" minlength="6">
+                        </div>
+                        <div *ngIf="CustomerForm.submitted && customerForm.cusMotDePasse !== confirm.value" class="error">
+                            Passwords don't match
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Status</h4>
+                </div>
+                <div class="grid grid-cols-1 gap-5">
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Customer Status <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <select class="form-input pl-10" [(ngModel)]="customerForm.status" name="status" required
+                                [compareWith]="compareBy('ctsCode')">
+                                <option [ngValue]="undefined" disabled selected>Select status</option>
+                                <option *ngFor="let status of statuses" [ngValue]="status">
+                                    {{ status.ctsLabe }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KYC Verification Section -->
+            <div *ngIf="!selectedCustomer" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">KYC Verification</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Identification Type
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <select class="form-input pl-10" [(ngModel)]="customerForm.identity!.customerIdentityType"
+                                [compareWith]="compareBy('citCode')" name="customerIdentityType">
+                                <option [ngValue]="undefined" disabled selected>Select ID type</option>
+                                <option *ngFor="let cit of identityTypes" [ngValue]="cit">{{cit.citLabe}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Identity Number
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="customerForm.identity!.cidNum" name="cidNum"
+                                (blur)="idNumExists()" type="text">
+                        </div>
+                        <div class="error-message" id="idNumRef"></div>
+                    </div>
+
+                    <div class="form-field md:col-span-2">
+                        <label class="form-label flex items-center">
+                            ID Documents
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                            (click)="files = []; customerDocs = []; documentInput.click()">
+                            <div
+                                class="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                                <i class="ri-upload-cloud-2-line text-primary text-2xl"></i>
+                            </div>
+                            <h4 class="text-sm font-medium text-gray-900 mb-1">Click to upload documents</h4>
+                            <p class="text-xs text-gray-500">(Max 10MB each)</p>
+                            <p *ngIf="files.length > 0" class="text-xs text-primary mt-2">
+                                {{ files.length }} file{{ files.length !== 1 ? 's' : '' }} selected
+                            </p>
+                            <input #documentInput type="file" class="hidden" multiple (change)="onFileSelected($event)"
+                                required [accept]="allowedDocTypes">
+
+                            <!-- Validation message -->
+                            <div *ngIf="documentInput.required && CustomerForm.submitted && !files.length"
+                                class="text-xs text-red-500 mt-2">
+                                Please upload at least one document
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button (click)="closeForm('customer-add')" id="cancel-create-customer"
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                    Cancel
+                </button>
+                <button type="submit" id="submit-create-customer"
+                    class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                    {{ selectedCustomer ? "Update Customer Details" : "Add Customer" }}
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+    <!-- customer Detail Modal -->
+    <div *ngIf="isUserDetailsVisible" id="customer-detail-modal"
+        class="bg-white rounded-lg shadow-lg w-full max-w-4xl h-[90vh] overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">Customer Details</h3>
+            <button id="close-customer-detail" class="text-gray-400 hover:text-gray-500">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i (click)="closeForm('customer-details')" class="ri-close-line ri-lg"></i>
+                </div>
+            </button>
+        </div>
+        <div class="p-6 custom-scrollbar" style="height: calc(90vh - 130px)">
+            <div class="flex flex-col md:flex-row md:space-x-6">
+                <div class="mb-6 md:mb-0 md:w-1/3">
+                    <!-- customer main info -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-center mb-4">
+                            <div
+                                class="w-20 h-20 mx-auto bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary">
+                                <i class="ri-contacts-line ri-2x"></i>
+                            </div>
+                            <h4 class="text-lg font-semibold mt-2">
+                                {{ selectedCustomer?.fullName }}
+                            </h4>
+                            <p class="text-sm text-gray-500">
+                                {{ selectedCustomer?.username }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-2/3 h-[90vh] flex flex-col">
+                    <div class="mb-6">
+                        <div class="flex border-b border-gray-200">
+                            <button class="details-tab-button px-4 py-3 text-sm active font-medium text-primary"
+                                id="details-basic-info" (click)="showTab('basic-info', 'details')">
+                                Basic Info
+                            </button>
+                            <button class="details-tab-button px-4 py-3 text-sm text-gray-500" id="details-documents"
+                                (click)="showTab('documents', 'details')">
+                                Documents
+                            </button>
+                            <button class="details-tab-button px-4 py-3 text-sm text-gray-500"
+                                id="details-relationships" (click)="showTab('relationships', 'details')">
+                                Relationships
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-y-auto">
+                        <!-- basic info -->
+                        <div id="details-tab-basic-info" class="details-tab-content">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Customer Information Column -->
+                                <div>
+                                    <h5 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
+                                        <i class="ri-user-3-line text-gray-500 mr-2"></i>
+                                        Customer Information
+                                    </h5>
+
+                                    <div class="space-y-4">
+                                        <div class="flex items-start">
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Customer Code</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    {{ selectedCustomer?.cusCode }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Identifier</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    {{ selectedCustomer?.cusIden }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Full Name</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    {{ selectedCustomer?.fullName }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Username</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    {{ selectedCustomer?.username }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Status</label>
+                                                <span
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                    {{ selectedCustomer?.status?.ctsLabe }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Additional Details Column -->
+                                <div>
+                                    <h5 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
+                                        <i class="ri-information-line text-gray-500 mr-2"></i>
+                                        Additional Details
+                                    </h5>
+
+                                    <div class="space-y-4">
+                                        <div class="flex items-start">
+                                            <i class="ri-mail-line text-gray-400 text-sm mr-3 mt-0.5"></i>
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Email</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    {{ selectedCustomer?.cusMailAddress }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <i class="ri-phone-line text-gray-400 text-sm mr-3 mt-0.5"></i>
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Phone</label>
+                                                <div class="text-sm font-medium text-gray-800">
+                                                    {{ selectedCustomer?.cusPhoneNbr }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <i class="ri-map-pin-line text-gray-400 text-sm mr-3 mt-0.5"></i>
+                                            <div>
+                                                <label class="block text-xs text-gray-500 mb-1">Address</label>
+                                                <div class="space-y-1">
+                                                    <div class="text-sm font-medium text-gray-800">
+                                                        {{ selectedCustomer?.cusAddress }}
+                                                    </div>
+                                                    <div class="text-sm font-medium text-gray-800">
+                                                        {{ selectedCustomer?.city?.ctyLabe }}
+                                                    </div>
+                                                    <div class="text-sm font-medium text-gray-800">
+                                                        {{ selectedCustomer?.country?.ctrLabe }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- documents -->
+                        <div id="details-tab-documents" class="details-tab-content hidden p-4">
+                            <div>
+                                <h4>
+                                    {{
+                                    selectedCustomer?.identity?.customerIdentityType?.citLabe
+                                    }}: {{ selectedCustomer?.identity?.cidNum }}
+                                </h4>
+                            </div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-800">
+                                    Customer Documents
+                                </h3>
+                                <div class="text-xs text-gray-500">
+                                    <i class="ri-lock-line mr-1"></i> Confidential Access Only
+                                </div>
+                            </div>
+
+                            <!-- Document List -->
+                            <div class="space-y-3">
+                                <div *ngFor="let doc of selectedCustomer?.identity?.customerDocListe?.customerDocs; let i = index"
+                                    (click)="previewDocument(doc, i)"
+                                    class="document-item group flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                                    <div class="flex items-center">
+                                        <div
+                                            class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 mr-3">
+                                            <i class="ri-file-line"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-800">{{doc.cdoLabe}}</div>
+                                            <div class="text-xs text-gray-500">{{doc.docType?.dtyLabe}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button class="p-1 text-gray-500 hover:text-blue-500" title="Preview">
+                                            <i class="ri-eye-line"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- relationships -->
+                        <div id="details-tab-relationships" class="details-tab-content hidden">
+                            <div>
+                                <h5 class="text-sm font-semibold text-gray-700 mb-3">
+                                    Customer Relationships
+                                </h5>
+                                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                    <table class="min-w-full divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th scope="col"
+                                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    code
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Full Name
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    email
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Status
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                            <tr>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                    DEP-001
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                                                    Sarah Williams
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                                                    sarah.williams&#64;gmail.com
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap">
+                                                    <span
+                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        Active
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                    DEP-001
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                                                    Sarah Williams
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                                                    sarah.williams&#64;gmail.com
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap">
+                                                    <span
+                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        Active
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                    DEP-001
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                                                    Sarah Williams
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                                                    sarah.williams&#64;gmail.com
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap">
+                                                    <span
+                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        Active
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                    DEP-001
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                                                    Sarah Williams
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                                                    sarah.williams&#64;gmail.com
+                                                </td>
+                                                <td class="px-4 py-3 whitespace-nowrap">
+                                                    <span
+                                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        Active
+                                                    </span>
+                                                </td>
+
+                                                <ng-template #noData>
+                                            <tr>
+                                                <td colspan="100%" class="py-8 text-center">
+                                                    <div class="flex flex-col items-center justify-center space-y-2">
+                                                        <p class="text-sm text-gray-400">The table is currently empty
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </ng-template>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+            <button (click)="closeForm('customer-details')" id="close-customer-detail-btn"
+                class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Add Status Modal -->
+    <div *ngIf="isCustomerStatusVisible" id="add-status-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">
+                    {{ selectedStatus ? "Edit Customer Status" : "Add Customer Status" }}
+                </h3>
+                <button id="close-status-modal" (click)="closeForm('customer-status')"
+                    class="text-gray-400 hover:text-gray-500">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-close-line"></i>
+                    </div>
+                </button>
+            </div>
+            <div class="p-6">
+                <form ngNativeValidate (ngSubmit)="selectedStatus ? updateStatus() : addStatus()" #StatusForm="ngForm"
+                    id="status-form">
+                    <div class="space-y-4">
+                        <!-- <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Status Identifier</label>
+                            <input type="text" [(ngModel)]="statusForm.ctsIden" name="ctsIden"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                placeholder="Identifier" required />
+                        </div> -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Status Label</label>
+                            <input type="text" [(ngModel)]="statusForm.ctsLabe" name="ctsLabe"
+                                (ngModelChange)="statusForm.ctsLabe = $event.toUpperCase()"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                placeholder="Label" required />
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" (click)="closeForm('customer-status')" id="cancel-add-status"
+                            class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 whitespace-nowrap">
+                            {{ selectedStatus ? "Update Customer Status" : "Add Customer Status" }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Identity Type Modal -->
+    <div *ngIf="isCustomerIdentityTypeVisible" id="add-identityType-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">
+                    {{ selectedIdentityType ? "Edit Customer Identity Type" : "Add Customer Identity Type" }}
+                </h3>
+                <button id="close-status-modal" (click)="closeForm('customer-identityType')"
+                    class="text-gray-400 hover:text-gray-500">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-close-line"></i>
+                    </div>
+                </button>
+            </div>
+            <div class="p-6">
+                <form ngNativeValidate (ngSubmit)="selectedStatus ? updateIdentityType() : addIdentityType()"
+                    #IdentityTypeForm="ngForm" id="identityType-form">
+                    <div class="space-y-4">
+                        <!-- <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Identity Type Identifier</label>
+                            <input type="text" [(ngModel)]="identityTypeForm.citIden" name="citIden"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                placeholder="Identifier" required />
+                        </div> -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Identity Type Label</label>
+                            <input type="text" [(ngModel)]="identityTypeForm.citLabe" name="citLabe"
+                                (ngModelChange)="identityTypeForm.citLabe = $event.toUpperCase()"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                placeholder="Label" required />
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" (click)="closeForm('customer-identityType')" id="cancel-add-status"
+                            class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 whitespace-nowrap">
+                            {{ selectedIdentityType ? "Edit Customer Identity Type" : "Add Customer Identity Type" }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Doc Type Modal -->
+    <div *ngIf="isDocTypeVisible" id="add-documentType-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">
+                    {{ selectedDocType ? "Edit Document Type" : "Add Document Type" }}
+                </h3>
+                <button id="close-status-modal" (click)="closeForm('docType')"
+                    class="text-gray-400 hover:text-gray-500">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-close-line"></i>
+                    </div>
+                </button>
+            </div>
+            <div class="p-6">
+                <form ngNativeValidate (ngSubmit)="addDocType()" #DocTypeForm="ngForm" id="docType-form">
+                    <div class="space-y-4">
+                        <!-- <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Document Type Identifier</label>
+                            <select
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                [(ngModel)]="docTypeForm" name="docType" required="">
+                                <option *ngFor="let docType of docTypeList" [ngValue]="docType">
+                                    {{ docType.dtyIden }}
+                                </option>
+                            </select>
+                        </div> -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Document Type Label</label>
+
+                            <select
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                [(ngModel)]="docTypeForm" name="dtyLabe" required="">
+                                <option *ngFor="let docType of docTypeList" [ngValue]="docType">
+                                    {{ docType.dtyLabe }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" (click)="closeForm('docType')" id="cancel-add-status"
+                            class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 whitespace-nowrap">
+                            {{ "Add Document Type" }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Country Modal -->
+    <div *ngIf="isCountryVisible" id="add-country-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">Add Country</h3>
+                <button id="close-status-modal" (click)="closeForm('country')"
+                    class="text-gray-400 hover:text-gray-500">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-close-line"></i>
+                    </div>
+                </button>
+            </div>
+            <div class="p-6">
+                <form ngNativeValidate (ngSubmit)="addCountry()" id="add-status-form">
+                    <div class="space-y-4">
+                        <!-- <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Country Identifier</label>
+                            <select
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                [(ngModel)]="countryForm" name="country" required="">
+                                <option *ngFor="let country of countryList" [ngValue]="country">
+                                    {{ country.ctrIden }}
+                                </option>
+                            </select>
+                        </div> -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Country Label</label>
+
+                            <select
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                [(ngModel)]="countryForm" name="ctrLabe" required="">
+                                <option *ngFor="let country of countryList" [ngValue]="country">
+                                    {{ country.ctrLabe }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" (click)="closeForm('country')" id="cancel-add-status"
+                            class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 whitespace-nowrap">
+                            Add Country
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add City Modal -->
+    <div *ngIf="isCityVisible" id="add-city-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">Add City</h3>
+                <button id="close-status-modal" (click)="closeForm('city')" class="text-gray-400 hover:text-gray-500">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-close-line"></i>
+                    </div>
+                </button>
+            </div>
+            <div class="p-6">
+                <form ngNativeValidate (ngSubmit)="addCity()" id="add-status-form">
+                    <div class="space-y-4">
+                        <!-- <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">City Identifier</label>
+                            <input type="text" [(ngModel)]="cityForm.ctyIden" name="ctrIden"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                placeholder="Identifier" required />
+                        </div> -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                            <select required (change)="onAllCountryChange()"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                [(ngModel)]="cityForm.country" name="country">
+                                <option *ngFor="let country of countries" [ngValue]="country">
+                                    {{ country.ctrLabe }}
+                                </option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">City Label</label>
+                            <select required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+                                [(ngModel)]="cityForm.ctyLabe" name="ctyLabe">
+                                <option *ngFor="let city of cityList" [ngValue]="city">
+                                    {{ city }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" (click)="closeForm('city')" id="cancel-add-status"
+                            class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 whitespace-nowrap">
+                            Add City
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

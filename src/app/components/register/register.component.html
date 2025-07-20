@@ -1,0 +1,209 @@
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+
+  <!-- Header -->
+  <div class="flex flex-col items-center space-y-4 mb-8">
+    <img src="../../../../assets/logo.png" alt="App Logo" (click)="goHome()"
+      class="w-16 h-16 object-contain cursor-pointer hover:opacity-80 transition-opacity">
+    <h2 class="text-2xl font-bold text-secondary">Register</h2>
+  </div>
+  <div class="register-container bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+
+    <!-- Step Indicator -->
+    <div class="flex justify-between mb-8">
+      <span *ngFor="let step of [1,2,3,4,5]" [class]="'step-indicator ' + (currentStep === step ? 'active' : '')">
+        Step {{step}}
+      </span>
+    </div>
+
+    <!-- Messages -->
+    <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
+      {{ successMessage }}
+    </div>
+
+    <form #registerForm="ngForm" class="space-y-6">
+
+      <!-- Step 1 - Personal Info -->
+      <div *ngIf="currentStep === 1" class="step space-y-4">
+        <div class="form-field">
+          <label class="form-label">First Name:</label>
+          <input class="form-input" [(ngModel)]="customer.cusFirstName" name="cusFirstName" type="text" required>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Middle Name (Optional):</label>
+          <input class="form-input" [(ngModel)]="customer.cusMidName" name="cusMidName" type="text">
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Last Name:</label>
+          <input class="form-input" [(ngModel)]="customer.cusLastName" name="cusLastName" type="text" required>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Username:</label>
+          <input class="form-input" [(ngModel)]="customer.username" name="username" type="text" required>
+        </div>
+      </div>
+
+      <!-- Step 2 - Location & Phone -->
+      <div *ngIf="currentStep === 2" class="step space-y-4">
+        <h3 class="text-lg font-medium">Select Your Address</h3>
+
+        <div class="form-field">
+          <label class="form-label">Country:</label>
+          <select class="form-input" [(ngModel)]="customer.country" name="country" (change)="onCountryChange()">
+            <option *ngFor="let country of countries" [ngValue]="country">{{ country.ctrLabe }}</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">City:</label>
+          <select class="form-input" [(ngModel)]="customer.city" name="city">
+            <option *ngFor="let city of cities" [ngValue]="city">{{ city.ctyLabe }}</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Address:</label>
+          <input class="form-input" [(ngModel)]="customer.cusAddress" name="cusAddress" type="text" required>
+        </div>
+
+        <div class="form-field" *ngIf="phoneForm && phoneForm.controls['phone']">
+          <label class="form-label">Phone Number:</label>
+          <ngx-intl-tel-input [formControl]="phoneForm.controls['phone']" name="cusPhoneNbr"
+            [preferredCountries]="customer.country ? [customer.country.ctrIden!.substring(4,6).toLocaleLowerCase()] : ['us']"
+            [enablePlaceholder]="true" [separateDialCode]="true" required>
+          </ngx-intl-tel-input>
+        </div>
+
+      </div>
+
+      <!-- Step 3 -  Email & OTP -->
+      <div *ngIf="currentStep === 3" class="step">
+        <div class="form-field">
+          <div class="p-2">
+            <label class="form-label">Email:</label>
+            <div class="flex gap-2">
+              <input class="form-input flex-1" [(ngModel)]="customer.cusMailAddress" name="cusMailAddress" type="email"
+                required #email="ngModel" email>
+              <button *ngIf="!otpSent" class="btn primary" [disabled]="!customer.cusMailAddress || isOtpLoading"
+                type="button" (click)="sendOtp()" [disabled]="email.invalid">
+                Send OTP
+              </button>
+            </div>
+            <div *ngIf="email.invalid && email.touched" class="error-message">
+              <div *ngIf="email.errors?.['required']">Email is required</div>
+              <div *ngIf="email.errors?.['email']">Invalid email format</div>
+            </div>
+          </div>
+          <div *ngIf="isOtpLoading" class="flex justify-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </div>
+
+        <!-- OTP Section -->
+        <div *ngIf="otpSent && !otpVerified" class="form-field">
+          <label class="form-label">OTP Code:</label>
+          <div class="flex gap-2">
+            <input class="form-input flex-1" [(ngModel)]="otpCode" name="code" type="text" required #otp="ngModel"
+              pattern="[0-9]{6}">
+            <button class="btn secondary" type="button" (click)="sendOtp()">Resend</button>
+          </div>
+          <div *ngIf="otp.invalid && otp.touched" class="error-message">
+            <div *ngIf="otp.errors?.['required']">OTP is required</div>
+            <div *ngIf="otp.errors?.['pattern']">Must be 6 digits</div>
+          </div>
+          <button class="btn primary w-full mt-2" type="button" (click)="verifyOtp()" [disabled]="otp.invalid">
+            Verify OTP
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 4 - Password Section-->
+      <div *ngIf="currentStep === 4" class="step space-y-4">
+        <div class="form-field">
+          <label class="form-label">Password:</label>
+          <input class="form-input" [(ngModel)]="customer.cusMotDePasse" name="cusMotDePasse" type="password" required
+            minlength="6" #password="ngModel">
+          <div *ngIf="password.invalid && password.touched" class="error-message">
+            <div *ngIf="password.errors?.['required']">Password is required</div>
+            <div *ngIf="password.errors?.['minlength']">Minimum 6 characters</div>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Confirm Password:</label>
+          <input class="form-input" [(ngModel)]="confirm" name="confirm" type="password" required minlength="6"
+            required>
+        </div>
+      </div>
+
+      <!-- Step 5 - KYC -->
+      <div *ngIf="currentStep === 5" class="step space-y-4">
+        <div class="form-field">
+          <label class="form-label">Identification Type:</label>
+          <select class="form-input" [(ngModel)]="customer.identity!.customerIdentityType" name="customerIdentityType">
+            <option *ngFor="let cit of identityTypes" [ngValue]="cit">{{cit.citLabe}}</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Identity Number:</label>
+          <input type="text" class="form-input p-2 " [(ngModel)]="customer.identity!.cidNum" name="cidNum">
+        </div>
+
+        <!-- <div class="form-field">
+          <label class="form-label">Upload ID Files (max 10M):</label>
+          <input type="file" class="form-input p-2" multiple (change)="onFileSelected($event)"
+            [accept]="allowedDocTypes">
+        </div> -->
+        <div class="form-field md:col-span-2">
+          <label class="form-label flex items-center">
+            ID Documents
+            <span class="text-primary ml-1">*</span>
+          </label>
+          <div
+            class="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+            (click)="files = []; customerDocs = []; documentInput.click()">
+            <div class="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <i class="ri-upload-cloud-2-line text-primary text-2xl"></i>
+            </div>
+            <h4 class="text-sm font-medium text-gray-900 mb-1">Click to upload documents</h4>
+            <p class="text-xs text-gray-500">(Max 10MB each)</p>
+            <p *ngIf="files.length > 0" class="text-xs text-primary mt-2">
+              {{ files.length }} file{{ files.length !== 1 ? 's' : '' }} selected
+            </p>
+            <input #documentInput type="file" class="hidden" multiple (change)="onFileSelected($event)"
+              [accept]="allowedDocTypes">
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div *ngIf="isLoading" class="flex justify-center">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="flex justify-between mt-8">
+      <button class="btn secondary" (click)="goToPreviousStep()" [disabled]="currentStep === 1">
+        Back
+      </button>
+      <button *ngIf="currentStep < 5" class="btn primary" (click)="goToNextStep()">
+        Next
+      </button>
+      <button *ngIf="currentStep === 5" [disabled]="!registerForm.form.valid || isLoading" class="btn primary"
+        (click)="onSubmit()">
+        Submit
+      </button>
+    </div>
+
+    <!-- Login Link -->
+    <div class="mt-6 text-center text-sm text-gray-600">
+      Already have an account?
+      <a href="/login" class="text-primary hover:underline">Login here</a>
+    </div>
+  </div>

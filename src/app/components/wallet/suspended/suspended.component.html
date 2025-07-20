@@ -1,0 +1,68 @@
+<div class="bg-white flex flex-col items-center justify-center min-h-screen p-4">
+  <!-- Logo -->
+  <img src="../../../../assets/logo.png" alt="App Logo" class="w-16 h-16 object-contain mx-auto mb-6">
+  
+  <!-- Status Icon -->
+  <div class="w-20 h-20 flex items-center justify-center bg-red-50 rounded-full mb-6">
+    <i class="ri-error-warning-line text-red-500 text-3xl"></i>
+  </div>
+  
+  <!-- Title and Message -->
+  <h2 class="text-2xl font-bold text-secondary mb-2">Account Suspended</h2>
+  <p class="text-gray-600 mb-8 text-center max-w-md">
+    Your wallet account has been temporarily suspended. Please review the details below.
+  </p>
+  
+  <!-- Suspension Details Card -->
+  <div class="bg-gray-50 rounded-lg p-6 mb-8 max-w-md w-full border border-red-100">
+    <!-- <div class="flex items-start mb-4">
+      <div class="w-6 h-6 flex items-center justify-center text-red-500 mr-3">
+        <i class="ri-alert-line"></i>
+      </div>
+      <div>
+        <h3 class="font-medium text-secondary mb-1">Reason for Suspension</h3>
+        <p class="text-gray-600 text-sm" *ngIf="suspensionReason; else defaultReason">
+          {{ suspensionReason }}
+        </p>
+        <ng-template #defaultReason>
+          <p class="text-gray-600 text-sm">
+            Unusual activity detected or verification required
+          </p>
+        </ng-template>
+      </div>
+    </div> -->
+    
+    <div class="flex items-start">
+      <div class="w-6 h-6 flex items-center justify-center text-primary mr-3">
+        <i class="ri-information-line"></i>
+      </div>
+      <div>
+        <h3 class="font-medium text-secondary mb-1">Next Steps</h3>
+        <p class="text-gray-600 text-sm">
+          Please contact our support team to resolve this issue.
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Contact Information -->
+  <div class="mb-8 max-w-md w-full">
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="mailto:support@yourwallet.com" class="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors rounded-button whitespace-nowrap">
+        <i class="ri-mail-line"></i> Email Support
+      </a>
+      <a href="tel:+1234567890" class="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors rounded-button whitespace-nowrap">
+        <i class="ri-phone-line"></i> Call Support
+      </a>
+    </div>
+  </div>
+  
+  <!-- Logout Button -->
+  <div class="border-t pt-6 max-w-md w-full">
+    <div class="flex justify-center">
+      <button (click)="logout()" class="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white hover:bg-red-600 transition-colors rounded-button whitespace-nowrap">
+        <i class="ri-logout-box-r-line"></i> Logout
+      </button>
+    </div>
+  </div>
+</div>

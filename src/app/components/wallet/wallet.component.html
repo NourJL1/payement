@@ -1,0 +1,58 @@
+<!-- Header -->
+<header class="bg-white shadow-sm fixed top-0 left-0 w-full z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <!-- Logo - Adjusted size to be more appropriate for a header -->
+      <div class="flex items-center">
+        <img src="../../../../assets/logo.png" alt="App Logo"
+          class="h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity">
+      </div>
+
+      <!-- Navigation and User Menu -->
+      <div class="flex items-center gap-4 md:gap-6">
+        <!-- Main Navigation Links -->
+        <nav class="hidden md:flex items-center space-x-4">
+          <a routerLink="/wallet/dashboard" routerLinkActive="text-primary border-b-2 border-primary"
+            class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+            Dashboard
+          </a>
+          <a routerLink="/wallet/overview" routerLinkActive="text-primary border-b-2 border-primary"
+            class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+            Overview
+          </a>
+          <a routerLink="/wallet/transactions" routerLinkActive="text-primary border-b-2 border-primary"
+            class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+            Transactions
+          </a>
+          <a routerLink="/wallet/settings" routerLinkActive="text-primary border-b-2 border-primary"
+            class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+            Settings
+          </a>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="flex items-center gap-2 cursor-pointer">
+          <div class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-gray-100 rounded-full">
+            <i class="ri-user-3-line text-gray-600 text-sm md:text-base"></i>
+          </div>
+          <div class="hidden md:block">
+            <div class="text-sm font-medium text-gray-900">{{wallet?.customer?.fullName}}</div>
+            <div class="text-xs text-gray-500">{{wallet?.walletType?.wtyLabe}}</div>
+          </div>
+          <!-- Logout Button -->
+          <button (click)="logout()"
+            class="flex items-center p-2 text-gray-600 hover:text-gray-900 rounded-full transition-all hover:bg-gray-100">
+            <div class="w-6 h-6 flex items-center justify-center">
+              <i class="ri-logout-box-line ri-lg"></i>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-16">
+  <router-outlet></router-outlet>
+</main>

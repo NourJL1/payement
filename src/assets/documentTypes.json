@@ -1,0 +1,40 @@
+{
+  "documentTypes": [
+    {
+      "dtyIden": "application/pdf",
+      "dtyLabe": "PDF Document"
+    },
+    {
+      "dtyIden": "image/jpeg",
+      "dtyLabe": "JPEG Image"
+    },
+    {
+      "dtyIden": "image/png",
+      "dtyLabe": "PNG Image"
+    },
+    {
+      "dtyIden": "image/heic",
+      "dtyLabe": "HEIC Image (iPhone)"
+    },
+    {
+      "dtyIden": "application/msword",
+      "dtyLabe": "Word Document (DOC)"
+    },
+    {
+      "dtyIden": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "dtyLabe": "Word (DOCX)"
+    },
+    {
+      "dtyIden": "application/vnd.ms-excel",
+      "dtyLabe": "Excel Spreadsheet (XLS)"
+    },
+    {
+      "dtyIden": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "dtyLabe": "Excel (XLSX)"
+    },
+    {
+      "dtyIden": "video/mp4",
+      "dtyLabe": "MP4 Video (Liveness Check)"
+    }
+  ]
+}
