@@ -35,7 +35,7 @@ export class CustomerMngComponent {
     private customerService: CustomerService,
     private customerStatusService: CustomerStatusService,
     private customerIdentityTypeService: CustomerIdentityTypeService,
-    private customerIdentityService: CustomerIdentityService, 
+    private customerIdentityService: CustomerIdentityService,
     private customerDocService: CustomerDocService,
     private docTypeService: DocTypeService,
     private countryService: CountryService,
@@ -68,7 +68,7 @@ export class CustomerMngComponent {
   identityTypes: CustomerIdentityType[] = [] // List of customer identity types
   filteredIdentityTypes: CustomerIdentityType[] = [] // Filtered list of customer identity types
 
-  docTypeList: DocType[] = [] // List of document types in db
+  docTypeList: DocType[] = [] // List of document types not in db
   filteredDocTypes: DocType[] = [] // Filtered list of document types
 
 
@@ -242,7 +242,7 @@ export class CustomerMngComponent {
       this.showErrorMessage("Some fields are already in use!")
       return
     }
-    if(this.customerForm.cusMotDePasse != this.confirmPassword){
+    if (this.customerForm.cusMotDePasse != this.confirmPassword) {
       this.showErrorMessage("Passwords mismatch!")
       return
     }
@@ -406,7 +406,7 @@ export class CustomerMngComponent {
     });
   }
 
-  idNumExists(){
+  idNumExists() {
     if (!this.customerForm.identity?.cidNum)
       return
     return this.customerIdentityService.existsByCidNum(this.customerForm.identity.cidNum).subscribe({
@@ -592,9 +592,19 @@ export class CustomerMngComponent {
     this.docTypeService.create(this.docTypeForm).subscribe({
       next: (docType: DocType) => {
         console.log('add Doc Type: identity added:', docType);
+
+        // 1. Add to DB list and filtered list
         this.docTypes.push(docType);
+        this.filteredDocTypes.push(docType);
+
+        // 2. Add to allowed types (if needed)
         this.allowedDocTypes.push(docType.dtyIden!);
-        this.docTypeForm = new DocType();
+
+        // 3. Remove from non-DB list (docTypeList)
+        this.docTypeList = this.docTypeList.filter(
+          item => item.dtyIden !== docType.dtyIden
+        );
+
         this.isDocTypeVisible = false;
         this.showSuccessMessage('Document type added successfully');
         this.cdr.detectChanges();

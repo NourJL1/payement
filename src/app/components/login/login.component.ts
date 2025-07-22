@@ -51,24 +51,23 @@ export class LoginComponent {
           this.router.navigate(['/admin/dashboard']);
         else {
 
-          switch(response.status)
-          {
+          switch (response.status) {
             case 'ACTIVE':
               this.walletService.getWalletByCustomerCode(response.cusCode).subscribe({
-              next: (walletData: Wallet) => {
-                const statusLabel = walletData.walletStatus?.wstLabe?.trim().toUpperCase();
+                next: (walletData: Wallet) => {
+                  const statusLabel = walletData.walletStatus?.wstLabe?.trim().toUpperCase();
 
-                if (statusLabel === 'ACTIVE') {
-                  this.router.navigate(['/wallet/overview']);
-                } else {
-                  this.errorMessage = 'Unknown wallet status: ' + statusLabel;
+                  if (statusLabel === 'ACTIVE') {
+                    this.router.navigate(['/wallet/overview']);
+                  } else {
+                    this.errorMessage = 'Unknown wallet status: ' + statusLabel;
+                  }
+                },
+                error: (err) => {
+                  console.error('Error fetching wallet data:', err);
+                  this.errorMessage = 'Failed to fetch wallet data.';
                 }
-              },
-              error: (err) => {
-                console.error('Error fetching wallet data:', err);
-                this.errorMessage = 'Failed to fetch wallet data.';
-              }
-            });
+              });
               break;
             case 'SUSPENDED':
               this.router.navigate(['/suspended']);
@@ -85,8 +84,6 @@ export class LoginComponent {
       error: (err) => {
         console.error('Login error:', err);
         this.errorMessage = 'Login failed. Please check your credentials.';
-      },
-      complete: () => {
         this.isLoading = false; // Hide loading indicator after completion
       }
     })
