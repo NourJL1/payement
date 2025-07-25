@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
-import { WalletService } from '../../services/wallet.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
-import { Wallet } from '../../entities/wallet';
-import { CustomerService } from '../../services/customer.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,13 +12,12 @@ import { CustomerService } from '../../services/customer.service';
 })
 export class LoginComponent {
   username: string = '';
-  cusMotDePasse: string = '';
+  password: string = '';
   errorMessage: string = '';
   isLoading: boolean = false;
 
   constructor(
-    private customerService: CustomerService,
-    private walletService: WalletService,
+    private authService: AuthService,
     private router: Router
   ) { }
 
@@ -33,52 +29,33 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.customerService.login(this.username, this.cusMotDePasse).subscribe({
+    this.authService.login(this.username, this.password).subscribe({
       next: (response) => {
 
-        // Store user data in localStorage
-        localStorage.setItem('authToken', response.token);
-        localStorage.setItem('cusCode', response.cusCode);
-        localStorage.setItem('role', response.role?.name || 'CUSTOMER');
-        localStorage.setItem('roles', response.roles || ['ROLE_CUSTOMER']); // Fallback to ROLE_CUSTOMER
-        localStorage.setItem('username', response.username);
-        localStorage.setItem('fullname', response.fullname || '');
-        localStorage.setItem('status', response.status || 'PENDING');
+        localStorage.setItem("username", response.username)
+        localStorage.setItem("fullname", response.fullname)
+        localStorage.setItem("authorities", response.authorities)
 
-        const role = (response.role?.name || 'CUSTOMER');
-
-        if (role === 'ADMIN')
-          this.router.navigate(['/admin/dashboard']);
-        else {
-
-          switch (response.status) {
-            case 'ACTIVE':
-              this.walletService.getWalletByCustomerCode(response.cusCode).subscribe({
-                next: (walletData: Wallet) => {
-                  const statusLabel = walletData.walletStatus?.wstLabe?.trim().toUpperCase();
-
-                  if (statusLabel === 'ACTIVE') {
-                    this.router.navigate(['/wallet/overview']);
-                  } else {
-                    this.errorMessage = 'Unknown wallet status: ' + statusLabel;
-                  }
-                },
-                error: (err) => {
-                  console.error('Error fetching wallet data:', err);
-                  this.errorMessage = 'Failed to fetch wallet data.';
-                }
-              });
-              break;
-            case 'SUSPENDED':
-              this.router.navigate(['/suspended']);
-              break;
-            case 'PENDING':
-              this.router.navigate(['/pending']);
-              break;
-            default:
-              this.errorMessage = 'Unknown status: ' + response.status;
-              console.warn('Unexpected status:', response.status);
-          }
+        switch (response.authorities[0]) {
+          case "ROLE_USER":
+            localStorage.setItem("useCode", response.useCode)
+            this.router.navigate(["/admin"])
+            break;
+          case "ROLE_CUSTOMER":
+            localStorage.setItem("cusCode", response.cusCode)
+            localStorage.setItem("status", response.status)
+            switch (response.status) {
+              case "SUSPENDED":
+                this.router.navigate(["/suspended"])
+                break;
+              case "PENDING":
+                this.router.navigate(["/pending"])
+                break;
+              case "ACTIVE":
+                this.router.navigate(["/wallet"])
+                break;
+            }
+            break;
         }
       },
       error: (err) => {

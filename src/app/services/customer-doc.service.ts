@@ -35,13 +35,8 @@ export class CustomerDocService {
   }
 
   getByCustomerDocListe(cdlCode: number) {
-    //return this.http.get(`${this.apiUrl}/cdl/${cdlIden}`);
     return this.http.get<CustomerDoc[]>(`${this.apiUrl}/cdl/${cdlCode}`);
   }
-
-  /* create(customerDoc: CustomerDoc): Observable<CustomerDoc> {
-    return this.http.post<CustomerDoc>(this.apiUrl, customerDoc, this.httpOptions);
-  } */
 
   create(customerDoc: CustomerDoc, file: File) {
 
