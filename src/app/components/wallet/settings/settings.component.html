@@ -1,1 +1,992 @@
-<p>settings works!</p>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-6">
+    <h1 class="text-2xl font-semibold text-gray-900">Account Settings</h1>
+    <p class="text-gray-600 mt-1">Manage your account preferences and settings</p>
+  </div>
+
+  <div class="flex flex-col md:flex-row gap-8">
+    <!-- Settings Sidebar -->
+    <div class="w-full md:w-64 flex-shrink-0">
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <nav class="flex flex-col">
+          <a href="#account" class="settings-nav-item active flex items-center gap-3 px-4 py-3" data-section="account">
+            <div class="w-6 h-6 flex items-center justify-center">
+              <i class="ri-user-3-line"></i>
+            </div>
+            <span class="font-medium">Account Information</span>
+          </a>
+          <a href="#notifications" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="notifications">
+            <div class="w-6 h-6 flex items-center justify-center">
+              <i class="ri-notification-3-line"></i>
+            </div>
+            <span class="font-medium">Notification Preferences</span>
+          </a>
+          <a href="#security" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="security">
+            <div class="w-6 h-6 flex items-center justify-center">
+              <i class="ri-shield-keyhole-line"></i>
+            </div>
+            <span class="font-medium">Privacy & Security</span>
+          </a>
+          <a href="#display" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="display">
+            <div class="w-6 h-6 flex items-center justify-center">
+              <i class="ri-palette-line"></i>
+            </div>
+            <span class="font-medium">Display Preferences</span>
+          </a>
+          <a href="#payment" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="payment">
+            <div class="w-6 h-6 flex items-center justify-center">
+              <i class="ri-bank-card-line"></i>
+            </div>
+            <span class="font-medium">Payment Preferences</span>
+          </a>
+          <a href="#documents" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="documents">
+            <div class="w-6 h-6 flex items-center justify-center">
+              <i class="ri-file-list-3-line"></i>
+            </div>
+            <span class="font-medium">Identity Documents</span>
+          </a>
+          <a href="#connected" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="connected">
+            <div class="w-6 h-6 flex items-center justify-center">
+              <i class="ri-link"></i>
+            </div>
+            <span class="font-medium">Connected Accounts</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Settings Content -->
+    <div class="flex-1">
+      <!-- Account Information Section -->
+      <div id="account" class="settings-section active">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Profile Information</h2>
+            <p class="text-sm text-gray-500 mt-1">Update your personal information</p>
+          </div>
+          <div class="p-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
+              <div class="relative">
+                <div class="w-24 h-24 bg-gray-100 rounded-full overflow-hidden flex items-center justify-center">
+                  <i class="ri-user-3-line text-gray-400 ri-2x"></i>
+                </div>
+                <button class="absolute bottom-0 right-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center shadow-sm">
+                  <i class="ri-pencil-line"></i>
+                </button>
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">Michael Anderson</h3>
+                <p class="text-sm text-gray-500">Premium Account Member since June 2023</p>
+                <div class="mt-2 flex items-center">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span class="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
+                    Verified
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                <input type="text" value="Michael" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Middle Name</label>
+                <input type="text" value="James" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                <input type="text" value="Anderson" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                <input type="text" value="michael.anderson" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Contact Information</h2>
+            <p class="text-sm text-gray-500 mt-1">Update your contact details</p>
+          </div>
+          <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <input type="email" value="michael.anderson@example.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                <input type="tel" value="+1 (415) 555-7890" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                <input type="text" value="123 Market Street, Apt 4B" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                    <input type="text" value="San Francisco" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
+                    <input type="text" value="California" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Zip Code</label>
+                    <input type="text" value="94105" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="px-6 py-4 bg-gray-50 flex justify-end">
+            <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Changes</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notification Preferences Section -->
+      <div id="notifications" class="settings-section hidden">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Notification Preferences</h2>
+            <p class="text-sm text-gray-500 mt-1">Manage how you receive notifications</p>
+          </div>
+          <div class="p-6">
+            <div class="mb-6">
+              <h3 class="text-md font-medium text-gray-900 mb-4">Communication Channels</h3>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">Email Notifications</div>
+                    <div class="text-sm text-gray-500">Receive updates via email</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">Push Notifications</div>
+                    <div class="text-sm text-gray-500">Receive notifications on your devices</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">SMS Notifications</div>
+                    <div class="text-sm text-gray-500">Receive text messages for important updates</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-6">
+              <h3 class="text-md font-medium text-gray-900 mb-4">Transaction Alerts</h3>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">All Transactions</div>
+                    <div class="text-sm text-gray-500">Get notified for every transaction</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">Large Transactions</div>
+                    <div class="text-sm text-gray-500">Only for transactions over $1,000</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">Deposits</div>
+                    <div class="text-sm text-gray-500">When money is added to your account</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">Withdrawals</div>
+                    <div class="text-sm text-gray-500">When money leaves your account</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-md font-medium text-gray-900 mb-4">System Notifications</h3>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">Security Alerts</div>
+                    <div class="text-sm text-gray-500">Login attempts and security updates</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">Account Updates</div>
+                    <div class="text-sm text-gray-500">Changes to your account settings</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">Marketing & Promotions</div>
+                    <div class="text-sm text-gray-500">Special offers and new features</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="px-6 py-4 bg-gray-50 flex justify-end">
+            <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Preferences</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Privacy & Security Section -->
+      <div id="security" class="settings-section hidden">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Password & Authentication</h2>
+            <p class="text-sm text-gray-500 mt-1">Manage your account security settings</p>
+          </div>
+          <div class="p-6">
+            <div class="space-y-6">
+              <div>
+                <h3 class="text-md font-medium text-gray-900 mb-4">Change Password</h3>
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                    <input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter current password">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                    <input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter new password">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                    <input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Confirm new password">
+                  </div>
+                </div>
+                <button class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Update Password</button>
+              </div>
+
+              <div class="pt-6 border-t border-gray-100">
+                <h3 class="text-md font-medium text-gray-900 mb-4">Two-Factor Authentication</h3>
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <div class="font-medium text-gray-800">Two-Factor Authentication</div>
+                    <div class="text-sm text-gray-500">Add an extra layer of security to your account</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="bg-blue-50 text-blue-800 p-4 rounded-lg text-sm">
+                  <div class="flex items-start">
+                    <div class="w-5 h-5 flex items-center justify-center mt-0.5">
+                      <i class="ri-information-line"></i>
+                    </div>
+                    <div class="ml-3">
+                      <p>Two-factor authentication is enabled. Your account is protected with an additional security layer.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-6 border-t border-gray-100">
+                <h3 class="text-md font-medium text-gray-900 mb-4">Login Sessions</h3>
+                <div class="space-y-4">
+                  <div class="flex items-start py-3 border-b border-gray-100">
+                    <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
+                      <i class="ri-macbook-line text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                      <div class="flex justify-between">
+                        <div class="font-medium text-gray-800">MacBook Pro</div>
+                        <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Current</div>
+                      </div>
+                      <div class="text-sm text-gray-500">Last active: Just now</div>
+                      <div class="text-xs text-gray-400">San Francisco, CA • Chrome Browser</div>
+                    </div>
+                  </div>
+                  <div class="flex items-start py-3 border-b border-gray-100">
+                    <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
+                      <i class="ri-smartphone-line text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                      <div class="flex justify-between">
+                        <div class="font-medium text-gray-800">iPhone 14 Pro</div>
+                        <button class="text-red-500 text-xs">Logout</button>
+                      </div>
+                      <div class="text-sm text-gray-500">Last active: 2 hours ago</div>
+                      <div class="text-xs text-gray-400">San Francisco, CA • Mobile App</div>
+                    </div>
+                  </div>
+                  <div class="flex items-start py-3">
+                    <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
+                      <i class="ri-tablet-line text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                      <div class="flex justify-between">
+                        <div class="font-medium text-gray-800">iPad Air</div>
+                        <button class="text-red-500 text-xs">Logout</button>
+                      </div>
+                      <div class="text-sm text-gray-500">Last active: 3 days ago</div>
+                      <div class="text-xs text-gray-400">New York, NY • Safari Browser</div>
+                    </div>
+                  </div>
+                </div>
+                <button class="mt-4 px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 font-medium !rounded-button whitespace-nowrap">Logout from All Devices</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Privacy Settings</h2>
+            <p class="text-sm text-gray-500 mt-1">Control your data and privacy preferences</p>
+          </div>
+          <div class="p-6">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                <div>
+                  <div class="font-medium text-gray-800">Activity Tracking</div>
+                  <div class="text-sm text-gray-500">Allow us to collect usage data to improve your experience</div>
+                </div>
+                <label class="custom-switch">
+                  <input type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                <div>
+                  <div class="font-medium text-gray-800">Location Services</div>
+                  <div class="text-sm text-gray-500">Allow access to your location for regional features</div>
+                </div>
+                <label class="custom-switch">
+                  <input type="checkbox">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                <div>
+                  <div class="font-medium text-gray-800">Data Sharing</div>
+                  <div class="text-sm text-gray-500">Share anonymized data with our partners</div>
+                </div>
+                <label class="custom-switch">
+                  <input type="checkbox">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="flex items-center justify-between py-3">
+                <div>
+                  <div class="font-medium text-gray-800">Personalized Ads</div>
+                  <div class="text-sm text-gray-500">Show ads based on your interests and activity</div>
+                </div>
+                <label class="custom-switch">
+                  <input type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="px-6 py-4 bg-gray-50 flex justify-end">
+            <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Privacy Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Display Preferences Section -->
+      <div id="display" class="settings-section hidden">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Display Preferences</h2>
+            <p class="text-sm text-gray-500 mt-1">Customize your visual experience</p>
+          </div>
+          <div class="p-6">
+            <div class="mb-8">
+              <h3 class="text-md font-medium text-gray-900 mb-4">Theme Settings</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <label class="relative cursor-pointer">
+                  <input type="radio" name="theme" class="sr-only" checked>
+                  <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-primary transition-all duration-200 peer-checked:border-primary">
+                    <div class="bg-white rounded h-24 mb-2 flex items-center justify-center text-gray-400">
+                      <i class="ri-sun-line ri-xl"></i>
+                    </div>
+                    <div class="font-medium text-gray-800">Light Mode</div>
+                    <div class="text-xs text-gray-500">Default light appearance</div>
+                  </div>
+                  <div class="absolute top-3 right-3 w-5 h-5 bg-primary rounded-full text-white flex items-center justify-center opacity-0 peer-checked:opacity-100">
+                    <i class="ri-check-line"></i>
+                  </div>
+                </label>
+                <label class="relative cursor-pointer">
+                  <input type="radio" name="theme" class="sr-only">
+                  <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-primary transition-all duration-200">
+                    <div class="bg-gray-800 rounded h-24 mb-2 flex items-center justify-center text-gray-400">
+                      <i class="ri-moon-line ri-xl"></i>
+                    </div>
+                    <div class="font-medium text-gray-800">Dark Mode</div>
+                    <div class="text-xs text-gray-500">Easier on the eyes at night</div>
+                  </div>
+                  <div class="absolute top-3 right-3 w-5 h-5 bg-primary rounded-full text-white flex items-center justify-center opacity-0 peer-checked:opacity-100">
+                    <i class="ri-check-line"></i>
+                  </div>
+                </label>
+                <label class="relative cursor-pointer">
+                  <input type="radio" name="theme" class="sr-only">
+                  <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-primary transition-all duration-200">
+                    <div class="bg-gradient-to-r from-white to-gray-800 rounded h-24 mb-2 flex items-center justify-center text-gray-400">
+                      <i class="ri-contrast-2-line ri-xl"></i>
+                    </div>
+                    <div class="font-medium text-gray-800">System Default</div>
+                    <div class="text-xs text-gray-500">Follows your system settings</div>
+                  </div>
+                  <div class="absolute top-3 right-3 w-5 h-5 bg-primary rounded-full text-white flex items-center justify-center opacity-0 peer-checked:opacity-100">
+                    <i class="ri-check-line"></i>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div class="mb-8">
+              <h3 class="text-md font-medium text-gray-900 mb-4">Language</h3>
+              <div class="relative">
+                <select class="w-full appearance-none px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white">
+                  <option value="en">English (US)</option>
+                  <option value="fr">Français</option>
+                  <option value="es">Español</option>
+                  <option value="de">Deutsch</option>
+                  <option value="zh">中文</option>
+                  <option value="ja">日本語</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <i class="ri-arrow-down-s-line text-gray-400"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-8">
+              <h3 class="text-md font-medium text-gray-900 mb-4">Date & Time Format</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Date Format</label>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg">
+                      <input type="radio" name="date-format" checked>
+                      <span class="radio-checkmark mr-3"></span>
+                      <span>MM/DD/YYYY</span>
+                    </label>
+                    <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg">
+                      <input type="radio" name="date-format">
+                      <span class="radio-checkmark mr-3"></span>
+                      <span>DD/MM/YYYY</span>
+                    </label>
+                    <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg">
+                      <input type="radio" name="date-format">
+                      <span class="radio-checkmark mr-3"></span>
+                      <span>YYYY-MM-DD</span>
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Time Format</label>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg">
+                      <input type="radio" name="time-format" checked>
+                      <span class="radio-checkmark mr-3"></span>
+                      <span>12-hour (AM/PM)</span>
+                    </label>
+                    <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg">
+                      <input type="radio" name="time-format">
+                      <span class="radio-checkmark mr-3"></span>
+                      <span>24-hour</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-md font-medium text-gray-900 mb-4">Accessibility</h3>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">Larger Text</div>
+                    <div class="text-sm text-gray-500">Increase text size for better readability</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">High Contrast</div>
+                    <div class="text-sm text-gray-500">Enhance visual distinction between elements</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between py-3">
+                  <div>
+                    <div class="font-medium text-gray-800">Reduce Motion</div>
+                    <div class="text-sm text-gray-500">Minimize animations and transitions</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="px-6 py-4 bg-gray-50 flex justify-end">
+            <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Display Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Preferences Section -->
+      <div id="payment" class="settings-section hidden">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Payment Methods</h2>
+            <p class="text-sm text-gray-500 mt-1">Manage your payment options</p>
+          </div>
+          <div class="p-6">
+            <div class="space-y-6">
+              <div class="flex items-center justify-between">
+                <h3 class="text-md font-medium text-gray-900">Saved Payment Methods</h3>
+                <button class="text-primary text-sm font-medium flex items-center !rounded-button">
+                  <i class="ri-add-line mr-1"></i>
+                  Add New
+                </button>
+              </div>
+
+              <div class="space-y-4">
+                <div class="flex items-start p-4 border border-gray-200 rounded-lg">
+                  <div class="w-12 h-8 flex items-center justify-center bg-blue-100 rounded mr-4">
+                    <i class="ri-visa-fill text-blue-700 ri-lg"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex justify-between">
+                      <div class="font-medium text-gray-800">Visa ending in 4582</div>
+                      <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Default</div>
+                    </div>
+                    <div class="text-sm text-gray-500">Expires 09/2026</div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+                      <i class="ri-pencil-line"></i>
+                    </button>
+                    <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500">
+                      <i class="ri-delete-bin-line"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex items-start p-4 border border-gray-200 rounded-lg">
+                  <div class="w-12 h-8 flex items-center justify-center bg-blue-100 rounded mr-4">
+                    <i class="ri-mastercard-fill text-orange-500 ri-lg"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-medium text-gray-800">Mastercard ending in 7890</div>
+                    <div class="text-sm text-gray-500">Expires 05/2025</div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+                      <i class="ri-pencil-line"></i>
+                    </button>
+                    <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500">
+                      <i class="ri-delete-bin-line"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex items-start p-4 border border-gray-200 rounded-lg">
+                  <div class="w-12 h-8 flex items-center justify-center bg-blue-100 rounded mr-4">
+                    <i class="ri-paypal-fill text-blue-600 ri-lg"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-medium text-gray-800">PayPal</div>
+                    <div class="text-sm text-gray-500">michael.andersonexample.com</div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+                      <i class="ri-pencil-line"></i>
+                    </button>
+                    <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500">
+                      <i class="ri-delete-bin-line"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-gray-100">
+              <h3 class="text-md font-medium text-gray-900 mb-4">Default Payment Settings</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Default Payment Method</label>
+                  <div class="relative">
+                    <select class="w-full appearance-none px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white">
+                      <option value="visa">Visa ending in 4582</option>
+                      <option value="mastercard">Mastercard ending in 7890</option>
+                      <option value="paypal">PayPal</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <i class="ri-arrow-down-s-line text-gray-400"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">Auto-Pay Monthly Bills</div>
+                    <div class="text-sm text-gray-500">Automatically pay recurring bills</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                  <div>
+                    <div class="font-medium text-gray-800">Save New Payment Methods</div>
+                    <div class="text-sm text-gray-500">Automatically save payment methods used</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between py-3">
+                  <div>
+                    <div class="font-medium text-gray-800">Payment Confirmation</div>
+                    <div class="text-sm text-gray-500">Require confirmation for payments over $1,000</div>
+                  </div>
+                  <label class="custom-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="px-6 py-4 bg-gray-50 flex justify-end">
+            <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Payment Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Identity Documents Section -->
+      <div id="documents" class="settings-section hidden">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Identity Documents</h2>
+            <p class="text-sm text-gray-500 mt-1">Manage your verification documents</p>
+          </div>
+          <div class="p-6">
+            <div class="mb-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-md font-medium text-gray-900">Identity Verification Status</h3>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <span class="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
+                  Verified
+                </span>
+              </div>
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <div class="text-sm text-gray-500">Document Type</div>
+                    <div class="font-medium text-gray-800">Passport</div>
+                  </div>
+                  <div>
+                    <div class="text-sm text-gray-500">Document Number</div>
+                    <div class="font-medium text-gray-800">P123456789</div>
+                  </div>
+                  <div>
+                    <div class="text-sm text-gray-500">Issue Date</div>
+                    <div class="font-medium text-gray-800">March 15, 2020</div>
+                  </div>
+                  <div>
+                    <div class="text-sm text-gray-500">Expiry Date</div>
+                    <div class="font-medium text-gray-800">March 14, 2030</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-6">
+              <h3 class="text-md font-medium text-gray-900 mb-4">Uploaded Documents</h3>
+              <div class="space-y-4">
+                <div class="flex items-start p-4 border border-gray-200 rounded-lg">
+                  <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
+                    <i class="ri-file-text-line text-blue-600 ri-lg"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex justify-between">
+                      <div class="font-medium text-gray-800">Passport.pdf</div>
+                      <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Verified</div>
+                    </div>
+                    <div class="text-sm text-gray-500">Uploaded on June 10, 2023</div>
+                    <div class="mt-2 flex gap-2">
+                      <button class="text-xs text-primary flex items-center">
+                        <i class="ri-eye-line mr-1"></i>
+                        View
+                      </button>
+                      <button class="text-xs text-gray-500 flex items-center">
+                        <i class="ri-download-2-line mr-1"></i>
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-start p-4 border border-gray-200 rounded-lg">
+                  <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
+                    <i class="ri-file-text-line text-blue-600 ri-lg"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex justify-between">
+                      <div class="font-medium text-gray-800">Address_Proof.pdf</div>
+                      <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Verified</div>
+                    </div>
+                    <div class="text-sm text-gray-500">Uploaded on June 10, 2023</div>
+                    <div class="mt-2 flex gap-2">
+                      <button class="text-xs text-primary flex items-center">
+                        <i class="ri-eye-line mr-1"></i>
+                        View
+                      </button>
+                      <button class="text-xs text-gray-500 flex items-center">
+                        <i class="ri-download-2-line mr-1"></i>
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-md font-medium text-gray-900 mb-4">Upload New Document</h3>
+              <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <i class="ri-upload-2-line text-gray-400 ri-2x"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-900 mb-1">Drag and drop your files here</h4>
+                <p class="text-xs text-gray-500 mb-4">or</p>
+                <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm font-medium !rounded-button whitespace-nowrap">Browse Files</button>
+                <p class="text-xs text-gray-500 mt-4">Supported formats: PDF, JPG, PNG (Max size: 10MB)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connected Accounts Section -->
+      <div id="connected" class="settings-section hidden">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Connected Accounts</h2>
+            <p class="text-sm text-gray-500 mt-1">Manage your linked external accounts</p>
+          </div>
+          <div class="p-6">
+            <div class="space-y-6">
+              <div class="flex items-start p-4 border border-gray-200 rounded-lg">
+                <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
+                  <i class="ri-bank-fill text-blue-600 ri-lg"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="flex justify-between">
+                    <div>
+                      <div class="font-medium text-gray-800">Chase Bank</div>
+                      <div class="text-sm text-gray-500">Checking Account ****4582</div>
+                    </div>
+                    <label class="custom-switch">
+                      <input type="checkbox" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div class="mt-2 text-xs text-gray-500">Connected on May 15, 2023</div>
+                  <div class="mt-2">
+                    <button class="text-red-500 text-sm">Disconnect</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-start p-4 border border-gray-200 rounded-lg">
+                <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
+                  <i class="ri-paypal-fill text-blue-600 ri-lg"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="flex justify-between">
+                    <div>
+                      <div class="font-medium text-gray-800">PayPal</div>
+                      <div class="text-sm text-gray-500">michael.andersonexample.com</div>
+                    </div>
+                    <label class="custom-switch">
+                      <input type="checkbox" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div class="mt-2 text-xs text-gray-500">Connected on April 3, 2023</div>
+                  <div class="mt-2">
+                    <button class="text-red-500 text-sm">Disconnect</button>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-start p-4 border border-gray-200 rounded-lg">
+                <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg mr-4">
+                  <i class="ri-google-fill text-red-500 ri-lg"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="flex justify-between">
+                    <div>
+                      <div class="font-medium text-gray-800">Google</div>
+                      <div class="text-sm text-gray-500">michael.andersongmail.com</div>
+                    </div>
+                    <label class="custom-switch">
+                      <input type="checkbox" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div class="mt-2 text-xs text-gray-500">Connected on March 20, 2023</div>
+                  <div class="mt-2">
+                    <button class="text-red-500 text-sm">Disconnect</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-8">
+              <h3 class="text-md font-medium text-gray-900 mb-4">Connect New Account</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
+                  <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-bank-line text-gray-600"></i>
+                  </div>
+                  <span class="font-medium">Connect Bank</span>
+                </button>
+                <button class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
+                  <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-apple-fill text-gray-600"></i>
+                  </div>
+                  <span class="font-medium">Connect Apple</span>
+                </button>
+                <button class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
+                  <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-facebook-fill text-gray-600"></i>
+                  </div>
+                  <span class="font-medium">Connect Facebook</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script id="settingsNavigation">
+document.addEventListener('DOMContentLoaded', function() {
+  const navItems = document.querySelectorAll('.settings-nav-item');
+  const sections = document.querySelectorAll('.settings-section');
+  
+  navItems.forEach(item => {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Remove active class from all nav items
+      navItems.forEach(navItem => {
+        navItem.classList.remove('active');
+      });
+      
+      // Add active class to clicked nav item
+      this.classList.add('active');
+      
+      // Hide all sections
+      sections.forEach(section => {
+        section.classList.add('hidden');
+      });
+      
+      // Show the corresponding section
+      const sectionId = this.getAttribute('data-section');
+      document.getElementById(sectionId).classList.remove('hidden');
+    });
+  });
+});
+</script>
+
+<script id="customFormControls">
+document.addEventListener('DOMContentLoaded', function() {
+  // Custom radio buttons
+  const radioInputs = document.querySelectorAll('input[type="radio"]');
+  radioInputs.forEach(input => {
+    input.addEventListener('change', function() {
+      const name = this.getAttribute('name');
+      const radioButtons = document.querySelectorAll(`input[name="${name}"]`);
+      
+      radioButtons.forEach(radio => {
+        const parent = radio.closest('.relative');
+        if (parent) {
+          if (radio.checked) {
+            parent.classList.add('peer-checked:border-primary');
+          } else {
+            parent.classList.remove('peer-checked:border-primary');
+          }
+        }
+      });
+    });
+  });
+  
+  // Custom switches
+  const switches = document.querySelectorAll('.custom-switch input[type="checkbox"]');
+  switches.forEach(switchEl => {
+    switchEl.addEventListener('change', function() {
+      // Here you would typically make an API call to update the setting
+      console.log('Switch toggled:', this.checked);
+    });
+  });
+});
+</script>
