@@ -17,6 +17,9 @@ import { PendingComponent } from './components/wallet/pending/pending.component'
 import { OverviewComponent } from './components/wallet/overview/overview.component';
 import { SuspendedComponent } from './components/wallet/suspended/suspended.component';
 import { Role } from './entities/role';
+import { TransactionsComponent } from './components/wallet/transactions/transactions.component';
+import { SettingsComponent } from './components/wallet/settings/settings.component';
+import { AddCustomerComponent } from './components/admin/add-customer/add-customer.component';
 
 export const routes: Routes = [
 
@@ -47,7 +50,9 @@ export const routes: Routes = [
     children:
     [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
-      { path: 'overview', component: OverviewComponent}
+      { path: 'overview', component: OverviewComponent},
+      { path: 'transactions', component: TransactionsComponent },
+      { path: 'settings', component: SettingsComponent}
     ]
   },
   {
@@ -64,6 +69,7 @@ export const routes: Routes = [
       {path: 'products', component: ProductsComponent},
       {path: 'profiling', component: ProfilingComponent},
       {path: 'customers', component: CustomerMngComponent},
+      {path: 'add-customer', component:AddCustomerComponent}
     ]
   }
 ];

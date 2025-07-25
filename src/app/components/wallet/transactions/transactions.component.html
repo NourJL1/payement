@@ -1,1 +1,460 @@
-<p>transactions works!</p>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Transactions</h1>
+        <p class="text-gray-600 mt-1">View and manage your transaction history</p>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+            <!-- Search -->
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="ri-search-line text-gray-400"></i>
+                </div>
+                <input type="text" placeholder="Search transactions..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm">
+            </div>
+
+            <!-- Date Range Filter -->
+            <div class="relative" id="dateFilterContainer">
+                <button id="dateFilterButton" class="w-full md:w-auto flex items-center justify-between gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm !rounded-button whitespace-nowrap">
+                    <i class="ri-calendar-line text-gray-500"></i>
+                    <span>Last 30 days</span>
+                    <i class="ri-arrow-down-s-line text-gray-500"></i>
+                </button>
+                <div class="date-picker-dropdown bg-white border border-gray-200 rounded-lg shadow-lg mt-1">
+                    <div class="p-3 border-b border-gray-100">
+                        <h3 class="font-medium text-gray-700">Select date range</h3>
+                    </div>
+                    <div class="p-3">
+                        <div class="space-y-2">
+                            <button class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm date-option" data-value="today">Today</button>
+                            <button class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm date-option" data-value="yesterday">Yesterday</button>
+                            <button class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm date-option" data-value="last7">Last 7 days</button>
+                            <button class="w-full text-left px-3 py-2 rounded bg-gray-100 text-sm date-option" data-value="last30">Last 30 days</button>
+                            <button class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm date-option" data-value="thisMonth">This month</button>
+                            <button class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm date-option" data-value="lastMonth">Last month</button>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-100">
+                            <div class="text-sm font-medium text-gray-700 mb-2">Custom range</div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Start date</label>
+                                    <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">End date</label>
+                                    <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+                                </div>
+                            </div>
+                            <button class="mt-3 w-full px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 text-sm font-medium !rounded-button whitespace-nowrap">Apply Range</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Type Filter -->
+            <div class="relative" id="typeFilterContainer">
+                <button id="typeFilterButton" class="w-full md:w-auto flex items-center justify-between gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm !rounded-button whitespace-nowrap">
+                    <i class="ri-filter-3-line text-gray-500"></i>
+                    <span>All Transactions</span>
+                    <i class="ri-arrow-down-s-line text-gray-500"></i>
+                </button>
+                <div class="type-dropdown bg-white border border-gray-200 rounded-lg shadow-lg mt-1">
+                    <div class="p-3">
+                        <div class="space-y-2">
+                            <button class="w-full text-left px-3 py-2 rounded bg-gray-100 text-sm type-option" data-value="all">All Transactions</button>
+                            <button class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm type-option" data-value="income">Income</button>
+                            <button class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm type-option" data-value="expense">Expenses</button>
+                            <button class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm type-option" data-value="transfer">Transfers</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Amount Filter -->
+            <div class="relative" id="amountFilterContainer">
+                <button id="amountFilterButton" class="w-full md:w-auto flex items-center justify-between gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm !rounded-button whitespace-nowrap">
+                    <i class="ri-money-dollar-circle-line text-gray-500"></i>
+                    <span>Any Amount</span>
+                    <i class="ri-arrow-down-s-line text-gray-500"></i>
+                </button>
+                <div class="amount-dropdown bg-white border border-gray-200 rounded-lg shadow-lg mt-1">
+                    <div class="p-3 border-b border-gray-100">
+                        <h3 class="font-medium text-gray-700">Amount range</h3>
+                    </div>
+                    <div class="p-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Min amount</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500">$</span>
+                                    </div>
+                                    <input type="number" placeholder="0.00" class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded text-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Max amount</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500">$</span>
+                                    </div>
+                                    <input type="number" placeholder="Any" class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded text-sm">
+                                </div>
+                            </div>
+                        </div>
+                        <button class="mt-3 w-full px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 text-sm font-medium !rounded-button whitespace-nowrap">Apply Range</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Button -->
+            <div class="relative" id="exportContainer">
+                <button id="exportButton" class="w-full md:w-auto flex items-center justify-between gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm !rounded-button whitespace-nowrap">
+                    <i class="ri-download-2-line text-gray-500"></i>
+                    <span>Export</span>
+                    <i class="ri-arrow-down-s-line text-gray-500"></i>
+                </button>
+                <div class="export-dropdown bg-white border border-gray-200 rounded-lg shadow-lg mt-1">
+                    <div class="p-3">
+                        <div class="space-y-2">
+                            <button class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm flex items-center gap-2">
+                                <i class="ri-file-excel-2-line text-green-600"></i>
+                                <span>Export as CSV</span>
+                            </button>
+                            <button class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm flex items-center gap-2">
+                                <i class="ri-file-pdf-line text-red-600"></i>
+                                <span>Export as PDF</span>
+                            </button>
+                            <button class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm flex items-center gap-2">
+                                <i class="ri-printer-line text-blue-600"></i>
+                                <span>Print Transactions</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions List -->
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+            <h2 class="text-lg font-semibold text-gray-900">Transaction History</h2>
+            <div class="text-sm text-gray-500">Showing 28 transactions</div>
+        </div>
+        
+        <div class="divide-y divide-gray-100">
+            <!-- Transaction Item -->
+            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
+                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
+                    <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full mr-4">
+                        <i class="ri-arrow-down-line text-blue-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">Salary Deposit</div>
+                        <div class="text-sm text-gray-500">July 3, 2025 • 09:15 AM</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
+                    <div class="text-green-600 font-medium">+$5,280.00</div>
+                    <div class="flex items-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Completed
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Transaction Item -->
+            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
+                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
+                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
+                        <i class="ri-shopping-bag-line text-red-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">Amazon.com</div>
+                        <div class="text-sm text-gray-500">July 2, 2025 • 04:32 PM</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
+                    <div class="text-red-600 font-medium">-$129.99</div>
+                    <div class="flex items-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Completed
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Transaction Item -->
+            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
+                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
+                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
+                        <i class="ri-restaurant-line text-red-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">Starbucks Coffee</div>
+                        <div class="text-sm text-gray-500">July 2, 2025 • 10:15 AM</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
+                    <div class="text-red-600 font-medium">-$8.45</div>
+                    <div class="flex items-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Completed
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Transaction Item -->
+            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
+                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
+                    <div class="w-10 h-10 flex items-center justify-center bg-purple-100 rounded-full mr-4">
+                        <i class="ri-exchange-line text-purple-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">Transfer to Savings</div>
+                        <div class="text-sm text-gray-500">July 1, 2025 • 08:45 PM</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
+                    <div class="text-red-600 font-medium">-$1,000.00</div>
+                    <div class="flex items-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Completed
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Transaction Item -->
+            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
+                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
+                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
+                        <i class="ri-home-line text-red-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">Apartment Rent</div>
+                        <div class="text-sm text-gray-500">July 1, 2025 • 12:00 PM</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
+                    <div class="text-red-600 font-medium">-$2,200.00</div>
+                    <div class="flex items-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Completed
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Transaction Item -->
+            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
+                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
+                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
+                        <i class="ri-netflix-line text-red-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">Netflix Subscription</div>
+                        <div class="text-sm text-gray-500">June 30, 2025 • 03:15 AM</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
+                    <div class="text-red-600 font-medium">-$15.99</div>
+                    <div class="flex items-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Completed
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Transaction Item -->
+            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
+                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
+                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
+                        <i class="ri-car-line text-red-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">Uber Ride</div>
+                        <div class="text-sm text-gray-500">June 29, 2025 • 10:45 PM</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
+                    <div class="text-red-600 font-medium">-$24.50</div>
+                    <div class="flex items-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Completed
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Transaction Item -->
+            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
+                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
+                    <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full mr-4">
+                        <i class="ri-user-received-line text-blue-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">Payment from Jennifer Wilson</div>
+                        <div class="text-sm text-gray-500">June 28, 2025 • 02:30 PM</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
+                    <div class="text-green-600 font-medium">+$75.00</div>
+                    <div class="flex items-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Completed
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Transaction Item -->
+            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
+                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
+                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
+                        <i class="ri-shopping-cart-line text-red-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">Whole Foods Market</div>
+                        <div class="text-sm text-gray-500">June 27, 2025 • 05:45 PM</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
+                    <div class="text-red-600 font-medium">-$87.32</div>
+                    <div class="flex items-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Completed
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Transaction Item -->
+            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
+                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
+                    <div class="w-10 h-10 flex items-center justify-center bg-yellow-100 rounded-full mr-4">
+                        <i class="ri-bank-card-line text-yellow-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">ATM Withdrawal</div>
+                        <div class="text-sm text-gray-500">June 26, 2025 • 11:20 AM</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
+                    <div class="text-red-600 font-medium">-$200.00</div>
+                    <div class="flex items-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Completed
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <div class="flex items-center text-sm text-gray-500">
+                <span>Showing 1-10 of 28 transactions</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <button class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                <button class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                <button class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                <button class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                    <i class="ri-arrow-right-s-line"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script id="dropdownHandlers">
+document.addEventListener('DOMContentLoaded', function() {
+    // Date filter dropdown
+    const dateFilterButton = document.getElementById('dateFilterButton');
+    const dateFilterContainer = document.getElementById('dateFilterContainer');
+    const datePickerDropdown = dateFilterContainer.querySelector('.date-picker-dropdown');
+    const dateOptions = document.querySelectorAll('.date-option');
+
+    dateFilterButton.addEventListener('click', function() {
+        datePickerDropdown.classList.toggle('active');
+        // Close other dropdowns
+        typeDropdown.classList.remove('active');
+        amountDropdown.classList.remove('active');
+        exportDropdown.classList.remove('active');
+    });
+
+    dateOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const value = this.getAttribute('data-value');
+            const text = this.textContent;
+            dateFilterButton.querySelector('span').textContent = text;
+            datePickerDropdown.classList.remove('active');
+        });
+    });
+
+    // Type filter dropdown
+    const typeFilterButton = document.getElementById('typeFilterButton');
+    const typeFilterContainer = document.getElementById('typeFilterContainer');
+    const typeDropdown = typeFilterContainer.querySelector('.type-dropdown');
+    const typeOptions = document.querySelectorAll('.type-option');
+
+    typeFilterButton.addEventListener('click', function() {
+        typeDropdown.classList.toggle('active');
+        // Close other dropdowns
+        datePickerDropdown.classList.remove('active');
+        amountDropdown.classList.remove('active');
+        exportDropdown.classList.remove('active');
+    });
+
+    typeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const value = this.getAttribute('data-value');
+            const text = this.textContent;
+            typeFilterButton.querySelector('span').textContent = text;
+            typeDropdown.classList.remove('active');
+        });
+    });
+
+    // Amount filter dropdown
+    const amountFilterButton = document.getElementById('amountFilterButton');
+    const amountFilterContainer = document.getElementById('amountFilterContainer');
+    const amountDropdown = amountFilterContainer.querySelector('.amount-dropdown');
+    amountFilterButton.addEventListener('click', function() {
+        amountDropdown.classList.toggle('active');
+        // Close other dropdowns
+        datePickerDropdown.classList.remove('active');
+        typeDropdown.classList.remove('active');
+        exportDropdown.classList.remove('active');
+    });
+
+    // Export dropdown
+    const exportButton = document.getElementById('exportButton');
+    const exportContainer = document.getElementById('exportContainer');
+    const exportDropdown = exportContainer.querySelector('.export-dropdown');
+
+    exportButton.addEventListener('click', function() {
+        exportDropdown.classList.toggle('active');
+        // Close other dropdowns
+        datePickerDropdown.classList.remove('active');
+        typeDropdown.classList.remove('active');
+        amountDropdown.classList.remove('active');
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!dateFilterContainer.contains(event.target)) {
+            datePickerDropdown.classList.remove('active');
+        }
+        if (!typeFilterContainer.contains(event.target)) {
+            typeDropdown.classList.remove('active');
+        }
+        if (!amountFilterContainer.contains(event.target)) {
+            amountDropdown.classList.remove('active');
+        }
+        if (!exportContainer.contains(event.target)) {
+            exportDropdown.classList.remove('active');
+        }
+    });
+});
+</script>
