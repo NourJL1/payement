@@ -243,13 +243,15 @@ export class CustomerMngComponent {
 
     const phone = customer.cusPhoneNbr!
     this.phoneForm.get('phone')!.setValue({
-      e164Number: phone.replace(" ", ""),
+      number: phone.substring(phone.indexOf(" ")+1, phone.length),
       internationalNumber: phone,
       nationalNumber: phone.substring(phone.indexOf(" ")+1, phone.length),
+      e164Number: phone.replace(/[^\d]/g, ''),
       countryCode: customer.country!.ctrIden!.substring(4,6),
-      dialCode: phone.substring(0, phone.indexOf(" ")-1),
-      number: phone.substring(phone.indexOf(" ")+1, phone.length)
+      dialCode: phone.substring(0, phone.indexOf(" "))
     });
+
+    console.log(this.phoneForm.get('phone')?.value)
 
     this.onCountryChange(customer.country!);
     this.customerDocs = []
@@ -426,6 +428,8 @@ export class CustomerMngComponent {
 
     const phoneValue = phoneControl.value as PhoneNumber;
     this.customerForm.cusPhoneNbr = phoneValue.internationalNumber as string;
+
+    //console.log(phoneValue)
 
     if (!this.customerForm.cusPhoneNbr || this.customerForm.cusPhoneNbr == this.selectedCustomer?.cusPhoneNbr)
       return
