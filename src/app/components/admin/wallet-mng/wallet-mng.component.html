@@ -6,9 +6,7 @@
 
   <!-- Tabs Section -->
   <div class="flex border-b border-gray-200">
-    <button class="tab-button px-6 py-3 text-sm font-medium text-primary border-b-2 border-primary transition-colors"
-      (click)="showTab('overview')" id="overview">Overview</button>
-    <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('wallets')"
+    <button class="tab-button px-6 py-3 text-sm font-medium text-primary border-b-2 border-primary transition-colors" (click)="showTab('wallets')"
       id="wallets">Wallets</button>
     <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('settings')"
       id="settings">Settings</button>
@@ -33,132 +31,10 @@
   </button>
 </div>
 
-<!-- Dashboard Content -->
-<div id="tab-overview" class="tab-content">
-  <!-- Stats Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-  
-  <!-- Total Wallets -->
-  <div class="bg-white rounded-lg shadow-lg p-5 text-gray-800 transform hover:scale-105 transition-all duration-300">
-    <div class="flex items-center justify-between">
-      <div>
-        <div class="text-sm font-medium text-gray-600">Total Wallets</div>
-        <div class="text-2xl font-bold mt-1">{{ walletCount }}</div>
-        <div class="text-xs text-gray-500 mt-1">Updated {{ lastUpdated | date:'short' }}</div>
-      </div>
-      <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full">
-        <i class="ri-wallet-3-line ri-xl text-blue-600"></i>
-      </div>
-    </div>
-    <div class="mt-4 flex items-center text-xs">
-      <span class="flex items-center bg-blue-100 px-2 py-1 rounded-full text-blue-600">
-        <i class="ri-arrow-up-s-line"></i>
-        <span class="ml-1">12.5%</span>
-      </span>
-      <span class="ml-2 text-gray-500">Since last month</span>
-    </div>
-    <div class="mt-3 h-1 bg-gray-200 rounded-full">
-      <div class="h-1 bg-blue-500 rounded-full" style="width: 75%"></div>
-    </div>
-  </div>
 
-  <!-- Pending Wallets -->
-  <div class="bg-white rounded-lg shadow-lg p-5 text-gray-800 transform hover:scale-105 transition-all duration-300">
-    <div class="flex items-center justify-between">
-      <div>
-        <div class="text-sm font-medium text-gray-600">Pending Wallets</div>
-        <div class="text-2xl font-bold mt-1">{{pendingWalletCount}}</div>
-        <div class="text-xs text-gray-500 mt-1">Last updated: 1 min ago</div>
-      </div>
-      <div class="w-12 h-12 flex items-center justify-center bg-yellow-100 rounded-full">
-        <i class="ri-time-line ri-xl text-yellow-500"></i>
-      </div>
-    </div>
-    <div class="mt-4 flex items-center text-xs">
-      <span class="flex items-center bg-yellow-100 px-2 py-1 rounded-full text-yellow-600">
-        <i class="ri-arrow-up-s-line"></i>
-        <span class="ml-1">8.3%</span>
-      </span>
-      <span class="ml-2 text-gray-500">Since last month</span>
-    </div>
-    <div class="mt-3 h-1 bg-gray-200 rounded-full">
-      <div class="h-1 bg-yellow-500 rounded-full" style="width: 83%"></div>
-    </div>
-  </div>
-
-  <!-- Active Wallets -->
-  <div class="bg-white rounded-lg shadow-lg p-5 text-gray-800 transform hover:scale-105 transition-all duration-300">
-    <div class="flex items-center justify-between">
-      <div>
-        <div class="text-sm font-medium text-gray-600">Active Wallets</div>
-        <div class="text-2xl font-bold mt-1">{{ activeWalletCount }}</div>
-        <div class="text-xs text-gray-500 mt-1">Real-time data</div>
-      </div>
-      <div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-full">
-        <i class="ri-check-line ri-xl text-green-600"></i>
-      </div>
-    </div>
-    <div class="mt-4 flex items-center text-xs">
-      <span class="flex items-center bg-green-100 px-2 py-1 rounded-full text-green-600">
-        <i class="ri-arrow-up-s-line"></i>
-        <span class="ml-1">5.2%</span>
-      </span>
-      <span class="ml-2 text-gray-500">Since last month</span>
-    </div>
-    <div class="mt-3 h-1 bg-gray-200 rounded-full">
-      <div class="h-1 bg-green-500 rounded-full" style="width: 92%"></div>
-    </div>
-  </div>
-
-</div>
-
-  <!-- Charts Section -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-    <div class="bg-white rounded shadow p-5">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Wallet Distribution</h3>
-        <div class="dropdown">
-          <button class="flex items-center text-sm text-gray-500 hover:text-gray-700">
-            <span>This Month</span>
-            <div class="w-5 h-5 flex items-center justify-center ml-1">
-              <i class="ri-arrow-down-s-line"></i>
-            </div>
-          </button>
-          <div class="dropdown-content">
-            <a href="#" class="text-sm">This Week</a>
-            <a href="#" class="text-sm">This Month</a>
-            <a href="#" class="text-sm">This Year</a>
-            <a href="#" class="text-sm">Custom Range</a>
-          </div>
-        </div>
-      </div>
-      <div id="wallet-distribution-chart" class="h-64"></div>
-    </div>
-    <div class="bg-white rounded shadow p-5">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Balance Trends</h3>
-        <div class="dropdown">
-          <button class="flex items-center text-sm text-gray-500 hover:text-gray-700">
-            <span>Last 30 Days</span>
-            <div class="w-5 h-5 flex items-center justify-center ml-1">
-              <i class="ri-arrow-down-s-line"></i>
-            </div>
-          </button>
-          <div class="dropdown-content">
-            <a href="#" class="text-sm">Last 7 Days</a>
-            <a href="#" class="text-sm">Last 30 Days</a>
-            <a href="#" class="text-sm">Last 90 Days</a>
-            <a href="#" class="text-sm">Custom Range</a>
-          </div>
-        </div>
-      </div>
-      <div id="balance-trends-chart" class="h-64"></div>
-    </div>
-  </div>
-</div>
 
 <!-- Wallet Management Section -->
-<div id="tab-wallets" class="tab-content hidden">
+<div id="tab-wallets" class="tab-content">
   <!-- Header Section -->
   <div
     class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white rounded-xl shadow mb-6">

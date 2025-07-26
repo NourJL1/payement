@@ -89,8 +89,6 @@ export class WalletMngComponent implements OnInit {
 
   walletCount: number = 0;
   lastUpdated: Date | null = null;
-  activeWalletCount: number = 0;
-  pendingWalletCount: number = 0;
 
   // Filter variables
   searchTerm?: string;
@@ -122,8 +120,6 @@ export class WalletMngComponent implements OnInit {
     this.loadCardLists();
     this.loadAccountTypes();
     this.loadWalletStats();
-    this.loadActiveWalletCount();
-    this.loadPendingWalletCount();
     this.loadWallets(); // this should internally fetch and assign to `wallets` and `filteredWallets`
   }
 
@@ -225,38 +221,7 @@ export class WalletMngComponent implements OnInit {
   }
 
 
-  loadActiveWalletCount(): void {
-    this.errorMessage = null;
-    // console.log('loadActiveWalletCount: Fetching active wallet count...');
-    this.walletService.getActiveWalletCount().subscribe({
-      next: (count: number) => {
-        // console.log('loadActiveWalletCount: Active wallet count received:', count);
-        this.activeWalletCount = count;
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        const message = error.status ? `Failed to load active wallet count: ${error.status} ${error.statusText}` : 'Failed to load active wallet count: Server error';
-        this.showErrorMessage(message);
-        console.error('Error loading active wallet count:', error);
-      }
-    });
-  }
-    loadPendingWalletCount(): void {
-    this.errorMessage = null;
-    // console.log('loadPendingWalletCount: Fetching pending wallet count...');
-    this.walletService.getPendingWalletCount().subscribe({
-      next: (count: number) => {
-        // console.log('loadPendingWalletCount: Pending wallet count received:', count);
-        this.pendingWalletCount = count;
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        const message = error.status ? `Failed to load pending wallet count: ${error.status} ${error.statusText}` : 'Failed to load pending wallet count: Server error';
-        this.showErrorMessage(message);
-        console.error('Error loading pending wallet count:', error);
-      }
-    });
-  }
+  
 
   loadWalletStats(): void {
     this.errorMessage = null;
