@@ -59,7 +59,7 @@ export const routes: Routes = [
     path: 'admin', 
     component: SideNavComponent, 
     canActivate: [AuthGuard],
-    data: { requiredRole: 'ROLE_ADMIN' },
+    data: { requiredRole: 'ROLE_USER' },
     children:
     [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

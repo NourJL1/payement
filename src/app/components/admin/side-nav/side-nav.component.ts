@@ -17,7 +17,7 @@ export class SideNavComponent implements OnInit{
   isCollapsed = false;
   fullname = localStorage.getItem('fullname');
   username = localStorage.getItem('username')
-  role = localStorage.getItem('role')
+  //authorities: string[] = localStorage.getItem('authorities')
 
   toggleSidebar(): void {
     this.isCollapsed = !this.isCollapsed;

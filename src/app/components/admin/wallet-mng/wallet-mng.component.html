@@ -180,11 +180,11 @@
                     class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                     <i class="ri-eye-line text-lg"></i>
                   </button>
-                    
-                    <button (click)="deleteWallet(wallet)"
-                        class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
-                        <i class="ri-delete-bin-line text-lg"></i>
-                    </button>
+
+                  <button (click)="deleteWallet(wallet)"
+                    class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                    <i class="ri-delete-bin-line text-lg"></i>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -257,7 +257,8 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i class="ri-search-line text-gray-400"></i>
           </div>
-          <input type="text" placeholder="Search..." [(ngModel)]="statusSearchTerm" name="statusSearchTerm" (input)="searchStatus()"
+          <input type="text" placeholder="Search..." [(ngModel)]="statusSearchTerm" name="statusSearchTerm"
+            (input)="searchStatus()"
             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
         <button id="btn-add-status" (click)="toggleForm('wallet-status')"
@@ -365,7 +366,8 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i class="ri-search-line text-gray-400"></i>
           </div>
-          <input type="text" placeholder="Search..." [(ngModel)]="typeSearchTerm" name="typeSearchTerm" (input)="searchType()"
+          <input type="text" placeholder="Search..." [(ngModel)]="typeSearchTerm" name="typeSearchTerm"
+            (input)="searchType()"
             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
         <button id="btn-add-type" (click)="toggleForm('wallet-type')"
@@ -472,7 +474,8 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i class="ri-search-line text-gray-400"></i>
           </div>
-          <input type="text" placeholder="Search..." [(ngModel)]="categorySearchTerm" name="categorySearchTerm" (input)="searchCategory()"
+          <input type="text" placeholder="Search..." [(ngModel)]="categorySearchTerm" name="categorySearchTerm"
+            (input)="searchCategory()"
             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
         <button id="btn-add-category" (click)="toggleForm('wallet-category')"
@@ -1252,7 +1255,7 @@
 
 <!-- Modals -->
 <div *ngIf="isAnyModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[50] ">
-  
+
   <!-- Wallet Detail Modal -->
   <div *ngIf="isWalletDetailsVisible" id="wallet-detail-modal"
     class="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] overflow-hidden">
@@ -1280,7 +1283,8 @@
             <div class="space-y-3">
               <div class="flex justify-between">
                 <span class="text-sm text-gray-500">Status:</span>
-                <span class="text-sm font-medium px-2 rounded-full status-active">{{ selectedWallet.walletStatus!.wstLabe
+                <span class="text-sm font-medium px-2 rounded-full status-active">{{
+                  selectedWallet.walletStatus!.wstLabe
                   }}</span>
               </div>
               <div class="flex justify-between">
@@ -1902,8 +1906,8 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
       <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h3 class="text-lg font-medium text-gray-900">{{isCategoryEditMode ? 'Edit Wallet Category' : 'Add Wallet
-          Category'}}</h3>
+        <h3 class="text-lg font-medium text-gray-900">
+          {{isCategoryEditMode ? 'Edit Wallet Category' : 'Add Wallet Category'}}</h3>
         <button id="close-category-modal" (click)="closeForm('wallet-category')"
           class="text-gray-400 hover:text-gray-500">
           <div class="w-6 h-6 flex items-center justify-center">
@@ -2069,7 +2073,6 @@
     </div>
   </div>
 
-
   <!-- Add Card List Modal -->
   <div *ngIf="isCardListVisible" id="add-list-modal"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -2118,6 +2121,7 @@
       </div>
     </div>
   </div>
+
   <!-- Create account Modal -->
   <div *ngIf="isAccountFormVisible" id="create-card-modal" class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
@@ -2198,13 +2202,14 @@
         Account</button>
     </div>
   </div>
+
   <!-- Add/Edit Account Type Modal -->
   <div *ngIf="isAccountTypeVisible" id="add-type-modal"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
       <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h3 class="text-lg font-medium text-gray-900">{{ isAccountTypeEditMode ? 'Edit Account Type' : 'Add Account
-          Type' }}</h3>
+        <h3 class="text-lg font-medium text-gray-900">
+          {{ isAccountTypeEditMode ? 'Edit Account Type' : 'Add Account Type' }}</h3>
         <button id="close-type-modal" (click)="closeForm('account-type')" class="text-gray-400 hover:text-gray-500">
           <div class="w-6 h-6 flex items-center justify-center">
             <i class="ri-close-line"></i>
@@ -2245,6 +2250,7 @@
       </div>
     </div>
   </div>
+  
   <!-- Add account list Modal -->
   <div *ngIf="isAccountListVisible" id="add-type-modal"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

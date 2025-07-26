@@ -1,32 +1,27 @@
-import { Role } from './role';
-import { Wallet } from './wallet';
-export class User {
-  id: number;
-  username: string;
-  password: string;
-  fullname: string;
-  phoneNbr: string;
-  email: string | null;
-  roles: Role[]; // Roles are represented as an array of Role objects
-  wallet?: Wallet;
+import { UserProfile } from "./user-profile"
 
-  constructor(
-    id: number,
-    username: string,
-    password: string,
-    fullname: string,
-    phoneNbr: string,
-    email: string | null,
-    roles: Role[],
-    wallet: Wallet,
-  ) {
-    this.id = id;
-    this.username = username;
-    this.password = password;
-    this.fullname = fullname;
-    this.phoneNbr = phoneNbr;
-    this.email = email;
-    this.roles = roles;
-    this.wallet = wallet;
-  }
+export class User {
+
+    code?: number
+    login?: string
+    password?: string
+    firstName?: string
+    middleName?: string
+    lastName?: string
+    function?: string
+    statusCode?: number
+    phone?: string
+    fax?: string
+    email?: string
+    profile?: UserProfile
+
+    get fullName(): string {
+        return this.middleName ? this.firstName + ' ' + this.middleName + ' ' + this.lastName : this.firstName + ' ' + this.lastName;
+      }
+    
+      constructor(init?: Partial<User>) {
+        this.profile = new UserProfile();
+        Object.assign(this, init);
+      }
+
 }

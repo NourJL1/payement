@@ -880,7 +880,7 @@
                         </div>
                     </div>
 
-                    <div class="form-field">
+                    <div class="form-field" *ngIf="!selectedCustomer">
                         <label class="form-label flex items-center">
                             Username
                             <span class="text-primary ml-1">*</span>
@@ -973,8 +973,13 @@
                         </label>
                         <!-- Phone input would go here -->
                         <div class="relative">
-                            <input class="form-input pl-10" type="tel" [(ngModel)]="customerForm.cusPhoneNbr"
-                                (blur)="phoneExists()" name="cusPhoneNumber" required>
+                            <!-- <input class="form-input pl-10" type="tel" [(ngModel)]="customerForm.cusPhoneNbr"
+                                (blur)="phoneExists()" name="cusPhoneNbr" required> -->
+                            <ngx-intl-tel-input class="form-input pl-10" name="cusPhoneNbr" (ngModelChange)="phoneExists()"
+                                [formControl]="phoneForm.controls['phone']"
+                                [preferredCountries]="customerForm.country ? [customerForm.country.ctrIden!.substring(4,6).toLocaleLowerCase()] : ['us']"
+                                [enablePlaceholder]="true" [separateDialCode]="true" required>
+                            </ngx-intl-tel-input>
                         </div>
                         <div class="error-message" id="phoneRef"></div>
                     </div>
@@ -1010,10 +1015,12 @@
                             <span class="text-primary ml-1">*</span>
                         </label>
                         <div class="relative">
-                            <input class="form-input pl-10 pr-10" #confirm="ngModel" [(ngModel)]="confirmPassword" name="confirmPassword" type="password"
-                                [disabled]="!customerForm.cusMotDePasse" [required]="customerForm.cusMotDePasse != confirm.value" minlength="6">
+                            <input class="form-input pl-10 pr-10" #confirm="ngModel" [(ngModel)]="confirmPassword"
+                                name="confirmPassword" type="password" [disabled]="!customerForm.cusMotDePasse"
+                                [required]="customerForm.cusMotDePasse != confirm.value" minlength="6">
                         </div>
-                        <div *ngIf="CustomerForm.submitted && customerForm.cusMotDePasse !== confirm.value" class="error">
+                        <div *ngIf="CustomerForm.submitted && customerForm.cusMotDePasse !== confirm.value"
+                            class="error">
                             Passwords don't match
                         </div>
                     </div>
@@ -1300,7 +1307,7 @@
                             <!-- Document List -->
                             <div class="space-y-3">
                                 <div *ngFor="let doc of selectedCustomer?.identity?.customerDocListe?.customerDocs; let i = index"
-                                    (click)="previewDocument(doc, i)"
+                                    (click)="previewDocument(doc)"
                                     class="document-item group flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                                     <div class="flex items-center">
                                         <div

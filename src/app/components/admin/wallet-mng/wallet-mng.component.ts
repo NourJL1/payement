@@ -403,7 +403,7 @@ export class WalletMngComponent implements OnInit {
       next: (types: WalletType[]) => {
         // console.log('loadWalletTypes: Wallet types received:', types);
         this.walletTypesList = types;
-        this.filteredWalletTypes = [...this.walletTypesList]; // ✅ corrected here
+        this.filteredWalletTypes = this.walletTypesList; // ✅ corrected here
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';  // Import FormsModule
 import { CommonModule } from '@angular/common';  // Import CommonModule
 import { CustomerService } from '../../services/customer.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -25,7 +26,7 @@ export class ForgotPasswordComponent {
   password: string = ''
   confirm: string = ''
 
-  constructor(private customerService: CustomerService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   sendCode() {
     this.errorMessage = '';
@@ -33,7 +34,7 @@ export class ForgotPasswordComponent {
     this.isEmailSent = false;  // Reset the flag when submitting the form
     this.isLoading = true;  // Show loading indicator
 
-    this.customerService.sendEmail(this.email, "Reset Password").subscribe({
+    this.authService.sendEmail(this.email, "Reset Password").subscribe({
       next: (result: any) => {
         if (result.message != 'success')
           this.errorMessage = result.message;
@@ -42,19 +43,18 @@ export class ForgotPasswordComponent {
           this.isEmailSent = true;  // Set flag to true when email is sent successfully
         }
         //localStorage.setItem('cusCode', value.cusCode)
+        this.isLoading = false
       },
       error: (err) => {
         this.errorMessage = 'Failed to send email. Please try again.';
         console.error('mailing Failed: ', err);
-      },
-      complete: () => {
         this.isLoading = false;  // Hide loading indicator
       }
     });
   }
 
   verifyCode() {
-    this.customerService.verifyOTP(this.email, this.code).subscribe({
+    this.authService.verifyOTP(this.email, this.code).subscribe({
       next: (verif: boolean) => {
         this.isVerified = verif; // Direct assignment (no .valueOf needed)
         console.log('OTP Verification Result:', verif);
@@ -82,9 +82,9 @@ export class ForgotPasswordComponent {
     if (this.password != this.confirm)
       this.errorMessage = 'Passwords do not match';
     else {
-      this.customerService.getCustomerByEmail(this.email).subscribe({
-        next: (value: any) => {
-          this.customerService.resetPassword(Number(value.cusCode), this.password).subscribe(
+      /* this.authService.getByEmail(this.email).subscribe({
+        next: (value: any) => { */
+          this.authService.resetPassword(this.email, this.password).subscribe(
             {
               next: (result: any) => {
                 if (result.message == "success") {
@@ -100,8 +100,8 @@ export class ForgotPasswordComponent {
               },
             }
           );
-        }
-      })
+        /* }
+      }) */
     }
   }
 }

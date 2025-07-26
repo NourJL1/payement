@@ -9,7 +9,6 @@ import { CountryService } from '../../services/country.service';
 import { CityService } from '../../services/city.service';
 import { Country } from '../../entities/country';
 import { City } from '../../entities/city';
-import { WalletService } from '../../services/wallet.service';
 import { CustomerIdentityTypeService } from '../../services/customer-identity-type.service';
 import { CustomerIdentityType } from '../../entities/customer-identity-type';
 import { DocTypeService } from '../../services/doc-type.service';
@@ -18,6 +17,7 @@ import { CustomerDoc } from '../../entities/customer-doc';
 import { CustomerDocService } from '../../services/customer-doc.service';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { CustomerIdentityService } from '../../services/customer-identity.service';
+import { AuthService } from '../../services/auth.service';
 
 interface PhoneNumber {
   internationalNumber: string;
@@ -45,6 +45,7 @@ export class RegisterComponent {
 
   constructor(
     private customerService: CustomerService,
+    private authService: AuthService,
     private countryService: CountryService,
     private cityService: CityService,
     private customerIdentityTypeService: CustomerIdentityTypeService,
@@ -122,12 +123,13 @@ export class RegisterComponent {
     this.customerService.register(this.customer).subscribe({
       next: (customer: Customer) => {
 
-        const customerDocs: CustomerDoc[] = this.customer.identity?.customerDocListe?.customerDocs || [];
-        for (let i = 0; i < customerDocs.length; i++) {
-          customerDocs[i].customerDocListe = customer.identity?.customerDocListe
-          this.customerDocService.create(customerDocs[i], this.files[i]).subscribe({
+        //const customerDocs: CustomerDoc[] = this.customer.identity?.customerDocListe?.customerDocs || [];
+        for (let i = 0; i < this.customerDocs.length; i++) {
+          this.customerDocs[i].customerDocListe = customer.identity?.customerDocListe
+          console.log(i+": "+this.customerDocs[i].cdoLabe+", "+this.customerDocs[i].docType?.dtyLabe)
+          this.customerDocService.create(this.customerDocs[i], this.files[i]).subscribe({
             next: () => { console.log("docs succ") },
-            error: (err) => { console.log(err) }
+            error: (err) => { this.errorMessage = (err) }
           })
         }
         this.successMessage = 'Registration successful!';
@@ -152,10 +154,12 @@ export class RegisterComponent {
         this.customerDocs.push(new CustomerDoc({
           cdoLabe: file.name,
           docType: matchedDocType,
+          //customerDocListe: this.customer.identity?.customerDocListe
         }))
         this.files.push(file)
       }))
     }
+      console.log(this.customerDocs)
   }
 
   toggleEdit() {
@@ -246,7 +250,7 @@ export class RegisterComponent {
       }
 
       const phoneValue = phoneControl.value as PhoneNumber;
-      this.customer.cusPhoneNbr = phoneValue.e164Number;
+      this.customer.cusPhoneNbr = phoneValue.internationalNumber;
 
       // Async phone check
       //const phoneTaken = await this.phoneExists().toPromise();
@@ -308,7 +312,7 @@ export class RegisterComponent {
 
     this.isOtpLoading = true
 
-    this.customerService.sendEmail(this.customer.cusMailAddress, "TOTP").subscribe({
+    this.authService.sendEmail(this.customer.cusMailAddress, "TOTP").subscribe({
       next: (result: any) => {
         console.log('OTP sent result:', result.message);
         if (result.message != 'success')
@@ -335,7 +339,7 @@ export class RegisterComponent {
       return;
     }
 
-    this.customerService.verifyOTP(this.customer.cusMailAddress, this.otpCode).subscribe({
+    this.authService.verifyOTP(this.customer.cusMailAddress, this.otpCode).subscribe({
       next: (verif: boolean) => {
         this.otpVerified = verif; // Direct assignment (no .valueOf needed)
         console.log('OTP Verification Result:', verif);

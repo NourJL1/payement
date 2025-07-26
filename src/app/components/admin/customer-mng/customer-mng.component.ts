@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CountryService } from '../../../services/country.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Customer, CustomerService } from '../../../services/customer.service';
@@ -21,10 +21,22 @@ import { WalletTypeService } from '../../../services/wallet-type.service';
 import { WalletType } from '../../../entities/wallet-type';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { CustomerIdentityService } from '../../../services/customer-identity.service';
+import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+import { AuthService } from '../../../services/auth.service';
+
+interface PhoneNumber {
+  internationalNumber: string;
+  nationalNumber: string;
+  e164Number: string;
+  countryCode: string;
+  dialCode: string;
+  number: string;
+  isNumberValid?: boolean;
+}
 
 @Component({
   selector: 'app-customer-mng',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxIntlTelInputModule],
   templateUrl: './customer-mng.component.html',
   styleUrl: './customer-mng.component.css'
 })
@@ -32,10 +44,11 @@ export class CustomerMngComponent {
 
   constructor(
     private http: HttpClient,
+    private authService: AuthService,
     private customerService: CustomerService,
     private customerStatusService: CustomerStatusService,
     private customerIdentityTypeService: CustomerIdentityTypeService,
-    private customerIdentityService: CustomerIdentityService, 
+    private customerIdentityService: CustomerIdentityService,
     private customerDocService: CustomerDocService,
     private docTypeService: DocTypeService,
     private countryService: CountryService,
@@ -68,7 +81,7 @@ export class CustomerMngComponent {
   identityTypes: CustomerIdentityType[] = [] // List of customer identity types
   filteredIdentityTypes: CustomerIdentityType[] = [] // Filtered list of customer identity types
 
-  docTypeList: DocType[] = [] // List of document types in db
+  docTypeList: DocType[] = [] // List of document types not in db
   filteredDocTypes: DocType[] = [] // Filtered list of document types
 
 
@@ -98,6 +111,8 @@ export class CustomerMngComponent {
 
   files: File[] = []
   customerDocs: CustomerDoc[] = [] // List of customer documents
+
+  confirmPassword?: String
 
   allowedDocTypes: string[] = [] // List of allowed document types
 
@@ -151,6 +166,7 @@ export class CustomerMngComponent {
           .subscribe((response) => {
             const allDocTypes: DocType[] = response.documentTypes
             this.docTypeList = allDocTypes.filter((docType: DocType) => !this.docTypes.some(dty => dty.dtyIden === docType.dtyIden))
+            //this.filteredDocTypes = this.docTypes
             this.allowedDocTypes = this.docTypes.map(type => type.dtyIden!)
           });
       },
@@ -224,14 +240,24 @@ export class CustomerMngComponent {
   editCustomer(customer: Customer) {
     this.selectedCustomer = customer
     this.customerForm = { ...customer, fullName: customer.fullName }
+
+    const phone = customer.cusPhoneNbr!
+    this.phoneForm.get('phone')!.setValue({
+      e164Number: phone.replace(" ", ""),
+      internationalNumber: phone,
+      nationalNumber: phone.substring(phone.indexOf(" ")+1, phone.length),
+      countryCode: customer.country!.ctrIden!.substring(4,6),
+      dialCode: phone.substring(0, phone.indexOf(" ")-1),
+      number: phone.substring(phone.indexOf(" ")+1, phone.length)
+    });
+
     this.onCountryChange(customer.country!);
     this.customerDocs = []
     this.files = []
-    this.isAddCustomerVisible = true
+    this.isAddCustomerVisible = true;
+    (document.getElementById("phoneRef") as HTMLDivElement).innerHTML = ''
     this.cdr.detectChanges();
   }
-
-  confirmPassword?: String
 
   addCustomer() {
     const emailRef = document.getElementById("emailRef") as HTMLDivElement
@@ -242,7 +268,7 @@ export class CustomerMngComponent {
       this.showErrorMessage("Some fields are already in use!")
       return
     }
-    if(this.customerForm.cusMotDePasse != this.confirmPassword){
+    if (this.customerForm.cusMotDePasse != this.confirmPassword) {
       this.showErrorMessage("Passwords mismatch!")
       return
     }
@@ -263,6 +289,7 @@ export class CustomerMngComponent {
         this.customerForm = new Customer();
         this.citiesByCountry = [];
         this.files = [];
+        this.confirmPassword = ''
         this.isAddCustomerVisible = false;
         this.showSuccessMessage('Customer added successfully');
         this.cdr.detectChanges();
@@ -277,8 +304,8 @@ export class CustomerMngComponent {
   updateCustomer() {
     const emailRef = document.getElementById("emailRef") as HTMLDivElement
     const phoneRef = document.getElementById("phoneRef") as HTMLDivElement
-    const usernameRef = document.getElementById("usernameRef") as HTMLDivElement
-    if (usernameRef.innerHTML || phoneRef.innerHTML || emailRef.innerHTML) {
+    //const usernameRef = document.getElementById("usernameRef") as HTMLDivElement
+    if (/* usernameRef.innerHTML ||  */phoneRef.innerHTML || emailRef.innerHTML) {
       this.showErrorMessage("Some fields are already in use!")
       return
     }
@@ -294,6 +321,7 @@ export class CustomerMngComponent {
         this.selectedCustomer = undefined;
         this.citiesByCountry = [];
         this.files = [];
+        this.confirmPassword = ''
         this.isAddCustomerVisible = false;
         this.showSuccessMessage('Customer updated successfully');
         this.cdr.detectChanges();
@@ -321,7 +349,6 @@ export class CustomerMngComponent {
         this.customerDocs.push(new CustomerDoc({
           cdoLabe: file.name,
           docType: matchedDocType,
-          //customerDocListe: this.customerForm.identity?.customerDocListe
         }))
         this.files.push(file)
       }))
@@ -373,7 +400,7 @@ export class CustomerMngComponent {
   usernameExists() {
     if (!this.customerForm.username)
       return
-    return this.customerService.existsByUsername(this.customerForm.username).subscribe({
+    return this.authService.existsByUsername(this.customerForm.username).subscribe({
       next: (response) => {
         const fieldRef = document.getElementById("usernameRef") as HTMLDivElement
         fieldRef.innerHTML = response ? 'Username already in use' : '';
@@ -383,11 +410,27 @@ export class CustomerMngComponent {
   }
 
   phoneExists() {
-    if (!this.customerForm.cusPhoneNbr)
+    const fieldRef = document.getElementById("phoneRef") as HTMLDivElement
+    const phoneControl = this.phoneForm.get('phone');
+
+    if (!phoneControl?.value) {
+      this.showErrorMessage('Please enter a phone number.')
+      return;
+    }
+
+    // Check if the control is invalid
+    if (phoneControl.invalid) {
+      this.showErrorMessage('Please enter a valid phone number.')
+      return;
+    }
+
+    const phoneValue = phoneControl.value as PhoneNumber;
+    this.customerForm.cusPhoneNbr = phoneValue.internationalNumber as string;
+
+    if (!this.customerForm.cusPhoneNbr || this.customerForm.cusPhoneNbr == this.selectedCustomer?.cusPhoneNbr)
       return
-    return this.customerService.existsByPhone(this.customerForm.cusPhoneNbr).subscribe({
+    return this.authService.existsByPhone(this.customerForm.cusPhoneNbr).subscribe({
       next: (response) => {
-        const fieldRef = document.getElementById("phoneRef") as HTMLDivElement
         fieldRef.innerHTML = response ? 'Phone number already in use' : '';
       },
       error: (err) => { console.log(err.message); return of(false) }
@@ -397,7 +440,7 @@ export class CustomerMngComponent {
   emailExists() {
     if (!this.customerForm.cusMailAddress)
       return
-    return this.customerService.existsByEmail(this.customerForm.cusMailAddress).subscribe({
+    return this.authService.existsByEmail(this.customerForm.cusMailAddress).subscribe({
       next: (response) => {
         const fieldRef = document.getElementById("emailRef") as HTMLDivElement
         fieldRef.innerHTML = response ? 'Email already in use' : '';
@@ -406,7 +449,7 @@ export class CustomerMngComponent {
     });
   }
 
-  idNumExists(){
+  idNumExists() {
     if (!this.customerForm.identity?.cidNum)
       return
     return this.customerIdentityService.existsByCidNum(this.customerForm.identity.cidNum).subscribe({
@@ -417,6 +460,30 @@ export class CustomerMngComponent {
       error: (err) => { console.log(err.message); return of(false) }
     });
   }
+
+  // ======================
+  // PHONE NUMBER RELATED CODE
+  // ======================
+
+  // Phone Form Control
+  phoneForm = new FormGroup({
+    phone: new FormControl<PhoneNumber | null>(null)
+  });
+
+  // Custom phone number validator
+/*   private validatePhoneNumber(control: AbstractControl) {
+    const phoneValue = control.value as PhoneNumber | null;
+    if (!phoneValue) {
+      return { required: true };
+    }
+    if (!phoneValue.e164Number) {
+      return { invalidFormat: true };
+    }
+    if (phoneValue.isNumberValid === false) {
+      return { invalidNumber: true };
+    }
+    return null;
+  } */
 
   // status methods
 
@@ -592,9 +659,19 @@ export class CustomerMngComponent {
     this.docTypeService.create(this.docTypeForm).subscribe({
       next: (docType: DocType) => {
         console.log('add Doc Type: identity added:', docType);
+
+        // 1. Add to DB list and filtered list
         this.docTypes.push(docType);
+        //this.filteredDocTypes.push(docType);
+
+        // 2. Add to allowed types (if needed)
         this.allowedDocTypes.push(docType.dtyIden!);
-        this.docTypeForm = new DocType();
+
+        // 3. Remove from non-DB list (docTypeList)
+        this.docTypeList = this.docTypeList.filter(
+          item => item.dtyIden !== docType.dtyIden
+        );
+
         this.isDocTypeVisible = false;
         this.showSuccessMessage('Document type added successfully');
         this.cdr.detectChanges();
@@ -835,6 +912,7 @@ export class CustomerMngComponent {
     switch (modal) {
       case 'customer-add':
         this.citiesByCountry = [];
+        this.confirmPassword = ''
         this.isAddCustomerVisible = false;
         break;
       case 'customer-details': this.isUserDetailsVisible = false; break;
@@ -888,7 +966,7 @@ export class CustomerMngComponent {
 
   fileData: any
 
-  previewDocument(customerDoc: CustomerDoc, index: number) {
+  previewDocument(customerDoc: CustomerDoc) {
     this.customerDocService.getFileById(customerDoc.cdoCode!)
   }
 
