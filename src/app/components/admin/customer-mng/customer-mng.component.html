@@ -975,7 +975,7 @@
                         <div class="relative">
                             <!-- <input class="form-input pl-10" type="tel" [(ngModel)]="customerForm.cusPhoneNbr"
                                 (blur)="phoneExists()" name="cusPhoneNbr" required> -->
-                            <ngx-intl-tel-input class="form-input pl-10" name="cusPhoneNbr" (valueChange) ="phoneExists()"
+                            <ngx-intl-tel-input class="form-input pl-10" name="cusPhoneNbr" (ngModelChange)="phoneExists()"
                                 [formControl]="phoneForm.controls['phone']"
                                 [preferredCountries]="customerForm.country ? [customerForm.country.ctrIden!.substring(4,6).toLocaleLowerCase()] : ['us']"
                                 [enablePlaceholder]="true" [separateDialCode]="true" required>

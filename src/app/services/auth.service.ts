@@ -18,6 +18,19 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/login`, { username, password });
   }
 
+  existsByEmail(email: string){
+    return this.http.get<boolean>(`${this.apiUrl}/existsByEmail/${email}`)
+  }
+
+  existsByUsername(username: string) {
+    return this.http.get<boolean>(`${this.apiUrl}/existsByUsername/${username}`);
+  }
+
+  existsByPhone(phone: string) {
+    console.log(`${this.apiUrl}/existsByCusPhoneNbr/${phone}`)
+    return this.http.get<boolean>(`${this.apiUrl}/existsByPhone/${phone}`);
+  }
+
   getByEmail(email: string): Observable<any> {
       return this.http.get(
         `${this.apiUrl}/getByEmail/${email}`/* ,

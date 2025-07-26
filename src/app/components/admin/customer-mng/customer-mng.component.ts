@@ -22,6 +22,7 @@ import { WalletType } from '../../../entities/wallet-type';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { CustomerIdentityService } from '../../../services/customer-identity.service';
 import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+import { AuthService } from '../../../services/auth.service';
 
 interface PhoneNumber {
   internationalNumber: string;
@@ -43,6 +44,7 @@ export class CustomerMngComponent {
 
   constructor(
     private http: HttpClient,
+    private authService: AuthService,
     private customerService: CustomerService,
     private customerStatusService: CustomerStatusService,
     private customerIdentityTypeService: CustomerIdentityTypeService,
@@ -164,7 +166,7 @@ export class CustomerMngComponent {
           .subscribe((response) => {
             const allDocTypes: DocType[] = response.documentTypes
             this.docTypeList = allDocTypes.filter((docType: DocType) => !this.docTypes.some(dty => dty.dtyIden === docType.dtyIden))
-            this.filteredDocTypes = this.docTypes
+            //this.filteredDocTypes = this.docTypes
             this.allowedDocTypes = this.docTypes.map(type => type.dtyIden!)
           });
       },
@@ -238,10 +240,22 @@ export class CustomerMngComponent {
   editCustomer(customer: Customer) {
     this.selectedCustomer = customer
     this.customerForm = { ...customer, fullName: customer.fullName }
+
+    const phone = customer.cusPhoneNbr!
+    this.phoneForm.get('phone')!.setValue({
+      e164Number: phone.replace(" ", ""),
+      internationalNumber: phone,
+      nationalNumber: phone.substring(phone.indexOf(" ")+1, phone.length),
+      countryCode: customer.country!.ctrIden!.substring(4,6),
+      dialCode: phone.substring(0, phone.indexOf(" ")-1),
+      number: phone.substring(phone.indexOf(" ")+1, phone.length)
+    });
+
     this.onCountryChange(customer.country!);
     this.customerDocs = []
     this.files = []
-    this.isAddCustomerVisible = true
+    this.isAddCustomerVisible = true;
+    (document.getElementById("phoneRef") as HTMLDivElement).innerHTML = ''
     this.cdr.detectChanges();
   }
 
@@ -335,7 +349,6 @@ export class CustomerMngComponent {
         this.customerDocs.push(new CustomerDoc({
           cdoLabe: file.name,
           docType: matchedDocType,
-          //customerDocListe: this.customerForm.identity?.customerDocListe
         }))
         this.files.push(file)
       }))
@@ -387,7 +400,7 @@ export class CustomerMngComponent {
   usernameExists() {
     if (!this.customerForm.username)
       return
-    return this.customerService.existsByUsername(this.customerForm.username).subscribe({
+    return this.authService.existsByUsername(this.customerForm.username).subscribe({
       next: (response) => {
         const fieldRef = document.getElementById("usernameRef") as HTMLDivElement
         fieldRef.innerHTML = response ? 'Username already in use' : '';
@@ -412,13 +425,11 @@ export class CustomerMngComponent {
     }
 
     const phoneValue = phoneControl.value as PhoneNumber;
-    this.customerForm.cusPhoneNbr = phoneValue.e164Number;
+    this.customerForm.cusPhoneNbr = phoneValue.internationalNumber as string;
 
-    this.showSuccessMessage(this.customerForm.cusPhoneNbr)
-
-    if (!this.customerForm.cusPhoneNbr)
+    if (!this.customerForm.cusPhoneNbr || this.customerForm.cusPhoneNbr == this.selectedCustomer?.cusPhoneNbr)
       return
-    return this.customerService.existsByPhone(this.customerForm.cusPhoneNbr).subscribe({
+    return this.authService.existsByPhone(this.customerForm.cusPhoneNbr).subscribe({
       next: (response) => {
         fieldRef.innerHTML = response ? 'Phone number already in use' : '';
       },
@@ -429,7 +440,7 @@ export class CustomerMngComponent {
   emailExists() {
     if (!this.customerForm.cusMailAddress)
       return
-    return this.customerService.existsByEmail(this.customerForm.cusMailAddress).subscribe({
+    return this.authService.existsByEmail(this.customerForm.cusMailAddress).subscribe({
       next: (response) => {
         const fieldRef = document.getElementById("emailRef") as HTMLDivElement
         fieldRef.innerHTML = response ? 'Email already in use' : '';
@@ -456,14 +467,11 @@ export class CustomerMngComponent {
 
   // Phone Form Control
   phoneForm = new FormGroup({
-    phone: new FormControl<PhoneNumber | null>(null, [
-      Validators.required,
-      this.validatePhoneNumber
-    ])
+    phone: new FormControl<PhoneNumber | null>(null)
   });
 
   // Custom phone number validator
-  private validatePhoneNumber(control: AbstractControl) {
+/*   private validatePhoneNumber(control: AbstractControl) {
     const phoneValue = control.value as PhoneNumber | null;
     if (!phoneValue) {
       return { required: true };
@@ -475,7 +483,7 @@ export class CustomerMngComponent {
       return { invalidNumber: true };
     }
     return null;
-  }
+  } */
 
   // status methods
 
@@ -654,7 +662,7 @@ export class CustomerMngComponent {
 
         // 1. Add to DB list and filtered list
         this.docTypes.push(docType);
-        this.filteredDocTypes.push(docType);
+        //this.filteredDocTypes.push(docType);
 
         // 2. Add to allowed types (if needed)
         this.allowedDocTypes.push(docType.dtyIden!);

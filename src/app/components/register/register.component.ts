@@ -250,7 +250,7 @@ export class RegisterComponent {
       }
 
       const phoneValue = phoneControl.value as PhoneNumber;
-      this.customer.cusPhoneNbr = phoneValue.e164Number;
+      this.customer.cusPhoneNbr = phoneValue.internationalNumber;
 
       // Async phone check
       //const phoneTaken = await this.phoneExists().toPromise();
