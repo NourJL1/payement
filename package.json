@@ -22,8 +22,8 @@
     "@angular/router": "^19.0.0",
     "@angular/ssr": "^19.0.2",
     "express": "^4.18.2",
+    "intl-tel-input": "^19.5.7",
     "ngx-intl-tel-input": "^17.0.0",
-  "intl-tel-input": "^19.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
