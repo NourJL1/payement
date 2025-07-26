@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CustomerService } from '../../../services/customer.service'; // Adjust the path as needed
+import { WalletService } from '../../../services/wallet.service';
+import { Wallet } from '../../../entities/wallet';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,10 +18,16 @@ export class DashboardComponent implements OnInit {
   totalCustomersPercentage: string = '0%';
   activeCustomersPercentage: string = '0%';
   newCustomersPercentage: string = '0%';
-  growthRatePercentage: string = '0%';
+  activeWalletCount: number = 0;
+  pendingWalletCount: number = 0;
 
-  constructor(private customerService: CustomerService) {
+    errorMessage: string | null = null;
+  successMessage: string | null = null;
+
+
+  constructor(private customerService: CustomerService, private cdr: ChangeDetectorRef, private walletService: WalletService) {
     const today = new Date();
+    
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
       month: 'long',
@@ -26,10 +35,15 @@ export class DashboardComponent implements OnInit {
       year: 'numeric',
     };
     this.currentDate = today.toLocaleDateString('en-US', options);
+
+    
   }
 
   ngOnInit(): void {
     this.loadCustomerCounts();
+    
+    this.loadActiveWalletCount();
+    this.loadPendingWalletCount();
   }
 
   loadCustomerCounts(): void {
@@ -63,14 +77,61 @@ export class DashboardComponent implements OnInit {
       error: (err: any) => console.error('Error fetching new customers today:', err),
     });
 
-    // Fetch growth rate
-    this.customerService.getGrowthRate().subscribe({
-      next: (rate: number) => {
-        this.growthRate = rate;
-        // Placeholder for percentage change logic
-        this.growthRatePercentage = '1.2%'; // Replace with actual logic if available
+    
+  }
+
+  loadActiveWalletCount(): void {
+    this.errorMessage = null;
+    // console.log('loadActiveWalletCount: Fetching active wallet count...');
+    this.walletService.getActiveWalletCount().subscribe({
+      next: (count: number) => {
+        // console.log('loadActiveWalletCount: Active wallet count received:', count);
+        this.activeWalletCount = count;
+        this.cdr.detectChanges();
       },
-      error: (err: any) => console.error('Error fetching growth rate:', err),
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to load active wallet count: ${error.status} ${error.statusText}` : 'Failed to load active wallet count: Server error';
+        this.showErrorMessage(message);
+        console.error('Error loading active wallet count:', error);
+      }
     });
+  }
+    loadPendingWalletCount(): void {
+    this.errorMessage = null;
+    // console.log('loadPendingWalletCount: Fetching pending wallet count...');
+    this.walletService.getPendingWalletCount().subscribe({
+      next: (count: number) => {
+        // console.log('loadPendingWalletCount: Pending wallet count received:', count);
+        this.pendingWalletCount = count;
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to load pending wallet count: ${error.status} ${error.statusText}` : 'Failed to load pending wallet count: Server error';
+        this.showErrorMessage(message);
+        console.error('Error loading pending wallet count:', error);
+      }
+    });
+  }
+
+  // Show error message
+  showErrorMessage(message: string): void {
+    // console.log('showErrorMessage:', message);
+    this.errorMessage = message;
+    this.successMessage = null;
+    setTimeout(() => {
+      this.errorMessage = null;
+      this.cdr.detectChanges();
+    }, 3000);
+  }
+
+  // Show success message
+  showSuccessMessage(message: string): void {
+    // console.log('showSuccessMessage:', message);
+    this.successMessage = message;
+    this.errorMessage = null;
+    setTimeout(() => {
+      this.successMessage = null;
+      this.cdr.detectChanges();
+    }, 3000);
   }
 }

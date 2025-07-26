@@ -86,13 +86,19 @@
           <input class="form-input" [(ngModel)]="customer.cusAddress" name="cusAddress" type="text" required>
         </div>
 
-        <div class="form-field" *ngIf="phoneForm && phoneForm.controls['phone']">
-          <label class="form-label">Phone Number:</label>
-          <ngx-intl-tel-input [formControl]="phoneForm.controls['phone']" name="cusPhoneNbr"
-            [preferredCountries]="customer.country ? [customer.country.ctrIden!.substring(4,6).toLocaleLowerCase()] : ['us']"
-            [enablePlaceholder]="true" [separateDialCode]="true" required>
-          </ngx-intl-tel-input>
-        </div>
+        <div *ngIf="currentStep === 2" class="form-field">
+  <label class="form-label">Phone Number:</label>
+  <ngx-intl-tel-input
+    [cssClass]="'form-input'"
+    [preferredCountries]="customer.country ? [customer.country.ctrIden!.substring(4,6).toLowerCase()] : ['us']"
+    [enablePlaceholder]="true"
+    [separateDialCode]="true"
+    [ngModel]="phoneForm.get('phone')?.value"
+    (ngModelChange)="onPhoneChange($event)"
+    name="phone"
+    required>
+  </ngx-intl-tel-input>
+</div>
 
       </div>
 

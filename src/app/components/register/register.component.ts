@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { NgxIntlTelInputModule, CountryISO, SearchCountryField } from 'ngx-intl-tel-input';
+import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { CustomerService } from '../../services/customer.service';
 import { Customer } from '../../entities/customer';
 import { CountryService } from '../../services/country.service';
@@ -370,6 +370,10 @@ export class RegisterComponent {
       this.validatePhoneNumber
     ])
   });
+  onPhoneChange(phone: PhoneNumber) {
+  this.phoneForm.get('phone')?.setValue(phone);
+  this.customer.cusPhoneNbr = phone.e164Number;
+}
 
   // Custom phone number validator
   private validatePhoneNumber(control: AbstractControl) {
