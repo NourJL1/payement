@@ -176,7 +176,7 @@ export class DashboardComponent implements OnInit {
           },
           title: {
             display: true,
-            text: 'Customer Distribution by City',
+            text: '',
           },
         },
       },
