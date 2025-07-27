@@ -23,6 +23,7 @@ import { catchError, Observable, of, tap } from 'rxjs';
 import { CustomerIdentityService } from '../../../services/customer-identity.service';
 import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { AuthService } from '../../../services/auth.service';
+import { Router } from "@angular/router";
 
 interface PhoneNumber {
   number?: string;
@@ -55,7 +56,8 @@ export class CustomerMngComponent {
     private cityService: CityService,
     private walletCategoryService: WalletCategoryService,
     private walletTypeService: WalletTypeService,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef,
+    private router: Router) { }
 
   isAddCustomerVisible: boolean = false;
   isUserDetailsVisible: boolean = false;
@@ -128,14 +130,19 @@ export class CustomerMngComponent {
 
 
   ngOnInit(): void {
+    if (history.state?.customerToEdit) {  // <-- Check history.state
+      const customer = history.state.customerToEdit as Customer;
+      this.editCustomer(customer);
+      history.replaceState({}, '');  // <-- This removes the customerToEdit from history
+    }
     this.loadAllCustomers()
     this.loadIdentityTypes()
     this.loadDocTypes()
     this.loadCountries()
     this.loadCities()
-    //this.loadWalletStatuses();
+    /* this.loadWalletStatuses();
     this.loadWalletCategories();
-    this.loadWalletTypes();
+    this.loadWalletTypes(); */
   }
 
   loadAllCustomers() {
@@ -250,7 +257,7 @@ export class CustomerMngComponent {
     this.customerDocs = []
     this.files = []
     this.isAddCustomerVisible = true;
-    (document.getElementById("phoneRef") as HTMLDivElement).innerHTML = ''
+    //(document.getElementById("phoneRef") as HTMLDivElement).innerHTML = ''
     this.cdr.detectChanges();
   }
 
@@ -429,7 +436,7 @@ export class CustomerMngComponent {
       return
     return this.authService.existsByPhone(this.customerForm.cusPhoneNbr).subscribe({
       next: (response) => {
-        fieldRef.innerHTML = response ? 'Phone number already in use' : '';
+        fieldRef.innerHTML = (this.selectedCustomer?.cusPhoneNbr != this.customerForm.cusPhoneNbr && response) ? 'Phone number already in use' : '';
       },
       error: (err) => { console.log(err.message); return of(false) }
     });
@@ -441,7 +448,7 @@ export class CustomerMngComponent {
     return this.authService.existsByEmail(this.customerForm.cusMailAddress).subscribe({
       next: (response) => {
         const fieldRef = document.getElementById("emailRef") as HTMLDivElement
-        fieldRef.innerHTML = response ? 'Email already in use' : '';
+        fieldRef.innerHTML = (this.selectedCustomer?.cusMailAddress != this.customerForm.cusMailAddress && response) ? 'Email already in use' : '';
       },
       error: (err) => { console.log(err.message); return of(false) }
     });
@@ -977,6 +984,7 @@ export class CustomerMngComponent {
   // Show success message
   showSuccessMessage(message: string): void {
     this.successMessage = message;
+    (new Audio('assets/notification.mp3')).play()
     this.errorMessage = null;
     setTimeout(() => {
       this.successMessage = null;
@@ -987,6 +995,7 @@ export class CustomerMngComponent {
   // Show error message
   showErrorMessage(message: string): void {
     this.errorMessage = message;
+    (new Audio('assets/notification.mp3')).play()
     this.successMessage = null;
     setTimeout(() => {
       this.errorMessage = null;
