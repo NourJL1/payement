@@ -25,12 +25,12 @@ import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { AuthService } from '../../../services/auth.service';
 
 interface PhoneNumber {
-  internationalNumber: string;
-  nationalNumber: string;
-  e164Number: string;
-  countryCode: string;
-  dialCode: string;
-  number: string;
+  number?: string;
+  internationalNumber?: string;
+  nationalNumber?: string;
+  e164Number?: string;
+  countryCode?: string;
+  dialCode?: string;
   isNumberValid?: boolean;
 }
 
@@ -242,14 +242,7 @@ export class CustomerMngComponent {
     this.customerForm = { ...customer, fullName: customer.fullName }
 
     const phone = customer.cusPhoneNbr!
-    this.phoneForm.get('phone')!.setValue({
-      number: phone.substring(phone.indexOf(" ")+1, phone.length),
-      internationalNumber: phone,
-      nationalNumber: phone.substring(phone.indexOf(" ")+1, phone.length),
-      e164Number: phone.replace(/[^\d]/g, ''),
-      countryCode: customer.country!.ctrIden!.substring(4,6),
-      dialCode: phone.substring(0, phone.indexOf(" "))
-    });
+    this.phoneForm.get('phone')!.setValue(phone);
 
     console.log(this.phoneForm.get('phone')?.value)
 
@@ -288,6 +281,7 @@ export class CustomerMngComponent {
           })
         }
         this.allCustomers.push(customer);
+        this.filteredCustomers.push(customer)
         this.customerForm = new Customer();
         this.citiesByCountry = [];
         this.files = [];
@@ -416,18 +410,18 @@ export class CustomerMngComponent {
     const phoneControl = this.phoneForm.get('phone');
 
     if (!phoneControl?.value) {
-      this.showErrorMessage('Please enter a phone number.')
+      fieldRef.innerHTML = ('Please enter a phone number.')
       return;
     }
 
     // Check if the control is invalid
     if (phoneControl.invalid) {
-      this.showErrorMessage('Please enter a valid phone number.')
+      fieldRef.innerHTML = ('Please enter a valid phone number.')
       return;
     }
 
     const phoneValue = phoneControl.value as PhoneNumber;
-    this.customerForm.cusPhoneNbr = phoneValue.internationalNumber as string;
+    this.customerForm.cusPhoneNbr = phoneValue.e164Number as string;
 
     //console.log(phoneValue)
 
@@ -471,23 +465,23 @@ export class CustomerMngComponent {
 
   // Phone Form Control
   phoneForm = new FormGroup({
-    phone: new FormControl<PhoneNumber | null>(null)
+    phone: new FormControl()//<PhoneNumber | null>(null)
   });
 
   // Custom phone number validator
-/*   private validatePhoneNumber(control: AbstractControl) {
-    const phoneValue = control.value as PhoneNumber | null;
-    if (!phoneValue) {
-      return { required: true };
-    }
-    if (!phoneValue.e164Number) {
-      return { invalidFormat: true };
-    }
-    if (phoneValue.isNumberValid === false) {
-      return { invalidNumber: true };
-    }
-    return null;
-  } */
+  /*   private validatePhoneNumber(control: AbstractControl) {
+      const phoneValue = control.value as PhoneNumber | null;
+      if (!phoneValue) {
+        return { required: true };
+      }
+      if (!phoneValue.e164Number) {
+        return { invalidFormat: true };
+      }
+      if (phoneValue.isNumberValid === false) {
+        return { invalidNumber: true };
+      }
+      return null;
+    } */
 
   // status methods
 
@@ -917,6 +911,7 @@ export class CustomerMngComponent {
       case 'customer-add':
         this.citiesByCountry = [];
         this.confirmPassword = ''
+        this.phoneForm.get('phone')!.setValue('');
         this.isAddCustomerVisible = false;
         break;
       case 'customer-details': this.isUserDetailsVisible = false; break;

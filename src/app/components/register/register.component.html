@@ -91,6 +91,7 @@
   <ngx-intl-tel-input
     [cssClass]="'form-input'"
     [preferredCountries]="customer.country ? [customer.country.ctrIden!.substring(4,6).toLowerCase()] : ['us']"
+    [searchCountryFlag]="true"
     [enablePlaceholder]="true"
     [separateDialCode]="true"
     [ngModel]="phoneForm.get('phone')?.value"
