@@ -17,7 +17,7 @@ export interface LocalUser {
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = `${environment.apiUrl}/users`;
+  private apiUrl = `${environment.apiUrl}/api/users`;
   private loggedInUserId: number | null = null;
   constructor(private http: HttpClient) {}
 
@@ -31,7 +31,11 @@ export class UserService {
     }),
   };
 }
-
+// Add this method to fetch total user count
+  getTotalUserCount(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/count`);
+  }  
+  
   // Register a new user
   register(user: LocalUser): Observable<User> {
     return this.http.post<User>(

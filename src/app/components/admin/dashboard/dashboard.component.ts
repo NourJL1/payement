@@ -3,7 +3,7 @@ import { CustomerService } from '../../../services/customer.service'; // Adjust 
 import { WalletService } from '../../../services/wallet.service';
 import { Wallet } from '../../../entities/wallet';
 import { HttpErrorResponse } from '@angular/common/http';
-
+import { UserService } from '../../../services/user.service';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -12,6 +12,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class DashboardComponent implements OnInit {
   currentDate: string;
   totalCustomers: number = 0;
+  totalUsers: number = 0; // Assuming you want to track total users as well
   activeCustomers: number = 0;
   newCustomersToday: number = 0;
   growthRate: number = 0;
@@ -25,7 +26,7 @@ export class DashboardComponent implements OnInit {
   successMessage: string | null = null;
 
 
-  constructor(private customerService: CustomerService, private cdr: ChangeDetectorRef, private walletService: WalletService) {
+  constructor(private customerService: CustomerService, private cdr: ChangeDetectorRef, private walletService: WalletService, private userService: UserService) {
     const today = new Date();
     
     const options: Intl.DateTimeFormatOptions = {
@@ -41,10 +42,23 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCustomerCounts();
-    
+    this.loadUserCounts();
     this.loadActiveWalletCount();
     this.loadPendingWalletCount();
   }
+
+  loadUserCounts(): void {
+    this.userService.getTotalUserCount().subscribe({
+      next: (count: number) => {
+        this.totalUsers = count;
+        // Placeholder for percentage change logic
+        this.totalCustomersPercentage = '12.5%'; // Replace with actual logic if available
+      },
+      error: (err: any) => console.error('Error fetching total users:', err),
+    });
+  }
+
+
 
   loadCustomerCounts(): void {
     // Fetch total customers
@@ -134,4 +148,6 @@ export class DashboardComponent implements OnInit {
       this.cdr.detectChanges();
     }, 3000);
   }
+
+  
 }
