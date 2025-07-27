@@ -70,4 +70,14 @@ export class CardService {
       })
     );
   }
+
+  searchCards(searchWord: string): Observable<Card[]> {
+    return this.http.get<Card[]>(`${this.apiUrl}/search?word=${encodeURIComponent(searchWord)}`, { headers: this.getHeaders(true) }).pipe(
+      map(cards => cards.map(card => new Card(card))),
+      catchError(error => {
+        console.error('searchCards: Error:', error);
+        return throwError(() => new Error('Failed to search cards'));
+      })
+    );
+  }
 }
