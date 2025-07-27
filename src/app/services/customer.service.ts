@@ -129,6 +129,10 @@ export class CustomerService {
   search(criteria: any) {
     return this.http.get<Customer[]>(`${this.apiUrl}/search?word=${criteria}`);
   }
-}
 
+
+getCustomerCountByCity(): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(`${this.apiUrl}/count-by-city`);
+  }
+}
 export { Customer };

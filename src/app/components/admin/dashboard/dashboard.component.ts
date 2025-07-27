@@ -3,7 +3,8 @@ import { CustomerService } from '../../../services/customer.service'; // Adjust 
 import { WalletService } from '../../../services/wallet.service';
 import { Wallet } from '../../../entities/wallet';
 import { HttpErrorResponse } from '@angular/common/http';
-
+import { UserService } from '../../../services/user.service';
+import Chart from 'chart.js/auto';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -12,6 +13,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class DashboardComponent implements OnInit {
   currentDate: string;
   totalCustomers: number = 0;
+  totalUsers: number = 0; // Assuming you want to track total users as well
   activeCustomers: number = 0;
   newCustomersToday: number = 0;
   growthRate: number = 0;
@@ -20,12 +22,13 @@ export class DashboardComponent implements OnInit {
   newCustomersPercentage: string = '0%';
   activeWalletCount: number = 0;
   pendingWalletCount: number = 0;
+  customerChart: Chart | undefined;
 
     errorMessage: string | null = null;
   successMessage: string | null = null;
 
 
-  constructor(private customerService: CustomerService, private cdr: ChangeDetectorRef, private walletService: WalletService) {
+  constructor(private customerService: CustomerService, private cdr: ChangeDetectorRef, private walletService: WalletService, private userService: UserService) {
     const today = new Date();
     
     const options: Intl.DateTimeFormatOptions = {
@@ -40,11 +43,31 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('ngOnInit triggered');
     this.loadCustomerCounts();
-    
+    this.loadUserCounts();
     this.loadActiveWalletCount();
     this.loadPendingWalletCount();
+    // Do not initialize chart here; wait for ngAfterViewInit
   }
+
+  ngAfterViewInit(): void {
+    console.log('ngAfterViewInit triggered');
+    this.loadCustomerDistributionByCity();
+  }
+
+  loadUserCounts(): void {
+    this.userService.getTotalUserCount().subscribe({
+      next: (count: number) => {
+        this.totalUsers = count;
+        // Placeholder for percentage change logic
+        this.totalCustomersPercentage = '12.5%'; // Replace with actual logic if available
+      },
+      error: (err: any) => console.error('Error fetching total users:', err),
+    });
+  }
+
+
 
   loadCustomerCounts(): void {
     // Fetch total customers
@@ -113,6 +136,54 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+   loadCustomerDistributionByCity(): void {
+    this.customerService.getCustomerCountByCity().subscribe({
+      next: (cityCounts) => {
+        this.createCustomerChart(cityCounts);
+      },
+      error: (err) => console.error('Error fetching customer distribution:', err),
+    });
+  }
+
+  createCustomerChart(cityCounts: { [key: string]: number }): void {
+    console.log('Creating chart with data:', cityCounts);
+    const ctx = document.getElementById('customerChart') as HTMLCanvasElement;
+    if (!ctx) {
+      console.error('Canvas element #customerChart not found');
+      return;
+    }
+    if (this.customerChart) {
+      this.customerChart.destroy();
+    }
+    this.customerChart = new Chart(ctx, {
+      type: 'doughnut', // Ensure this type is registered
+      data: {
+        labels: Object.keys(cityCounts),
+        datasets: [
+          {
+            data: Object.values(cityCounts),
+            backgroundColor: ['#FFF9B0', '#F4B6C2', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+            hoverOffset: 4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+          },
+          title: {
+            display: true,
+            text: '',
+          },
+        },
+      },
+    });
+    console.log('Chart created successfully');
+  }
+
   // Show error message
   showErrorMessage(message: string): void {
     // console.log('showErrorMessage:', message);
@@ -134,4 +205,6 @@ export class DashboardComponent implements OnInit {
       this.cdr.detectChanges();
     }, 3000);
   }
+
+  
 }
