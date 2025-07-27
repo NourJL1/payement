@@ -68,7 +68,7 @@ export class DashboardComponent implements OnInit {
     });
 
     // Fetch new customers today
-    this.customerService.getNewCustomersToday().subscribe({
+    this.customerService.getNewCustomersTodayCount().subscribe({
       next: (count: number) => {
         this.newCustomersToday = count;
         // Placeholder for percentage change from yesterday

@@ -1023,6 +1023,7 @@ export class WalletMngComponent implements OnInit {
   // Show success message
   showSuccessMessage(message: string): void {
     // console.log('showSuccessMessage:', message);
+      (new Audio('assets/notification.mp3')).play()
     this.successMessage = message;
     this.errorMessage = null;
     setTimeout(() => {
@@ -1034,6 +1035,7 @@ export class WalletMngComponent implements OnInit {
   // Show error message
   showErrorMessage(message: string): void {
     // console.log('showErrorMessage:', message);
+      (new Audio('assets/notification.mp3')).play()
     this.errorMessage = message;
     this.successMessage = null;
     setTimeout(() => {

@@ -45,8 +45,12 @@ export class CustomerService {
     return this.http.get<Customer>(`${this.apiUrl}/${username}`);
   }
 
-  getNewCustomersToday(): Observable<number> {
+  getNewCustomersTodayCount(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/count/new-today`);
+  }
+
+  getNewCustomersToday(): Observable<Customer[]> {
+    return this.http.get<Customer[]>(`${this.apiUrl}/new-today`);
   }
 
   getGrowthRate(): Observable<number> {

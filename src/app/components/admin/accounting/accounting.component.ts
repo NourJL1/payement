@@ -899,6 +899,7 @@ export class AccountingComponent implements OnInit {
 
   showSuccessMessage(message: string): void {
     console.log('showSuccessMessage:', message);
+      (new Audio('assets/notification.mp3')).play()
     this.successMessage = message;
     this.errorMessage = null;
     setTimeout(() => {
@@ -909,6 +910,7 @@ export class AccountingComponent implements OnInit {
 
   showErrorMessage(message: string): void {
     console.log('showErrorMessage:', message);
+      (new Audio('assets/notification.mp3')).play()
     this.errorMessage = message;
     this.successMessage = null;
     setTimeout(() => {
