@@ -53,6 +53,8 @@ export class WalletMngComponent implements OnInit {
   isWalletTypeVisible: boolean = false;
 
   cardsList: Card[] = [];
+  filteredCardsList: Card[] = []; // Added for filtered cards
+  searchCardTerm: string = ''; // Added for search term
   newCard: Card = new Card({ cardList: new CardList({ wallet: new Wallet() }), cardType: new CardType() });
   selectedCard: Card | null = null;
   isCardEditMode: boolean = false;
@@ -159,6 +161,31 @@ export class WalletMngComponent implements OnInit {
       })
     }
   }
+
+searchCards(): void {
+  console.log('Search term:', this.searchCardTerm);
+  if (!this.searchCardTerm) {
+    this.filteredCardsList = [...this.cardsList];
+    this.cdr.detectChanges();
+  } else {
+    this.cardService.searchCards(this.searchCardTerm).subscribe({
+      next: (searchResults: Card[]) => {
+        console.log('Search results:', searchResults);
+        this.filteredCardsList = searchResults;
+        setTimeout(() => {
+          this.cdr.markForCheck(); // Mark for check instead of detectChanges
+        }, 0);
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Search error:', error);
+        const message = error.status
+          ? `Failed to search cards: ${error.status} ${error.statusText}`
+          : 'Failed to search cards: Server error';
+        this.showErrorMessage(message);
+      }
+    });
+  }
+}
 
   searchType() {
     if (!this.typeSearchTerm)
@@ -416,21 +443,24 @@ export class WalletMngComponent implements OnInit {
 
   // Load cards
   loadCards(): void {
-    this.errorMessage = null;
-    // console.log('loadCards: Fetching cards...');
-    this.cardService.getAll().subscribe({
-      next: (cards: Card[]) => {
-        // console.log('loadCards: Cards received:', cards);
-        this.cardsList = cards;
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        const message = error.status ? `Failed to load cards: ${error.status} ${error.statusText}` : 'Failed to load cards: Server error';
-        this.showErrorMessage(message);
-        console.error('Error loading cards:', error);
-      }
-    });
-  }
+  this.errorMessage = null;
+  this.cardService.getAll().subscribe({
+    next: (cards: Card[]) => {
+      this.cardsList = cards;
+      this.filteredCardsList = [...cards]; // Ensure filteredCardsList is initialized
+      console.log('Loaded cards:', this.cardsList);
+      console.log('Initialized filteredCardsList:', this.filteredCardsList);
+      this.cdr.detectChanges();
+    },
+    error: (error: HttpErrorResponse) => {
+      const message = error.status
+        ? `Failed to load cards: ${error.status} ${error.statusText}`
+        : 'Failed to load cards: Server error';
+      this.showErrorMessage(message);
+      console.error('Error loading cards:', error);
+    }
+  });
+}
 
   // Load card types
   loadCardTypes(): void {

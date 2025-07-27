@@ -594,13 +594,18 @@
           </h2>
         </div>
         <!-- Search -->
-        <div class="relative flex-grow">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i class="ri-search-line text-gray-400"></i>
-          </div>
-          <input type="text" placeholder="Search cards..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+      <div class="relative flex-grow">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="ri-search-line text-gray-400"></i>
         </div>
+        <input
+          type="text"
+          placeholder="Search cards..."
+          [(ngModel)]="searchCardTerm"
+          (input)="searchCards()"
+          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm"
+        />
+      </div>
         <button id="btn-add-card" (click)="toggleForm('create-card')"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Card
@@ -636,7 +641,7 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <ng-container *ngIf="cardsList!.length > 0; else noData">
-              <tr *ngFor="let card of cardsList" class="hover:bg-gray-50 transition duration-150">
+              <tr *ngFor="let card of filteredCardsList" class="hover:bg-gray-50 transition duration-150">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ card.carLabe || card.carIden }}</div>
                 </td>
