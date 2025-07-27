@@ -62,9 +62,11 @@ export class SideNavComponent implements OnInit {
   }
 
   editCustomerFromNotification(customer: Customer) {
+    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
     this.router.navigate(['/admin/customers'], {
       state: { customerToEdit: customer }
     });
+  });
   }
 
   currentYear: number = new Date().getFullYear();

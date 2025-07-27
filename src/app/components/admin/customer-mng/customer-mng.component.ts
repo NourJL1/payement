@@ -60,7 +60,7 @@ export class CustomerMngComponent {
     private router: Router) { }
 
   isAddCustomerVisible: boolean = false;
-  isUserDetailsVisible: boolean = false;
+  isCustomerDetailsVisible: boolean = false;
   isCustomerStatusVisible: boolean = false;
   isCustomerIdentityTypeVisible: boolean = false;
   isDocTypeVisible: boolean = false;
@@ -132,7 +132,9 @@ export class CustomerMngComponent {
   ngOnInit(): void {
     if (history.state?.customerToEdit) {  // <-- Check history.state
       const customer = history.state.customerToEdit as Customer;
-      this.editCustomer(customer);
+      //this.editCustomer(customer);
+      this.selectedCustomer = customer
+      this.toggleForm('customer-details')
       history.replaceState({}, '');  // <-- This removes the customerToEdit from history
     }
     this.loadAllCustomers()
@@ -206,37 +208,35 @@ export class CustomerMngComponent {
     })
   }
 
-  // Load wallet categories
-  loadWalletCategories(): void {
-    this.errorMessage = null;
-    this.walletCategoryService.getAll().subscribe({
-      next: (categories: WalletCategory[]) => {
-        this.walletCategories = categories;
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        const message = error.status ? `Failed to load wallet categories: ${error.status} ${error.statusText}` : 'Failed to load wallet categories: Server error';
-        this.showErrorMessage(message);
-        console.error('Error loading wallet categories:', error);
-      }
-    });
-  }
-
-  // Load wallet types
-  loadWalletTypes(): void {
-    this.errorMessage = null;
-    this.walletTypeService.getAll().subscribe({
-      next: (types: WalletType[]) => {
-        this.walletTypes = types;
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        const message = error.status ? `Failed to load wallet types: ${error.status} ${error.statusText}` : 'Failed to load wallet types: Server error';
-        this.showErrorMessage(message);
-        console.error('Error loading wallet types:', error);
-      }
-    });
-  }
+  /*   loadWalletCategories(): void {
+      this.errorMessage = null;
+      this.walletCategoryService.getAll().subscribe({
+        next: (categories: WalletCategory[]) => {
+          this.walletCategories = categories;
+          this.cdr.detectChanges();
+        },
+        error: (error: HttpErrorResponse) => {
+          const message = error.status ? `Failed to load wallet categories: ${error.status} ${error.statusText}` : 'Failed to load wallet categories: Server error';
+          this.showErrorMessage(message);
+          console.error('Error loading wallet categories:', error);
+        }
+      });
+    }
+  
+    loadWalletTypes(): void {
+      this.errorMessage = null;
+      this.walletTypeService.getAll().subscribe({
+        next: (types: WalletType[]) => {
+          this.walletTypes = types;
+          this.cdr.detectChanges();
+        },
+        error: (error: HttpErrorResponse) => {
+          const message = error.status ? `Failed to load wallet types: ${error.status} ${error.statusText}` : 'Failed to load wallet types: Server error';
+          this.showErrorMessage(message);
+          console.error('Error loading wallet types:', error);
+        }
+      });
+    } */
 
   compareBy(prop: keyof any) {
     return (a: any, b: any) => a?.[prop] === b?.[prop];
@@ -335,6 +335,13 @@ export class CustomerMngComponent {
         this.showErrorMessage('Failed to update customer: ' + (err.error?.message || 'Please try again.'));
       }
     })
+  }
+
+
+  changeStatus(customer: Customer, status: CustomerStatus) {
+    customer.status = status
+
+
   }
 
   onFileSelected(event: Event): void {
@@ -867,10 +874,11 @@ export class CustomerMngComponent {
         this.isAddCustomerVisible = true;
         break;
       case 'customer-details':
-        this.isUserDetailsVisible = true;
+        this.isCustomerDetailsVisible = true;
         this.customerDocService.getByCustomerDocListe(this.selectedCustomer?.identity?.customerDocListe?.cdlCode!).subscribe({
           next: (docs: CustomerDoc[]) => {
-            this.selectedCustomer!.identity!.customerDocListe!.customerDocs = docs
+            //this.selectedCustomer!.identity!.customerDocListe!.customerDocs
+            this.customerDocs = docs
             this.cdr.detectChanges();
           }
           /* next: (docs: any) => {
@@ -921,7 +929,7 @@ export class CustomerMngComponent {
         this.phoneForm.get('phone')!.setValue('');
         this.isAddCustomerVisible = false;
         break;
-      case 'customer-details': this.isUserDetailsVisible = false; break;
+      case 'customer-details': this.isCustomerDetailsVisible = false; break;
       case 'customer-status': this.isCustomerStatusVisible = false; break;
       case 'customer-identityType': this.isCustomerIdentityTypeVisible = false; break;
       case 'docType': this.isDocTypeVisible = false; break;
@@ -936,7 +944,7 @@ export class CustomerMngComponent {
   get isAnyModalVisible(): boolean {
     return (
       this.isAddCustomerVisible ||
-      this.isUserDetailsVisible ||
+      this.isCustomerDetailsVisible ||
       this.isCustomerStatusVisible ||
       this.isCustomerIdentityTypeVisible ||
       this.isDocTypeVisible ||

@@ -35,6 +35,7 @@ export class CustomerDocService {
   }
 
   getByCustomerDocListe(cdlCode: number) {
+    console.log(`${this.apiUrl}/cdl/${cdlCode}`)
     return this.http.get<CustomerDoc[]>(`${this.apiUrl}/cdl/${cdlCode}`);
   }
 
