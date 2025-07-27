@@ -281,7 +281,7 @@ export class CustomerMngComponent {
           })
         }
         this.allCustomers.push(customer);
-        this.filteredCustomers.push(customer)
+        //this.filteredCustomers.push(customer)
         this.customerForm = new Customer();
         this.citiesByCountry = [];
         this.files = [];
