@@ -4,6 +4,7 @@ import { WalletService } from '../../../services/wallet.service';
 import { Wallet } from '../../../entities/wallet';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../../services/user.service';
+import Chart from 'chart.js/auto';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -21,6 +22,7 @@ export class DashboardComponent implements OnInit {
   newCustomersPercentage: string = '0%';
   activeWalletCount: number = 0;
   pendingWalletCount: number = 0;
+  customerChart: Chart | undefined;
 
     errorMessage: string | null = null;
   successMessage: string | null = null;
@@ -41,10 +43,17 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('ngOnInit triggered');
     this.loadCustomerCounts();
     this.loadUserCounts();
     this.loadActiveWalletCount();
     this.loadPendingWalletCount();
+    // Do not initialize chart here; wait for ngAfterViewInit
+  }
+
+  ngAfterViewInit(): void {
+    console.log('ngAfterViewInit triggered');
+    this.loadCustomerDistributionByCity();
   }
 
   loadUserCounts(): void {
@@ -125,6 +134,54 @@ export class DashboardComponent implements OnInit {
         console.error('Error loading pending wallet count:', error);
       }
     });
+  }
+
+   loadCustomerDistributionByCity(): void {
+    this.customerService.getCustomerCountByCity().subscribe({
+      next: (cityCounts) => {
+        this.createCustomerChart(cityCounts);
+      },
+      error: (err) => console.error('Error fetching customer distribution:', err),
+    });
+  }
+
+  createCustomerChart(cityCounts: { [key: string]: number }): void {
+    console.log('Creating chart with data:', cityCounts);
+    const ctx = document.getElementById('customerChart') as HTMLCanvasElement;
+    if (!ctx) {
+      console.error('Canvas element #customerChart not found');
+      return;
+    }
+    if (this.customerChart) {
+      this.customerChart.destroy();
+    }
+    this.customerChart = new Chart(ctx, {
+      type: 'doughnut', // Ensure this type is registered
+      data: {
+        labels: Object.keys(cityCounts),
+        datasets: [
+          {
+            data: Object.values(cityCounts),
+            backgroundColor: ['#FFF9B0', '#F4B6C2', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+            hoverOffset: 4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+          },
+          title: {
+            display: true,
+            text: 'Customer Distribution by City',
+          },
+        },
+      },
+    });
+    console.log('Chart created successfully');
   }
 
   // Show error message

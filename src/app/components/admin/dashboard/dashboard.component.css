@@ -1,3 +1,11 @@
 :where([class^="ri-"])::before {
 content: "\f3c2";
 }
+.chart-container {
+  width: 100%;
+  position: relative;
+}
+#customerChart {
+  width: 100% !important;
+  height: 100% !important;
+}
