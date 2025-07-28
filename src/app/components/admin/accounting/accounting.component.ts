@@ -40,6 +40,8 @@ filteredFeesList: Fees[] = [];
   selectedFee: Fees | null = null;
 
   feeSchemasList: FeeSchema[] = [];
+  searchFeeSchemaTerm: string = '';
+filteredFeeSchemasList: FeeSchema[] = [];
   newFeeSchema: FeeSchema = new FeeSchema();
   selectedFeeSchema: FeeSchema | null = null;
 
@@ -156,6 +158,28 @@ filteredFeesList: Fees[] = [];
     });
   }
 }
+searchFeeSchemas(): void {
+  console.log('Search term:', this.searchFeeSchemaTerm);
+  if (!this.searchFeeSchemaTerm || this.searchFeeSchemaTerm.trim() === '') {
+    this.filteredFeeSchemasList = [...this.feeSchemasList]; // Show all when search is empty
+    this.cdr.detectChanges();
+  } else {
+    this.feeSchemaService.search(this.searchFeeSchemaTerm, this.getHttpOptions()).subscribe({
+      next: (searchResults: FeeSchema[]) => {
+        console.log('Search results:', searchResults);
+        this.filteredFeeSchemasList = searchResults;
+        this.cdr.detectChanges();
+      },
+      error: (error: any) => {
+        console.error('Search error:', error);
+        const message = error.status
+          ? `Failed to search fee schemas: ${error.status} ${error.statusText}`
+          : 'Failed to search fee schemas: Server error';
+        this.showErrorMessage(message);
+      }
+    });
+  }
+}
 
   loadFees(): void {
   this.searchFeesTerm = ''; // Reset search term
@@ -174,20 +198,22 @@ filteredFeesList: Fees[] = [];
 }
 
   loadFeeSchemas(): void {
-    // console.log('loadFeeSchemas: Fetching fee schemas...');
-    this.feeSchemaService.getAll().subscribe({
-      next: (data: FeeSchema[]) => {
-        // console.log('loadFeeSchemas: Fee schemas received:', data);
-        this.feeSchemasList = data || [];
-        this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.error('loadFeeSchemas: Error:', err.status, err.message);
-        this.feeSchemasList = [];
-        this.showErrorMessage('Failed to load fee schemas.');
-      }
-    });
-  }
+  this.searchFeeSchemaTerm = ''; // Reset search term
+  this.errorMessage = null;
+  this.feeSchemaService.getAll().subscribe({
+    next: (data: FeeSchema[]) => {
+      this.feeSchemasList = data || [];
+      this.filteredFeeSchemasList = [...this.feeSchemasList]; // Initialize filtered list
+      this.cdr.detectChanges();
+    },
+    error: (err: any) => {
+      console.error('loadFeeSchemas: Error:', err.status, err.message);
+      this.feeSchemasList = [];
+      this.filteredFeeSchemasList = [];
+      this.showErrorMessage('Failed to load fee schemas.');
+    }
+  });
+}
 
   loadFeeRuleTypes(): void {
     // console.log('loadFeeRuleTypes: Fetching fee rule types...');
