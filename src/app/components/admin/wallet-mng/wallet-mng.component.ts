@@ -83,6 +83,8 @@ filteredCardListsList: CardList[] = [];
   selectedWallet: Wallet = new Wallet()
 
   accountTypesList: AccountType[] = [];
+  searchAccountTypeTerm: string = '';
+  filteredAccountTypesList: AccountType[] = [];
   newAccountType: AccountType = new AccountType();
   selectedAccountType: AccountType | null = null;
   isAccountTypeEditMode: boolean = false;
@@ -286,6 +288,29 @@ searchCardLists(): void {
   }
 }
 
+searchAccountTypes(): void {
+  console.log('Search term:', this.searchAccountTypeTerm);
+  if (!this.searchAccountTypeTerm || this.searchAccountTypeTerm.trim() === '') {
+    this.filteredAccountTypesList = [...this.accountTypesList]; // Show all when search is empty
+    this.cdr.detectChanges();
+  } else {
+    this.accountTypeService.searchAccountTypes(this.searchAccountTypeTerm).subscribe({
+      next: (searchResults: AccountType[]) => {
+        console.log('Search results:', searchResults);
+        this.filteredAccountTypesList = searchResults;
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Search error:', error);
+        const message = error.status
+          ? `Failed to search account types: ${error.status} ${error.statusText}`
+          : 'Failed to search account types: Server error';
+        this.showErrorMessage(message);
+      }
+    });
+  }
+}
+
   applyFilters(): void {
     if (!this.selectedStatus && !this.selectedWalletType && !this.selectedCategory && !this.searchTerm)
       this.filteredWallets = this.walletsList;
@@ -353,22 +378,22 @@ searchCardLists(): void {
   }
 
   // Load account types
-  loadAccountTypes(): void {
-    this.errorMessage = null;
-    // console.log('loadAccountTypes: Fetching account types...');
-    this.accountTypeService.getAll().subscribe({
-      next: (accountTypes: AccountType[]) => {
-        // console.log('loadAccountTypes: Account types received:', accountTypes);
-        this.accountTypesList = accountTypes;
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        const message = error.status ? `Failed to load account types: ${error.status} ${error.statusText}` : 'Failed to load account types: Server error';
-        this.showErrorMessage(message);
-        console.error('Error loading account types:', error);
-      }
-    });
-  }
+loadAccountTypes(): void {
+  this.searchAccountTypeTerm = ''; // Reset search term
+  this.errorMessage = null;
+  this.accountTypeService.getAll().subscribe({
+    next: (accountTypes: AccountType[]) => {
+      this.accountTypesList = accountTypes;
+      this.filteredAccountTypesList = [...accountTypes]; // Initialize filtered list
+      this.cdr.detectChanges();
+    },
+    error: (error: HttpErrorResponse) => {
+      const message = error.status ? `Failed to load account types: ${error.status} ${error.statusText}` : 'Failed to load account types: Server error';
+      this.showErrorMessage(message);
+      console.error('Error loading account types:', error);
+    }
+  });
+}
 
   // Save account type
   saveAccountType(): void {
