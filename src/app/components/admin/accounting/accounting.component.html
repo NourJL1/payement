@@ -742,10 +742,10 @@
                   <div class="text-sm font-medium text-gray-900">{{ wotm.wotmCode }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wotm.wallet!.walLabe }}</div>
+                  <div class="text-sm text-gray-900">{{ wotm.wallet?.walLabe }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wotm.operationType!.optLabe }}</div>
+                  <div class="text-sm text-gray-900">{{ wotm.operationType?.optLabe }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm text-gray-900">{{ wotm.wotmLimitMax }}</div>
@@ -754,7 +754,7 @@
                   <div class="text-sm text-gray-900">{{ wotm.wotmDispAmount }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wotm.fees!.feeLabel }}</div>
+                  <div class="text-sm text-gray-900">{{ wotm.fees?.feeLabel }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center justify-end space-x-3">
@@ -871,19 +871,19 @@
                   <div class="text-sm font-medium text-gray-900">{{ wcotm.id }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wcotm.walletCategory!.wcaLabe }}</div>
+                  <div class="text-sm text-gray-900">{{ wcotm.walletCategory?.wcaLabe }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wcotm.operationType!.optLabe }}</div>
+                  <div class="text-sm text-gray-900">{{ wcotm.operationType?.optLabe }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm text-gray-900">{{ wcotm.limitMax }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wcotm.periodicity!.perLabe }}</div>
+                  <div class="text-sm text-gray-900">{{ wcotm.periodicity?.perLabe }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wcotm.fees!.feeLabel }}</div>
+                  <div class="text-sm text-gray-900">{{ wcotm.fees?.feeLabel }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center justify-end space-x-3">
@@ -1410,7 +1410,7 @@
       </div>
     </div>
   </div>
-
+  <!-- add wotm-->
   <div *ngIf="isWotmVisible" id="add-wotm-modal" class="bg-white rounded-lg shadow-lg w-full max-w-md">
     <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
       <h3 class="text-lg font-medium text-gray-900">{{ selectedWotm ? 'Edit Wallet Operation Type Map' : 'Add Wallet Operation Type Map' }}</h3>
@@ -1479,7 +1479,7 @@
       </div>
     </form>
   </div>
-
+  <!-- add wcotm-->
   <div *ngIf="isWcotmVisible" id="add-wcotm-modal" class="bg-white rounded-lg shadow-lg w-full max-w-md">
     <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
       <h3 class="text-lg font-medium text-gray-900">{{ selectedWcotm ? 'Edit Wallet Category Operation Type Map' : 'Add Wallet Category Operation Type Map' }}</h3>

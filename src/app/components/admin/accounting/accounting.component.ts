@@ -73,6 +73,10 @@ filteredFeeSchemasList: FeeSchema[] = [];
   selectedWotm?: WalletOperationTypeMap | null = null
 
   wcotmList: WalletCategoryOperationTypeMap[] = []
+  // In your component class
+  // Add this to your component class
+searchWcotmTerm: string = '';
+filteredWcotmList: WalletCategoryOperationTypeMap[] = [];
   newWcotm: WalletCategoryOperationTypeMap = new WalletCategoryOperationTypeMap()
   selectedWcotm?: WalletCategoryOperationTypeMap | null = null
 
