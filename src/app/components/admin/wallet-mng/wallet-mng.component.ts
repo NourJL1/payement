@@ -20,6 +20,7 @@ import { AccountTypeService } from '../../../services/account-type.service';
 import { AccountType } from '../../../entities/account-type';
 import { error } from 'console';
 import { filter } from 'rxjs';
+import { Customer } from '../../../entities/customer';
 
 @Component({
   selector: 'app-wallet-mng',
@@ -114,6 +115,20 @@ export class WalletMngComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (history.state?.walletOwner) {  // <-- Check history.state
+          const customer = history.state.walletOwner as number;
+          //this.editCustomer(customer);
+          this.walletService.getWalletByCustomerCode(customer).subscribe({
+            next: (wallet: Wallet) => {
+              this.selectedWallet = wallet
+              this.toggleForm('wallet-details')
+          history.replaceState({}, '');
+            },
+            error: (err) => {
+              console.log("failed to get wallet by customer")
+            }
+          })
+        }
     this.loadWalletStatuses();
     this.loadWalletCategories();
     this.loadWalletTypes();

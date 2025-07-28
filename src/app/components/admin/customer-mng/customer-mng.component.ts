@@ -338,10 +338,12 @@ export class CustomerMngComponent {
   }
 
 
-  changeStatus(customer: Customer, status: CustomerStatus) {
-    customer.status = status
-
-
+  goToWalletDetails(cusCode: number){
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/admin/wallets'], {
+        state: { walletOwner: cusCode }
+      });
+    });
   }
 
   onFileSelected(event: Event): void {
