@@ -34,25 +34,35 @@ import { WalletCategoryService } from '../../../services/wallet-category.service
 })
 export class AccountingComponent implements OnInit {
   feesList: Fees[] = [];
+  searchFeesTerm: string = '';
+filteredFeesList: Fees[] = [];
   newFee: Fees = new Fees();
   selectedFee: Fees | null = null;
+
   feeSchemasList: FeeSchema[] = [];
   newFeeSchema: FeeSchema = new FeeSchema();
   selectedFeeSchema: FeeSchema | null = null;
+
   feeRuleTypesList: FeeRuleType[] = [];
   newFeeRuleType: FeeRuleType = new FeeRuleType();
   selectedFeeRuleType: FeeRuleType | null = null;
+
   feeRulesList: FeeRule[] = [];
   newFeeRule: FeeRule = new FeeRule();
   selectedFeeRule: FeeRule | null = null;
+
   operationTypesList: OperationType[] = [];
   newOperationType: OperationType = new OperationType({ feeSchema: new FeeSchema() });
   selectedOperationType: OperationType | null = null;
+
   periodicitiesList: Periodicity[] = [];
   newPeriodicity: Periodicity = new Periodicity();
   selectedPeriodicity: Periodicity | null = null;
+
   vatRatesList: VatRate[] = [];
+
   walletsList: Wallet[] = [];
+
   walletCategories: WalletCategory[] = []
 
   
@@ -124,20 +134,44 @@ export class AccountingComponent implements OnInit {
     return { headers }; // Correctly return object with headers property
   }
 
-  loadFees(): void {
-    // console.log('loadFees: Fetching fees...');
-    this.feesService.getAll().subscribe({
-      next: (data: Fees[]) => {
-        // console.log('loadFees: Fees received:', data);
-        this.feesList = data;
+  searchFees(): void {
+  console.log('Search term:', this.searchFeesTerm);
+  if (!this.searchFeesTerm || this.searchFeesTerm.trim() === '') {
+    this.filteredFeesList = [...this.feesList]; // Show all when search is empty
+    this.cdr.detectChanges();
+  } else {
+    this.feesService.search(this.searchFeesTerm).subscribe({
+      next: (searchResults: Fees[]) => {
+        console.log('Search results:', searchResults);
+        this.filteredFeesList = searchResults;
         this.cdr.detectChanges();
       },
-      error: (err: any) => {
-        console.error('loadFees: Error:', err.status, err.message);
-        this.showErrorMessage('Failed to load fees.');
+      error: (error: any) => {
+        console.error('Search error:', error);
+        const message = error.status
+          ? `Failed to search fees: ${error.status} ${error.statusText}`
+          : 'Failed to search fees: Server error';
+        this.showErrorMessage(message);
       }
     });
   }
+}
+
+  loadFees(): void {
+  this.searchFeesTerm = ''; // Reset search term
+  this.errorMessage = null;
+  this.feesService.getAll().subscribe({
+    next: (data: Fees[]) => {
+      this.feesList = data;
+      this.filteredFeesList = [...data]; // Initialize filtered list
+      this.cdr.detectChanges();
+    },
+    error: (err: any) => {
+      console.error('loadFees: Error:', err.status, err.message);
+      this.showErrorMessage('Failed to load fees.');
+    }
+  });
+}
 
   loadFeeSchemas(): void {
     // console.log('loadFeeSchemas: Fetching fee schemas...');
