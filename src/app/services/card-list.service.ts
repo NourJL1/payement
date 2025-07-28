@@ -66,4 +66,17 @@ export class CardListService {
       })
     );
   }
+
+  // Add this method to your CardListService
+searchCardLists(searchWord: string): Observable<CardList[]> {
+  return this.http.get<CardList[]>(`${this.apiUrl}/search?word=${encodeURIComponent(searchWord)}`, { 
+    headers: this.getHeaders(true) 
+  }).pipe(
+    map(cardLists => cardLists.map(cardList => new CardList(cardList))),
+    catchError(error => {
+      console.error('searchCardLists: Error:', error);
+      return throwError(() => new Error('Failed to search card lists'));
+    })
+  );
+}
 }

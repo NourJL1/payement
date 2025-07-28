@@ -71,6 +71,9 @@ filteredCardTypesList: CardType[] = [];
   isCardTypeVisible: boolean = false;
 
   cardListsList: CardList[] = [];
+  // Add these to your component properties
+searchCardListTerm: string = '';
+filteredCardListsList: CardList[] = [];
   newCardList: CardList = new CardList({ wallet: new Wallet() });
   selectedCardList: CardList | null = null;
   isCardListEditMode: boolean = false;
@@ -254,6 +257,29 @@ searchCards(): void {
         const message = error.status
           ? `Failed to search card types: ${error.status} ${error.statusText}`
           : 'Failed to search card types: Server error';
+        this.showErrorMessage(message);
+      }
+    });
+  }
+}
+
+searchCardLists(): void {
+  console.log('Search term:', this.searchCardListTerm);
+  if (!this.searchCardListTerm || this.searchCardListTerm.trim() === '') {
+    this.filteredCardListsList = [...this.cardListsList];
+    this.cdr.detectChanges();
+  } else {
+    this.cardListService.searchCardLists(this.searchCardListTerm).subscribe({
+      next: (searchResults: CardList[]) => {
+        console.log('Search results:', searchResults);
+        this.filteredCardListsList = searchResults;
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Search error:', error);
+        const message = error.status
+          ? `Failed to search card lists: ${error.status} ${error.statusText}`
+          : 'Failed to search card lists: Server error';
         this.showErrorMessage(message);
       }
     });
@@ -524,21 +550,22 @@ searchCards(): void {
 
   // Load card lists
   loadCardLists(): void {
-    this.errorMessage = null;
-    // console.log('loadCardLists: Fetching card lists...');
-    this.cardListService.getAll().subscribe({
-      next: (cardLists: CardList[]) => {
-        // console.log('loadCardLists: Card lists received:', cardLists);
-        this.cardListsList = cardLists;
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        const message = error.status ? `Failed to load card lists: ${error.status} ${error.statusText}` : 'Failed to load card lists: Server error';
-        this.showErrorMessage(message);
-        console.error('Error loading card lists:', error);
-      }
-    });
-  }
+  this.errorMessage = null;
+  this.cardListService.getAll().subscribe({
+    next: (cardLists: CardList[]) => {
+      this.cardListsList = cardLists;
+      this.filteredCardListsList = [...cardLists]; // Initialize filtered list
+      this.cdr.detectChanges();
+    },
+    error: (error: HttpErrorResponse) => {
+      const message = error.status 
+        ? `Failed to load card lists: ${error.status} ${error.statusText}`
+        : 'Failed to load card lists: Server error';
+      this.showErrorMessage(message);
+      console.error('Error loading card lists:', error);
+    }
+  });
+}
 
   // Load wallets
   loadWallets(): void {
