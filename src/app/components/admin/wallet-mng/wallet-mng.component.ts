@@ -62,6 +62,9 @@ export class WalletMngComponent implements OnInit {
   isCardFormVisible: boolean = false;
 
   cardTypesList: CardType[] = [];
+  // Add these to your component properties
+searchCardTypeTerm: string = '';
+filteredCardTypesList: CardType[] = [];
   newCardType: CardType = new CardType();
   selectedCardType: CardType | null = null;
   isCardTypeEditMode: boolean = false;
@@ -233,6 +236,29 @@ searchCards(): void {
       })
     }
   }
+
+  searchCardTypes(): void {
+  console.log('Search term:', this.searchCardTypeTerm);
+  if (!this.searchCardTypeTerm || this.searchCardTypeTerm.trim() === '') {
+    this.filteredCardTypesList = [...this.cardTypesList];
+    this.cdr.detectChanges();
+  } else {
+    this.cardTypeService.searchCardTypes(this.searchCardTypeTerm).subscribe({
+      next: (searchResults: CardType[]) => {
+        console.log('Search results:', searchResults);
+        this.filteredCardTypesList = searchResults;
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Search error:', error);
+        const message = error.status
+          ? `Failed to search card types: ${error.status} ${error.statusText}`
+          : 'Failed to search card types: Server error';
+        this.showErrorMessage(message);
+      }
+    });
+  }
+}
 
   applyFilters(): void {
     if (!this.selectedStatus && !this.selectedWalletType && !this.selectedCategory && !this.searchTerm)
@@ -479,21 +505,22 @@ searchCards(): void {
 
   // Load card types
   loadCardTypes(): void {
-    this.errorMessage = null;
-    // console.log('loadCardTypes: Fetching card types...');
-    this.cardTypeService.findAll().subscribe({
-      next: (cardTypes: CardType[]) => {
-        // console.log('loadCardTypes: Card types received:', cardTypes);
-        this.cardTypesList = cardTypes;
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        const message = error.status ? `Failed to load card types: ${error.status} ${error.statusText}` : 'Failed to load card types: Server error';
-        this.showErrorMessage(message);
-        console.error('Error loading card types:', error);
-      }
-    });
-  }
+  this.errorMessage = null;
+  this.cardTypeService.findAll().subscribe({
+    next: (cardTypes: CardType[]) => {
+      this.cardTypesList = cardTypes;
+      this.filteredCardTypesList = [...cardTypes]; // Initialize filtered list
+      this.cdr.detectChanges();
+    },
+    error: (error: HttpErrorResponse) => {
+      const message = error.status 
+        ? `Failed to load card types: ${error.status} ${error.statusText}`
+        : 'Failed to load card types: Server error';
+      this.showErrorMessage(message);
+      console.error('Error loading card types:', error);
+    }
+  });
+}
 
   // Load card lists
   loadCardLists(): void {
