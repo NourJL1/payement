@@ -186,4 +186,14 @@ export class WalletService {
   search(word: string){
     return this.http.get<Wallet[]>(`${this.apiUrl}/search?word=${word}`, { headers: this.getHeaders() })
   }
+
+  // wallet.service.ts
+getWalletCountByCategory(): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(`${this.apiUrl}/count/by-category`, { headers: this.getHeaders() }).pipe(
+        catchError(error => {
+            console.error('Error fetching wallet counts by category:', error);
+            return throwError(() => new Error('Failed to fetch wallet counts by category'));
+        })
+    );
+}
 }

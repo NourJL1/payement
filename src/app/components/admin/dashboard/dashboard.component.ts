@@ -4,10 +4,14 @@ import { WalletService } from '../../../services/wallet.service';
 import { Wallet } from '../../../entities/wallet';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../../services/user.service';
+import { CommonModule } from '@angular/common'; // Import CommonModule
 import Chart from 'chart.js/auto';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
+  imports: [
+    CommonModule
+  ],
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
@@ -23,6 +27,7 @@ export class DashboardComponent implements OnInit {
   activeWalletCount: number = 0;
   pendingWalletCount: number = 0;
   customerChart: Chart | undefined;
+  walletCategoryCounts: { label: string; count: number; percentageChange: string }[] = [];
 
     errorMessage: string | null = null;
   successMessage: string | null = null;
@@ -48,6 +53,7 @@ export class DashboardComponent implements OnInit {
     this.loadUserCounts();
     this.loadActiveWalletCount();
     this.loadPendingWalletCount();
+    this.loadWalletCountByCategory();
     // Do not initialize chart here; wait for ngAfterViewInit
   }
 
@@ -55,6 +61,31 @@ export class DashboardComponent implements OnInit {
     console.log('ngAfterViewInit triggered');
     this.loadCustomerDistributionByCity();
   }
+
+  loadWalletCountByCategory(): void {
+        this.walletService.getWalletCountByCategory().subscribe({
+            next: (counts: { [key: string]: number }) => {
+                this.walletCategoryCounts = Object.entries(counts).map(([label, count]) => ({
+                    label,
+                    count,
+                    percentageChange: this.calculatePercentageChange(label, count), // Implement as needed
+                }));
+                this.cdr.detectChanges();
+            },
+            error: (err: any) => {
+                console.error('Error fetching wallet counts by category:', err);
+                this.showErrorMessage('Failed to load wallet counts by category');
+            },
+        });
+    }
+
+    calculatePercentageChange(label: string, count: number): string {
+    // Calculate a random percentage change for demo purposes
+    const randomChange = (Math.random() * 20 - 5).toFixed(1); // Returns a string like "12.3"
+    const changeValue = parseFloat(randomChange); // Convert string to number
+    return changeValue > 0 ? `+${randomChange}%` : `${randomChange}%`;
+}
+
 
   loadUserCounts(): void {
     this.userService.getTotalUserCount().subscribe({

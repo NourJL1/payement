@@ -118,72 +118,54 @@
   </div>
   <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-semibold text-black">Customer Activity</h2>
-      <div class="w-6 h-6 flex items-center justify-center">
-        <i class="ri-more-line text-gray-400"></i>
-      </div>
+        <h2 class="text-xl font-semibold text-black">Customer Activity</h2>
+        <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-more-line text-gray-400"></i>
+        </div>
     </div>
     <div class="space-y-4">
-      <div class="flex items-center justify-between p-6 bg-gray-50 rounded-lg">
-        <div class="flex items-center space-x-4">
-          <div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-full">
-            <i class="ri-user-line text-green-600 text-lg"></i>
-          </div>
-          <div>
-            <div class="font-medium text-black text-lg">Premium Customers</div>
-            <div class="text-sm text-gray-600">High-value users</div>
-          </div>
+        <div *ngFor="let category of walletCategoryCounts" class="flex items-center justify-between p-6 bg-gray-50 rounded-lg">
+            <div class="flex items-center space-x-4">
+                <!-- Icon for the category label -->
+                <div class="w-12 h-12 flex items-center justify-center rounded-full"
+                     [ngClass]="{
+                        'bg-green-100': category.label === 'VIP LEVEL 1' || category.label === 'PREMIUM' || category.label === 'VIP' || category.label === 'STANDARD',
+                        'bg-blue-100': category.label === 'VIP LEVEL 1',
+                        'bg-yellow-100': category.label === 'PREMIUM',
+                        'bg-purple-100': category.label === 'VIP',
+                        'bg-gray-100': category.label === 'STANDARD'
+                     }">
+                    <i class="text-lg"
+                       [ngClass]="{
+                          'ri-vip-crown-line text-blue-600': category.label === 'VIP LEVEL 1',
+                          'ri-medal-line text-yellow-600': category.label === 'PREMIUM',
+                          'ri-vip-crown-2-line text-purple-600': category.label === 'VIP',
+                          'ri-user-line text-gray-600': category.label === 'STANDARD'
+                       }"></i>
+                </div>
+                <!-- Category label with additional icon -->
+                <div class="flex items-center space-x-2">
+                    <div>
+                        <div class="font-medium text-black text-lg">{{ category.label }}</div>
+                        <div class="text-sm text-gray-600">Customers in {{ category.label }} category</div>
+                    </div>
+                    <!-- Additional icon next to the label -->
+                    <i class="text-lg"
+                       [ngClass]="{
+                          'ri-crown-line text-blue-500': category.label === 'VIP LEVEL 1',
+                          'ri-star-line text-yellow-500': category.label === 'PREMIUM',
+                          'ri-diamond-line text-purple-500': category.label === 'VIP',
+                          'ri-user-check-line text-gray-500': category.label === 'STANDARD'
+                       }"></i>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="text-2xl font-semibold text-black">{{ category.count }}</div>
+                <div class="text-sm" [ngClass]="{'text-green-500': category.percentageChange.includes('+'), 'text-red-500': !category.percentageChange.includes('+')}">
+                    {{ category.percentageChange }}
+                </div>
+            </div>
         </div>
-        <div class="text-right">
-          <div class="text-2xl font-semibold text-black">3,456</div>
-          <div class="text-sm text-green-500">+12.3%</div>
-        </div>
-      </div>
-      <div class="flex items-center justify-between p-6 bg-gray-50 rounded-lg">
-        <div class="flex items-center space-x-4">
-          <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full">
-            <i class="ri-user-2-line text-blue-600 text-lg"></i>
-          </div>
-          <div>
-            <div class="font-medium text-black text-lg">Standard Customers</div>
-            <div class="text-sm text-gray-600">Regular users</div>
-          </div>
-        </div>
-        <div class="text-right">
-          <div class="text-2xl font-semibold text-black">8,765</div>
-          <div class="text-sm text-green-500">+8.7%</div>
-        </div>
-      </div>
-      <div class="flex items-center justify-between p-6 bg-gray-50 rounded-lg">
-        <div class="flex items-center space-x-4">
-          <div class="w-12 h-12 flex items-center justify-center bg-yellow-100 rounded-full">
-            <i class="ri-user-3-line text-yellow-600 text-lg"></i>
-          </div>
-          <div>
-            <div class="font-medium text-black text-lg">Trial Customers</div>
-            <div class="text-sm text-gray-600">New trial users</div>
-          </div>
-        </div>
-        <div class="text-right">
-          <div class="text-2xl font-semibold text-black">2,134</div>
-          <div class="text-sm text-green-500">+25.1%</div>
-        </div>
-      </div>
-      <div class="flex items-center justify-between p-6 bg-gray-50 rounded-lg">
-        <div class="flex items-center space-x-4">
-          <div class="w-12 h-12 flex items-center justify-center bg-red-100 rounded-full">
-            <i class="ri-user-unfollow-line text-red-600 text-lg"></i>
-          </div>
-          <div>
-            <div class="font-medium text-black text-lg">Inactive Customers</div>
-            <div class="text-sm text-gray-600">Dormant users</div>
-          </div>
-        </div>
-        <div class="text-right">
-          <div class="text-2xl font-semibold text-black">4,077</div>
-          <div class="text-sm text-red-500">-3.2%</div>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 </div>
