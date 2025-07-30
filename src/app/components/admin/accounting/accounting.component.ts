@@ -184,6 +184,23 @@ searchFeeSchemas(): void {
     });
   }
 }
+searchWcotm(): void {
+  if (!this.searchWcotmTerm || this.searchWcotmTerm.trim() === '') {
+    this.filteredWcotmList = [...this.wcotmList]; // Show all when search is empty
+    this.cdr.detectChanges();
+  } else {
+    this.wcotmService.search(this.searchWcotmTerm, this.getHttpOptions()).subscribe({
+      next: (searchResults: WalletCategoryOperationTypeMap[]) => {
+        this.filteredWcotmList = searchResults;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Search error:', err);
+        this.showErrorMessage('Failed to search mappings');
+      }
+    });
+  }
+}
 
   loadFees(): void {
   this.searchFeesTerm = ''; // Reset search term
@@ -280,19 +297,18 @@ searchFeeSchemas(): void {
   }
 
   loadWalletCategoryOperationTypeMap(): void {
-    // console.log('loadWalletCategoryOperationTypeMap: Fetching ...');
-    this.wcotmService.getAll(this.getHttpOptions()).subscribe({
-      next: (data: WalletCategoryOperationTypeMap[]) => {
-        console.log('loadWalletOperationTypeMap: Wallet xategory operation type map received:', data);
-        this.wcotmList = data;
-        this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.error('loadWalletOperationTypeMap: Error:', err.status, err.message);
-        this.showErrorMessage('Failed to load wallet operation type map.');
-      }
-    });
-  }
+  this.wcotmService.getAll(this.getHttpOptions()).subscribe({
+    next: (data: WalletCategoryOperationTypeMap[]) => {
+      this.wcotmList = data;
+      this.filteredWcotmList = [...data]; // Initialize filtered list
+      this.cdr.detectChanges();
+    },
+    error: (err: any) => {
+      console.error('Error loading WCOTM:', err);
+      this.showErrorMessage('Failed to load mappings');
+    }
+  });
+}
 
   loadPeriodicities(): void {
     // console.log('loadPeriodicities: Fetching periodicities...');
@@ -803,84 +819,110 @@ searchFeeSchemas(): void {
     }
   }
 
-  addWcotm(): void {
-    // console.log('addWcotm: Adding wcotm:', this.newWcotm);
-    if (!this.newWcotm.walletCategory || !this.newWcotm.operationType || !this.newWcotm.limitMax || !this.newWcotm.periodicity || !this.newWcotm.fees) {
-      this.showErrorMessage('Please fill in all required fields, including Fee Schema.');
-      return;
+// Add WCOTM methods to your component
+addWcotm(): void {
+  if (!this.newWcotm.walletCategory || !this.newWcotm.operationType || 
+      !this.newWcotm.limitMax || !this.newWcotm.periodicity || !this.newWcotm.fees) {
+    this.showErrorMessage('Please fill in all required fields.');
+    return;
+  }
+
+  this.wcotmService.create(this.newWcotm, this.getHttpOptions()).subscribe({
+    next: (createdWcotm: WalletCategoryOperationTypeMap) => {
+      this.wcotmList = [...this.wcotmList, createdWcotm];
+      
+      // Always add to filtered list and let searchWcotm() handle filtering
+      this.filteredWcotmList = [...this.filteredWcotmList, createdWcotm];
+      
+      // If there's an active search term, reapply the search
+      if (this.searchWcotmTerm) {
+        this.searchWcotm();
+      }
+
+      this.newWcotm = new WalletCategoryOperationTypeMap();
+      this.isWcotmVisible = false;
+      this.showSuccessMessage('Mapping added successfully');
+      this.cdr.detectChanges();
+    },
+    error: (err: any) => {
+      console.error('addWcotm: Error:', err);
+      this.showErrorMessage('Failed to add mapping: ' + 
+        (err.error?.message || 'Please check the form.'));
     }
-    this.wcotmService.create(this.newWcotm).subscribe({
-      next: (createdWcotm: WalletCategoryOperationTypeMap) => {
-        // console.log('addWcotm: wcotm added:', createdWcotm);
-        this.wcotmList = [...this.wcotmList, createdWcotm];
-        this.newWcotm = new WalletCategoryOperationTypeMap();
-        this.isWcotmVisible = false;
-        this.  showSuccessMessage('Mapping added successfully');
+  });
+}
+
+updateWcotm(): void {
+  if (!this.selectedWcotm?.id) {
+    this.showErrorMessage('No mapping selected for update.');
+    return;
+  }
+
+  if (!this.newWcotm.walletCategory || !this.newWcotm.operationType || 
+      !this.newWcotm.limitMax || !this.newWcotm.periodicity || !this.newWcotm.fees) {
+    this.showErrorMessage('Please fill in all required fields.');
+    return;
+  }
+
+  this.wcotmService.update(this.selectedWcotm.id, this.newWcotm, this.getHttpOptions()).subscribe({
+    next: (updatedWcotm: WalletCategoryOperationTypeMap) => {
+      // Update main list
+      const index = this.wcotmList.findIndex(w => w.id === updatedWcotm.id);
+      if (index !== -1) {
+        this.wcotmList[index] = updatedWcotm;
+        this.wcotmList = [...this.wcotmList];
+      }
+      
+      // Update filtered list
+      const filteredIndex = this.filteredWcotmList.findIndex(w => w.id === updatedWcotm.id);
+      if (filteredIndex !== -1) {
+        this.filteredWcotmList[filteredIndex] = updatedWcotm;
+        this.filteredWcotmList = [...this.filteredWcotmList];
+      }
+
+      // If there's an active search term, reapply the search
+      if (this.searchWcotmTerm) {
+        this.searchWcotm();
+      }
+
+      this.newWcotm = new WalletCategoryOperationTypeMap();
+      this.selectedWcotm = null;
+      this.isWcotmVisible = false;
+      this.showSuccessMessage('Mapping updated successfully');
+      this.cdr.detectChanges();
+    },
+    error: (err: any) => {
+      console.error('updateWcotm: Error:', err);
+      this.showErrorMessage('Failed to update mapping: ' + 
+        (err.error?.message || 'Please try again.'));
+    }
+  });
+}
+
+editWcotm(wcotm: WalletCategoryOperationTypeMap): void {
+  this.selectedWcotm = wcotm;
+  this.newWcotm = { ...wcotm };
+  this.isWcotmVisible = true;
+  this.cdr.detectChanges();
+}
+
+deleteWcotm(id: number | undefined): void {
+  if (id && confirm('Are you sure you want to delete this mapping?')) {
+    this.wcotmService.delete(id, this.getHttpOptions()).subscribe({
+      next: () => {
+        this.wcotmList = this.wcotmList.filter(w => w.id !== id);
+        this.filteredWcotmList = this.filteredWcotmList.filter(w => w.id !== id);
+        this.showSuccessMessage('Mapping deleted successfully');
         this.cdr.detectChanges();
       },
       error: (err: any) => {
-        console.error('addWcotm: Error:', err.status, err.error);
-        this.showErrorMessage('Failed to add mapping: ' + (err.error?.message || 'Please check the form.'));
+        console.error('deleteWcotm: Error:', err);
+        this.showErrorMessage('Failed to delete mapping: ' + 
+          (err.error?.message || 'Please try again.'));
       }
     });
   }
-
-  editWcotm(wcotm: WalletCategoryOperationTypeMap): void {
-    // console.log('editWcotm: mapping object:', wcotm);
-    this.selectedWcotm = wcotm;
-    this.newWcotm = { ...wcotm }
-    this.isWcotmVisible = true;
-    this.cdr.detectChanges();
-  }
-
-  updateWcotm(): void {
-    // console.log('addWcotm: Adding wcotm:', this.newWcotm);
-    if (!this.newWcotm.walletCategory || !this.newWcotm.operationType || !this.newWcotm.limitMax || !this.newWcotm.periodicity || !this.newWcotm.fees) {
-      this.showErrorMessage('Please fill in all required fields, including Fee Schema.');
-      return;
-    }
-    if (this.selectedWcotm?.id) {
-      this.wcotmService.update(this.selectedWcotm.id, this.newWcotm).subscribe({
-        next: (updatedWcotm: WalletCategoryOperationTypeMap) => {
-          // console.log('updateWcotm: Mapping updated:', updatedWcotm);
-          const index = this.wcotmList.findIndex(wcotm => wcotm.id === updatedWcotm.id);
-          if (index !== -1) {
-            this.wcotmList[index] = updatedWcotm;
-            this.wcotmList = [...this.wcotmList];
-          }
-          this.newWcotm = new WalletCategoryOperationTypeMap();
-          this.selectedWcotm = null;
-          this.isWcotmVisible = false;
-          this.  showSuccessMessage('Mapping type updated successfully');
-          this.cdr.detectChanges();
-        },
-        error: (err: any) => {
-          console.error('updateWcotm: Error:', err.status, err.error);
-          this.showErrorMessage('Failed to update Mapping: ' + (err.error?.message || 'Please try again.'));
-        }
-      });
-    } else {
-      this.showErrorMessage('No mapping selected for update.');
-    }
-  }
-
-  deleteWcotm(wcotmCode: number | undefined): void {
-    // console.log('deleteOperationType: wcotm:', wcotmCode);
-    if (wcotmCode && confirm('Are you sure you want to delete this mapping?')) {
-      this.wcotmService.delete(wcotmCode).subscribe({
-        next: () => {
-          // console.log('deleteOperationType: Success, wcotmCode:', wcotmCode);
-          this.wcotmList = this.wcotmList.filter(wcotm => wcotm.id !== wcotmCode);
-          this.  showSuccessMessage('Mapping deleted successfully');
-          this.cdr.detectChanges();
-        },
-        error: (err: any) => {
-          console.error('deleteMapping: Error:', err.status, err.message, err.error);
-          this.showErrorMessage('Failed to delete mapping: ' + (err.error?.message || 'Please try again.'));
-        }
-      });
-    }
-  }
+}
 
   addPeriodicity(): void {
     // console.log('addPeriodicity: Adding periodicity:', this.newPeriodicity);

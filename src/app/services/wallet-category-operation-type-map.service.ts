@@ -63,7 +63,10 @@ create(wcotm: WalletCategoryOperationTypeMap, options?: { headers: HttpHeaders }
     );
   }
 
-  search(word: string): Observable<WalletCategoryOperationTypeMap[]> {
-    return this.http.get<WalletCategoryOperationTypeMap[]>(`${this.apiUrl}/search?word=${word}`, this.getHttpOptions());
-  }
+  search(term: string, httpOptions: { headers: HttpHeaders }): Observable<WalletCategoryOperationTypeMap[]> {
+  return this.http.get<WalletCategoryOperationTypeMap[]>(
+    `${this.apiUrl}/search?word=${term}`, 
+    httpOptions
+  );
+}
 }
