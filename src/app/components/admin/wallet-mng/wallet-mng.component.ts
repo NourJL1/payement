@@ -660,52 +660,51 @@ loadAccountTypes(): void {
 
   // Add or update card
   saveCard(): void {
-    this.errorMessage = null;
-    // console.log('saveCard: Saving card:', this.newCard);
-    if (/* !this.newCard.carIden ||  */!this.newCard.carLabe || !this.newCard.carNumb || !this.newCard.carExpiryDate || !this.newCard.cardType?.ctypCode || !this.newCard.cardList?.cliCode) {
-      this.showErrorMessage('Please fill in all required fields: Label, Number, Expiry Date, Card Type, and Card List.');
-      return;
-    }
-    if (this.isCardEditMode && this.selectedCard?.carCode) {
-      this.cardService.update(this.selectedCard.carCode, this.newCard).subscribe({
-        next: (updatedCard: Card) => {
-          // console.log('saveCard: Card updated:', updatedCard);
-          const index = this.cardsList.findIndex(c => c.carCode === updatedCard.carCode);
-          if (index !== -1) {
-            this.cardsList[index] = updatedCard;
-            this.cardsList = [...this.cardsList];
-          }
-          this.newCard = new Card({ cardList: new CardList({ wallet: new Wallet() }), cardType: new CardType() });
-          this.selectedCard = null;
-          this.isCardEditMode = false;
-          this.isCardFormVisible = false;
-          this.showSuccessMessage('Card updated successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to update card: ${error.status} ${error.statusText}` : 'Failed to update card: Server error';
-          this.showErrorMessage(message);
-          console.error('Error updating card:', error);
-        }
-      });
-    } else {
-      this.cardService.create(this.newCard).subscribe({
-        next: (createdCard: Card) => {
-          // console.log('saveCard: Card created:', createdCard);
-          this.cardsList.push(createdCard);
-          this.newCard = new Card({ cardList: new CardList({ wallet: new Wallet() }), cardType: new CardType() });
-          this.isCardFormVisible = false;
-          this.showSuccessMessage('Card added successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to create card: ${error.status} ${error.statusText}` : 'Failed to create card: Server error';
-          this.showErrorMessage(message);
-          console.error('Error creating card:', error);
-        }
-      });
-    }
+  this.errorMessage = null;
+  if (!this.newCard.carLabe || !this.newCard.carNumb || !this.newCard.carExpiryDate || !this.newCard.cardType?.ctypCode || !this.newCard.cardList?.cliCode) {
+    this.showErrorMessage('Please fill in all required fields: Label, Number, Expiry Date, Card Type, and Card List.');
+    return;
   }
+  if (this.isCardEditMode && this.selectedCard?.carCode) {
+    this.cardService.update(this.selectedCard.carCode, this.newCard).subscribe({
+      next: (updatedCard: Card) => {
+        const index = this.cardsList.findIndex(c => c.carCode === updatedCard.carCode);
+        if (index !== -1) {
+          this.cardsList[index] = updatedCard;
+          this.cardsList = [...this.cardsList]; // Trigger change detection
+        }
+        this.newCard = new Card({ cardList: new CardList({ wallet: new Wallet() }), cardType: new CardType() });
+        this.selectedCard = null;
+        this.isCardEditMode = false;
+        this.isCardFormVisible = false;
+        this.showSuccessMessage('Card updated successfully');
+        this.searchCards(); // Reapply search to update filteredCardsList
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to update card: ${error.status} ${error.statusText}` : 'Failed to update card: Server error';
+        this.showErrorMessage(message);
+        console.error('Error updating card:', error);
+      }
+    });
+  } else {
+    this.cardService.create(this.newCard).subscribe({
+      next: (createdCard: Card) => {
+        this.cardsList.push(createdCard);
+        this.newCard = new Card({ cardList: new CardList({ wallet: new Wallet() }), cardType: new CardType() });
+        this.isCardFormVisible = false;
+        this.showSuccessMessage('Card added successfully');
+        this.searchCards(); // Reapply search to update filteredCardsList
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to create card: ${error.status} ${error.statusText}` : 'Failed to create card: Server error';
+        this.showErrorMessage(message);
+        console.error('Error creating card:', error);
+      }
+    });
+  }
+}
 
   // Edit card
   editCard(card: Card): void {
@@ -724,73 +723,71 @@ loadAccountTypes(): void {
 
   // Delete card
   deleteCard(carCode: number | undefined): void {
-    this.errorMessage = null;
-    // console.log('deleteCard: carCode:', carCode);
-    if (carCode && confirm('Are you sure you want to delete this card?')) {
-      this.cardService.delete(carCode).subscribe({
-        next: () => {
-          // console.log('deleteCard: Success, carCode:', carCode);
-          this.cardsList = this.cardsList.filter(c => c.carCode !== carCode);
-          this.showSuccessMessage('Card deleted successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to delete card: ${error.status} ${error.statusText}` : 'Failed to delete card: Server error';
-          this.showErrorMessage(message);
-          console.error('Error deleting card:', error);
-        }
-      });
-    }
+  this.errorMessage = null;
+  if (carCode && confirm('Are you sure you want to delete this card?')) {
+    this.cardService.delete(carCode).subscribe({
+      next: () => {
+        this.cardsList = this.cardsList.filter(c => c.carCode !== carCode);
+        this.searchCards(); // Reapply search to update filteredCardsList
+        this.showSuccessMessage('Card deleted successfully');
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to delete card: ${error.status} ${error.statusText}` : 'Failed to delete card: Server error';
+        this.showErrorMessage(message);
+        console.error('Error deleting card:', error);
+      }
+    });
   }
+}
 
   // Add or update card type
   saveCardType(): void {
-    this.errorMessage = null;
-    // console.log('saveCardType: Saving card type:', this.newCardType);
-    if (/* !this.newCardType.ctypIden ||  */!this.newCardType.ctypLabe) {
-      this.showErrorMessage('Please fill in all required fields: Label.');
-      return;
-    }
-    if (this.isCardTypeEditMode && this.selectedCardType?.ctypCode) {
-      this.cardTypeService.save(this.newCardType).subscribe({
-        next: (updatedCardType: CardType) => {
-          // console.log('saveCardType: Card type updated:', updatedCardType);
-          const index = this.cardTypesList.findIndex(t => t.ctypCode === updatedCardType.ctypCode);
-          if (index !== -1) {
-            this.cardTypesList[index] = updatedCardType;
-            this.cardTypesList = [...this.cardTypesList];
-          }
-          this.newCardType = new CardType();
-          this.selectedCardType = null;
-          this.isCardTypeEditMode = false;
-          this.isCardTypeVisible = false;
-          this.showSuccessMessage('Card type updated successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to update card type: ${error.status} ${error.statusText}` : 'Failed to update card type: Server error';
-          this.showErrorMessage(message);
-          console.error('Error updating card type:', error);
-        }
-      });
-    } else {
-      this.cardTypeService.save(this.newCardType).subscribe({
-        next: (createdCardType: CardType) => {
-          // console.log('saveCardType: Card type created:', createdCardType);
-          this.cardTypesList.push(createdCardType);
-          this.newCardType = new CardType();
-          this.isCardTypeVisible = false;
-          this.showSuccessMessage('Card type added successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to create card type: ${error.status} ${error.statusText}` : 'Failed to create card type: Server error';
-          this.showErrorMessage(message);
-          console.error('Error creating card type:', error);
-        }
-      });
-    }
+  this.errorMessage = null;
+  if (!this.newCardType.ctypLabe) {
+    this.showErrorMessage('Please fill in all required fields: Label.');
+    return;
   }
+  if (this.isCardTypeEditMode && this.selectedCardType?.ctypCode) {
+    this.cardTypeService.save(this.newCardType).subscribe({
+      next: (updatedCardType: CardType) => {
+        const index = this.cardTypesList.findIndex(t => t.ctypCode === updatedCardType.ctypCode);
+        if (index !== -1) {
+          this.cardTypesList[index] = updatedCardType;
+          this.cardTypesList = [...this.cardTypesList];
+        }
+        this.newCardType = new CardType();
+        this.selectedCardType = null;
+        this.isCardTypeEditMode = false;
+        this.isCardTypeVisible = false;
+        this.showSuccessMessage('Card type updated successfully');
+        this.searchCardTypes(); // Reapply search to update filteredCardTypesList
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to update card type: ${error.status} ${error.statusText}` : 'Failed to update card type: Server error';
+        this.showErrorMessage(message);
+        console.error('Error updating card type:', error);
+      }
+    });
+  } else {
+    this.cardTypeService.save(this.newCardType).subscribe({
+      next: (createdCardType: CardType) => {
+        this.cardTypesList.push(createdCardType);
+        this.newCardType = new CardType();
+        this.isCardTypeVisible = false;
+        this.showSuccessMessage('Card type added successfully');
+        this.searchCardTypes(); // Reapply search to update filteredCardTypesList
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to create card type: ${error.status} ${error.statusText}` : 'Failed to create card type: Server error';
+        this.showErrorMessage(message);
+        console.error('Error creating card type:', error);
+      }
+    });
+  }
+}
 
   // Edit card type
   editCardType(cardType: CardType): void {
@@ -805,73 +802,78 @@ loadAccountTypes(): void {
 
   // Delete card type
   deleteCardType(ctypCode: number | undefined): void {
-    this.errorMessage = null;
-    // console.log('deleteCardType: ctypCode:', ctypCode);
-    if (ctypCode && confirm('Are you sure you want to delete this card type?')) {
-      this.cardTypeService.deleteById(ctypCode).subscribe({
-        next: () => {
-          // console.log('deleteCardType: Success, ctypCode:', ctypCode);
-          this.cardTypesList = this.cardTypesList.filter(t => t.ctypCode !== ctypCode);
-          this.showSuccessMessage('Card type deleted successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to delete card type: ${error.status} ${error.statusText}` : 'Failed to delete card type: Server error';
-          this.showErrorMessage(message);
-          console.error('Error deleting card type:', error);
-        }
-      });
-    }
+  this.errorMessage = null;
+  if (ctypCode && confirm('Are you sure you want to delete this card type?')) {
+    this.cardTypeService.deleteById(ctypCode).subscribe({
+      next: () => {
+        this.cardTypesList = this.cardTypesList.filter(t => t.ctypCode !== ctypCode);
+        this.searchCardTypes(); // Reapply search to update filteredCardTypesList
+        this.showSuccessMessage('Card type deleted successfully');
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to delete card type: ${error.status} ${error.statusText}` : 'Failed to delete card type: Server error';
+        this.showErrorMessage(message);
+        console.error('Error deleting card type:', error);
+      }
+    });
   }
+}
 
   // Add or update card list
-  saveCardList(): void {
-    this.errorMessage = null;
-    // console.log('saveCardList: Saving card list:', this.newCardList);
-    if (/* !this.newCardList.cliIden ||  */!this.newCardList.cliLabe || !this.newCardList.wallet?.walIden) {
-      this.showErrorMessage('Please fill in all required fields: Label, and Wallet.');
-      return;
-    }
-    if (this.isCardListEditMode && this.selectedCardList?.cliCode) {
-      this.cardListService.update(this.selectedCardList.cliCode, this.newCardList).subscribe({
-        next: (updatedCardList: CardList) => {
-          // console.log('saveCardList: Card list updated:', updatedCardList);
-          const index = this.cardListsList.findIndex(l => l.cliCode === updatedCardList.cliCode);
-          if (index !== -1) {
-            this.cardListsList[index] = updatedCardList;
-            this.cardListsList = [...this.cardListsList];
-          }
-          this.newCardList = new CardList({ wallet: new Wallet() });
-          this.selectedCardList = null;
-          this.isCardListEditMode = false;
-          this.isCardListVisible = false;
-          this.showSuccessMessage('Card list updated successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to update card list: ${error.status} ${error.statusText}` : 'Failed to update card list: Server error';
-          this.showErrorMessage(message);
-          console.error('Error updating card list:', error);
-        }
-      });
-    } else {
-      this.cardListService.create(this.newCardList).subscribe({
-        next: (createdCardList: CardList) => {
-          // console.log('saveCardList: Card list created:', createdCardList);
-          this.cardListsList.push(createdCardList);
-          this.newCardList = new CardList({ wallet: new Wallet() });
-          this.isCardListVisible = false;
-          this.showSuccessMessage('Card list added successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to create card list: ${error.status} ${error.statusText}` : 'Failed to create card list: Server error';
-          this.showErrorMessage(message);
-          console.error('Error creating card list:', error);
-        }
-      });
-    }
+saveCardList(): void {
+  this.errorMessage = null;
+  if (!this.newCardList.cliLabe || !this.newCardList.wallet?.walIden) {
+    this.showErrorMessage('Please fill in all required fields: Label and Wallet.');
+    return;
   }
+  const cardListPayload: CardList = {
+    cliLabe: this.newCardList.cliLabe,
+    cliIden: this.newCardList.cliIden || this.selectedCardList?.cliIden,
+    wallet: { walIden: this.newCardList.wallet.walIden },
+    cards: this.newCardList.cards || []
+  };
+  console.log('Payload being sent:', JSON.stringify(cardListPayload, null, 2));
+  if (this.isCardListEditMode && this.selectedCardList?.cliCode) {
+    this.cardListService.update(this.selectedCardList.cliCode, cardListPayload).subscribe({
+      next: (updatedCardList: CardList) => {
+        const index = this.cardListsList.findIndex(l => l.cliCode === updatedCardList.cliCode);
+        if (index !== -1) {
+          this.cardListsList[index] = updatedCardList;
+          this.cardListsList = [...this.cardListsList];
+        }
+        this.newCardList = new CardList({ wallet: new Wallet(), cards: [] });
+        this.selectedCardList = null;
+        this.isCardListEditMode = false;
+        this.isCardListVisible = false;
+        this.showSuccessMessage('Card list updated successfully');
+        this.searchCardLists(); // Reapply search to update filteredCardListsList
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.error?.message || `Failed to update card list: ${error.status} ${error.statusText}`;
+        this.showErrorMessage(message);
+        console.error('Error updating card list:', error);
+      }
+    });
+  } else {
+    this.cardListService.create(cardListPayload).subscribe({
+      next: (createdCardList: CardList) => {
+        this.cardListsList.push(createdCardList);
+        this.newCardList = new CardList({ wallet: new Wallet(), cards: [] });
+        this.isCardListVisible = false;
+        this.showSuccessMessage('Card list added successfully');
+        this.searchCardLists(); // Reapply search to update filteredCardListsList
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.error?.message || `Failed to create card list: ${error.status} ${error.statusText}`;
+        this.showErrorMessage(message);
+        console.error('Error creating card list:', error);
+      }
+    });
+  }
+}
 
   // Edit card list
   editCardList(cardList: CardList): void {
@@ -886,24 +888,23 @@ loadAccountTypes(): void {
 
   // Delete card list
   deleteCardList(cliCode: number | undefined): void {
-    this.errorMessage = null;
-    // console.log('deleteCardList: cliCode:', cliCode);
-    if (cliCode && confirm('Are you sure you want to delete this card list?')) {
-      this.cardListService.delete(cliCode).subscribe({
-        next: () => {
-          // console.log('deleteCardList: Success, cliCode:', cliCode);
-          this.cardListsList = this.cardListsList.filter(l => l.cliCode !== cliCode);
-          this.showSuccessMessage('Card list deleted successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to delete card list: ${error.status} ${error.statusText}` : 'Failed to delete card list: Server error';
-          this.showErrorMessage(message);
-          console.error('Error deleting card list:', error);
-        }
-      });
-    }
+  this.errorMessage = null;
+  if (cliCode && confirm('Are you sure you want to delete this card list?')) {
+    this.cardListService.delete(cliCode).subscribe({
+      next: () => {
+        this.cardListsList = this.cardListsList.filter(l => l.cliCode !== cliCode);
+        this.searchCardLists(); // Reapply search to update filteredCardListsList
+        this.showSuccessMessage('Card list deleted successfully');
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to delete card list: ${error.status} ${error.statusText}` : 'Failed to delete card list: Server error';
+        this.showErrorMessage(message);
+        console.error('Error deleting card list:', error);
+      }
+    });
   }
+}
 
   // Save wallet status
   saveStatus(): void {
