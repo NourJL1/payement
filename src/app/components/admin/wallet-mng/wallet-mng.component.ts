@@ -21,6 +21,8 @@ import { AccountType } from '../../../entities/account-type';
 import { error } from 'console';
 import { filter } from 'rxjs';
 import { Customer } from '../../../entities/customer';
+import { AccountList } from '../../../entities/account-list';
+import { AccountListService } from '../../../services/account-list.service';
 
 @Component({
   selector: 'app-wallet-mng',
@@ -90,6 +92,13 @@ filteredCardListsList: CardList[] = [];
   isAccountTypeEditMode: boolean = false;
   isAccountTypeVisible: boolean = false;
 
+  accountListsList: AccountList[] = [];
+  searchAccountListTerm: string = '';
+  filteredAccountListsList: AccountList[] = [];
+  newAccountList: AccountList = new AccountList({ wallet: new Wallet() });
+  selectedAccountList: AccountList | null = null;
+  isAccountListEditMode: boolean = false;
+
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
@@ -119,6 +128,7 @@ filteredCardListsList: CardList[] = [];
     private cardListService: CardListService,
     private walletService: WalletService,
     private accountTypeService: AccountTypeService,
+    private accountListService: AccountListService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -144,6 +154,7 @@ filteredCardListsList: CardList[] = [];
     this.loadCardTypes();
     this.loadCardLists();
     this.loadAccountTypes();
+    this.loadAccountLists();
     this.loadWalletStats();
     this.loadWallets(); // this should internally fetch and assign to `wallets` and `filteredWallets`
   }
@@ -167,6 +178,139 @@ filteredCardListsList: CardList[] = [];
     this.successMessage = null;
     this.errorMessage = null;
     this.cdr.detectChanges();
+  }
+
+  // Load account lists
+  loadAccountLists(): void {
+    this.errorMessage = null;
+    this.accountListService.getAll().subscribe({
+      next: (accountLists: AccountList[]) => {
+        this.accountListsList = accountLists;
+        this.filteredAccountListsList = [...accountLists];
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status
+          ? `Failed to load account lists: ${error.status} ${error.statusText}`
+          : 'Failed to load account lists: Server error';
+        this.showErrorMessage(message);
+        console.error('Error loading account lists:', error);
+      }
+    });
+  }
+
+  // Search account lists
+  searchAccountLists(): void {
+    console.log('Search term:', this.searchAccountListTerm);
+    if (!this.searchAccountListTerm || this.searchAccountListTerm.trim() === '') {
+      this.filteredAccountListsList = [...this.accountListsList];
+      this.cdr.detectChanges();
+    } else {
+      this.accountListService.searchAccountLists(this.searchAccountListTerm).subscribe({
+        next: (searchResults: AccountList[]) => {
+          console.log('Search results:', searchResults);
+          this.filteredAccountListsList = searchResults;
+          this.cdr.detectChanges();
+        },
+        error: (error: HttpErrorResponse) => {
+          const message = error.status
+            ? `Failed to search account lists: ${error.status} ${error.statusText}`
+            : 'Failed to search account lists: Server error';
+          this.showErrorMessage(message);
+          console.error('Error searching account lists:', error);
+        }
+      });
+    }
+  }
+
+  // Save account list
+  saveAccountList(): void {
+    this.errorMessage = null;
+    if (!this.newAccountList.aliLabe) {
+      this.showErrorMessage('Please fill in the required field: List Label.');
+      return;
+    }
+    const accountListPayload: AccountList = {
+      aliLabe: this.newAccountList.aliLabe,
+      aliIden: this.newAccountList.aliIden || this.selectedAccountList?.aliIden,
+      wallet: this.newAccountList.wallet ? { walIden: this.newAccountList.wallet.walIden } : null,
+      accounts: this.newAccountList.accounts || []
+    };
+    if (this.isAccountListEditMode && this.selectedAccountList?.aliCode) {
+      this.accountListService.update(this.selectedAccountList.aliCode, accountListPayload).subscribe({
+        next: (updatedAccountList: AccountList) => {
+          const index = this.accountListsList.findIndex(l => l.aliCode === updatedAccountList.aliCode);
+          if (index !== -1) {
+            this.accountListsList[index] = updatedAccountList;
+            this.accountListsList = [...this.accountListsList];
+          }
+          this.newAccountList = new AccountList({ wallet: new Wallet() });
+          this.selectedAccountList = null;
+          this.isAccountListEditMode = false;
+          this.isAccountListVisible = false;
+          this.showSuccessMessage('Account list updated successfully');
+          this.searchAccountLists();
+          this.cdr.detectChanges();
+        },
+        error: (error: HttpErrorResponse) => {
+          const message = error.status
+            ? `Failed to update account list: ${error.status} ${error.statusText}`
+            : 'Failed to update account list: Server error';
+          this.showErrorMessage(message);
+          console.error('Error updating account list:', error);
+        }
+      });
+    } else {
+      this.accountListService.create(accountListPayload).subscribe({
+        next: (createdAccountList: AccountList) => {
+          this.accountListsList.push(createdAccountList);
+          this.newAccountList = new AccountList({ wallet: new Wallet() });
+          this.isAccountListVisible = false;
+          this.showSuccessMessage('Account list added successfully');
+          this.searchAccountLists();
+          this.cdr.detectChanges();
+        },
+        error: (error: HttpErrorResponse) => {
+          const message = error.status
+            ? `Failed to create account list: ${error.status} ${error.statusText}`
+            : 'Failed to create account list: Server error';
+          this.showErrorMessage(message);
+          console.error('Error creating account list:', error);
+        }
+      });
+    }
+  }
+
+  // Edit account list
+  editAccountList(accountList: AccountList): void {
+    this.errorMessage = null;
+    this.selectedAccountList = accountList;
+    this.newAccountList = { ...accountList, wallet: accountList.wallet ? { ...accountList.wallet } : new Wallet() };
+    this.isAccountListEditMode = true;
+    this.isAccountListVisible = true;
+    this.cdr.detectChanges();
+  }
+
+  // Delete account list
+  deleteAccountList(aliCode: number | undefined): void {
+    this.errorMessage = null;
+    if (aliCode && confirm('Are you sure you want to delete this account list?')) {
+      this.accountListService.delete(aliCode).subscribe({
+        next: () => {
+          this.accountListsList = this.accountListsList.filter(l => l.aliCode !== aliCode);
+          this.searchAccountLists();
+          this.showSuccessMessage('Account list deleted successfully');
+          this.cdr.detectChanges();
+        },
+        error: (error: HttpErrorResponse) => {
+          const message = error.status
+            ? `Failed to delete account list: ${error.status} ${error.statusText}`
+            : 'Failed to delete account list: Server error';
+          this.showErrorMessage(message);
+          console.error('Error deleting account list:', error);
+        }
+      });
+    }
   }
 
   searchStatus() {
