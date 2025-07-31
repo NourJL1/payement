@@ -1087,25 +1087,32 @@ saveWallet(): void {
   if (this.selectedWallet.walCode) {
     this.walletService.update(this.selectedWallet.walCode, walletPayload).subscribe({
       next: (updatedWallet: Wallet) => {
-        // Find and update the wallet in both lists
-        const updateWalletInList = (list: Wallet[]) => {
-          const index = list.findIndex(w => w.walCode === updatedWallet.walCode);
-          if (index !== -1) {
-            // Merge the updated properties while preserving other properties
-            list[index] = {
-              ...list[index],
-              ...updatedWallet,
-              walletStatus: updatedWallet.walletStatus || list[index].walletStatus,
-              walletType: updatedWallet.walletType || list[index].walletType,
-              walletCategory: updatedWallet.walletCategory || list[index].walletCategory,
-              walFinId: updatedWallet.walFinId || list[index].walFinId
-            };
-          }
-          return [...list]; // Return new array to trigger change detection
+        // Create a deep merge function to properly update the wallet
+        const deepMergeWallet = (existing: Wallet, updated: Wallet): Wallet => {
+          return {
+            ...existing,
+            ...updated,
+            walletStatus:  existing.walletStatus,
+            walletType:  existing.walletType,
+            walletCategory:  existing.walletCategory,
+            createdAt: existing.createdAt, // Preserve the original createdAt
+            lastUpdatedDate: updatedWallet.lastUpdatedDate || existing.lastUpdatedDate
+          };
         };
 
-        this.walletsList = updateWalletInList(this.walletsList);
-        this.filteredWallets = updateWalletInList(this.filteredWallets);
+        // Update walletsList
+        const walletIndex = this.walletsList.findIndex(w => w.walCode === updatedWallet.walCode);
+        if (walletIndex !== -1) {
+          this.walletsList[walletIndex] = deepMergeWallet(this.walletsList[walletIndex], updatedWallet);
+          this.walletsList = [...this.walletsList]; // Create new array reference
+        }
+
+        // Update filteredWallets
+        const filteredIndex = this.filteredWallets.findIndex(w => w.walCode === updatedWallet.walCode);
+        if (filteredIndex !== -1) {
+          this.filteredWallets[filteredIndex] = deepMergeWallet(this.filteredWallets[filteredIndex], updatedWallet);
+          this.filteredWallets = [...this.filteredWallets]; // Create new array reference
+        }
 
         this.isWalletFormVisible = false;
         this.selectedWallet = new Wallet();
