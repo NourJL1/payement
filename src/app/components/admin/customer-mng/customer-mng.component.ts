@@ -19,7 +19,6 @@ import { WalletCategory } from '../../../entities/wallet-category';
 import { WalletCategoryService } from '../../../services/wallet-category.service';
 import { WalletTypeService } from '../../../services/wallet-type.service';
 import { WalletType } from '../../../entities/wallet-type';
-import { catchError, Observable, of, tap } from 'rxjs';
 import { CustomerIdentityService } from '../../../services/customer-identity.service';
 import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { AuthService } from '../../../services/auth.service';
@@ -138,6 +137,7 @@ export class CustomerMngComponent {
       history.replaceState({}, '');  // <-- This removes the customerToEdit from history
     }
     this.loadAllCustomers()
+    this.loadAllStatuses()
     this.loadIdentityTypes()
     this.loadDocTypes()
     this.loadCountries()
@@ -152,7 +152,9 @@ export class CustomerMngComponent {
       next: (customers: Customer[]) => { this.allCustomers = customers; this.filteredCustomers = customers },
       error: (err) => { console.log(err) }
     })
+  }
 
+  loadAllStatuses(){
     this.customerStatusService.getAll().subscribe({
       next: (statuses: CustomerStatus[]) => { this.statuses = statuses; this.filteredStatuses = statuses },
       error: (err) => { console.log(err) }
@@ -251,7 +253,6 @@ export class CustomerMngComponent {
     const phone = customer.cusPhoneNbr!
     this.phoneForm.get('phone')!.setValue(phone);
 
-    console.log(this.phoneForm.get('phone')?.value)
 
     this.onCountryChange(customer.country!);
     this.customerDocs = []
@@ -318,7 +319,6 @@ export class CustomerMngComponent {
         const index = this.allCustomers.findIndex(cus => cus.cusCode === this.customerForm.cusCode);
         if (index !== -1) {
           this.allCustomers[index] = customer;
-          this.allCustomers = this.allCustomers;
         }
         this.customerForm = new Customer();
         this.selectedCustomer = undefined;
@@ -335,6 +335,20 @@ export class CustomerMngComponent {
         this.showErrorMessage('Failed to update customer: ' + (err.error?.message || 'Please try again.'));
       }
     })
+  }
+
+  deleteCustomer(customer: Customer) {
+    if (confirm('Are you sure you want to delete this customer?')) {
+      this.customerService.deleteCustomer(customer.cusCode!).subscribe({
+        next: () => {
+          this.allCustomers = this.allCustomers.filter(cus => cus.cusCode !== customer?.cusCode);
+          this.filteredCustomers = this.filteredCustomers.filter(cus => cus.cusCode !== customer?.cusCode);
+          this.showSuccessMessage('Customer deleted successfully');
+          this.cdr.detectChanges();
+        },
+        error: (err) => { console.log(err) }
+      })
+    }
   }
 
 
@@ -367,20 +381,6 @@ export class CustomerMngComponent {
     }
   }
 
-  deleteCustomer(customer: Customer) {
-    if (confirm('Are you sure you want to delete this customer?')) {
-      this.customerService.deleteCustomer(customer.cusCode!).subscribe({
-        next: () => {
-          this.allCustomers = this.allCustomers.filter(cus => cus.cusCode !== customer?.cusCode);
-          this.filteredCustomers = this.filteredCustomers.filter(cus => cus.cusCode !== customer?.cusCode);
-          this.showSuccessMessage('Customer deleted successfully');
-          this.cdr.detectChanges();
-        },
-        error: (err) => { console.log(err) }
-      })
-    }
-  }
-
   filterCustomers() {
     if (!this.selectedStatus && !this.selectedCountry && !this.selectedCity && !this.customerSearchTerm)
       this.loadAllCustomers()
@@ -401,9 +401,9 @@ export class CustomerMngComponent {
           this.cdr.detectChanges();
         },
         error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to search wallets: ${error.status} ${error.statusText}` : 'Failed to search wallets: Server error';
+          const message = error.status ? `Failed to search customers: ${error.status} ${error.statusText}` : 'Failed to search customers: Server error';
           this.showErrorMessage(message);
-          console.error('Error searching wallets:', error);
+          console.error('Error searching customers:', error);
         }
       })
     }
@@ -417,7 +417,7 @@ export class CustomerMngComponent {
         const fieldRef = document.getElementById("usernameRef") as HTMLDivElement
         fieldRef.innerHTML = response ? 'Username already in use' : '';
       },
-      error: (err) => { console.log(err.message); return of(false) }
+      error: (err) => { console.log(err.message)}
     });
   }
 
@@ -447,7 +447,7 @@ export class CustomerMngComponent {
       next: (response) => {
         fieldRef.innerHTML = (this.selectedCustomer?.cusPhoneNbr != this.customerForm.cusPhoneNbr && response) ? 'Phone number already in use' : '';
       },
-      error: (err) => { console.log(err.message); return of(false) }
+      error: (err) => { console.log(err.message)}
     });
   }
 
@@ -459,7 +459,7 @@ export class CustomerMngComponent {
         const fieldRef = document.getElementById("emailRef") as HTMLDivElement
         fieldRef.innerHTML = (this.selectedCustomer?.cusMailAddress != this.customerForm.cusMailAddress && response) ? 'Email already in use' : '';
       },
-      error: (err) => { console.log(err.message); return of(false) }
+      error: (err) => { console.log(err.message)}
     });
   }
 
@@ -471,7 +471,7 @@ export class CustomerMngComponent {
         const fieldRef = document.getElementById("idNumRef") as HTMLDivElement
         fieldRef.innerHTML = response ? 'ID Num already in use' : '';
       },
-      error: (err) => { console.log(err.message); return of(false) }
+      error: (err) => { console.log(err.message)}
     });
   }
 
@@ -565,7 +565,7 @@ export class CustomerMngComponent {
 
   statusSearch() {
     if (!this.statusSearchTerm)
-      this.filteredStatuses = this.statuses
+      this.loadAllStatuses()
     else {
       this.customerStatusService.search(this.statusSearchTerm).subscribe({
         next: (searchResults: CustomerStatus[]) => {
@@ -573,7 +573,7 @@ export class CustomerMngComponent {
           this.cdr.detectChanges();
         },
         error: (error: HttpErrorResponse) => {
-          this.showErrorMessage(`Failed to search wallet statuses: ${error.status} ${error.statusText}`);
+          this.showErrorMessage(`Failed to search customer statuses: ${error.status} ${error.statusText}`);
         }
       })
     }
@@ -815,6 +815,7 @@ export class CustomerMngComponent {
 
   onCountryChange(country: Country): void {
     if (!country) {
+      this.selectedCity = undefined
       this.citiesByCountry = [];
       return;
     }

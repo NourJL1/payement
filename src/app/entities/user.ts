@@ -3,6 +3,7 @@ import { UserProfile } from "./user-profile"
 export class User {
 
     code?: number
+    identifier?: string
     login?: string
     password?: string
     firstName?: string

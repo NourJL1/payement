@@ -23,7 +23,7 @@ export class SideNavComponent implements OnInit {
 
   ngOnInit(): void {
     this.getNewCustomers()
-    setInterval(() => this.getNewCustomers(), 60000); // check every 1 min
+    setInterval(() => this.getNewCustomers(), 30000); // check every 30s
   }
 
   isCollapsed = false;

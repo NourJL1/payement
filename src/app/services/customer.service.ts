@@ -12,7 +12,7 @@ export class CustomerService {
   private apiUrl = `${environment.apiUrl}/api/customers`;
   private loggedInCustomerId: number | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private getHttpOptions() {
     const roles: Role[] = JSON.parse(localStorage.getItem('roles') || '[]');
@@ -64,8 +64,8 @@ export class CustomerService {
     );
   }
 
-  
-  existsByEmail(email: string){
+
+  existsByEmail(email: string) {
     return this.http.get<boolean>(`${this.apiUrl}/existsByEmail/${email}`)
   }
 
@@ -131,7 +131,7 @@ export class CustomerService {
   }
 
 
-getCustomerCountByCity(): Observable<{ [key: string]: number }> {
+  getCustomerCountByCity(): Observable<{ [key: string]: number }> {
     return this.http.get<{ [key: string]: number }>(`${this.apiUrl}/count-by-city`);
   }
 }

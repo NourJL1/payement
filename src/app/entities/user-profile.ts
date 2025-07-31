@@ -1,6 +1,6 @@
-import Module from "module";
 import { UserProfileMenuOption } from "./user-profile-menu-option";
 import { User } from "./user";
+import { Module } from "./module";
 
 export class UserProfile {
     code?: number

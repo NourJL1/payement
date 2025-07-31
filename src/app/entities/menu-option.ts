@@ -1,4 +1,4 @@
-import Module from "module";
+import { Module } from "./module";
 import { UserProfileMenuOption } from "./user-profile-menu-option";
 
 export class MenuOption {

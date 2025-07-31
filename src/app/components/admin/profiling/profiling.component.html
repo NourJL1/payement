@@ -15,6 +15,8 @@
             id="modules">Modules</button>
         <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('options')"
             id="options">Menu Options</button>
+        <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors"
+            (click)="showTab('profile-options')" id="profile-options">Profile Options</button>
     </div>
 </div>
 
@@ -62,21 +64,18 @@
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="ri-search-line text-gray-400"></i>
                 </div>
-                <input type="text" placeholder="Search..."
+                <input type="text" placeholder="Search..." [(ngModel)]="userSearchTerm" name="userSearchTerm"
+                    (input)="filterUsers()"
                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
             </div>
             <div class="w-full sm:w-auto">
                 <div class="relative">
-                    <select
+                    <select [(ngModel)]="selectedProfile" name="selectedProfile" (ngModelChange)="filterUsers()"
                         class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
-                        <option value="">All Profiles</option>
-                        <option value="">ADMIN</option>
-                        <option value="">EMPLOYEE</option>
-                        <option value="">ACCOUNTANT</option>
-                        <option value="">DATA ANALYST</option>
-                        <!-- <option *ngFor="let status of statuses" [value]="status">
-                            {{ status.ctsLabe }}
-                        </option> -->
+                        <option [ngValue]="undefined">All Profiles</option>
+                        <option *ngFor="let profile of allProfiles" [ngValue]="profile">
+                            {{ profile.label }}
+                        </option>
                     </select>
                 </div>
             </div>
@@ -117,39 +116,50 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr class="hover:bg-gray-50 transition duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">1</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">USE-2507100000-ABCD</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">john</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">JOHN DOE</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">ADMIN</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex items-center justify-end space-x-3">
-                                <button (click)="toggleForm('user-details')"
-                                    class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
-                                    <i class="ri-eye-line text-lg"></i>
-                                </button>
-                                <button
-                                    class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
-                                    <i class="ri-edit-line text-lg"></i>
-                                </button>
-                                <button
-                                    class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
-                                    <i class="ri-delete-bin-line text-lg"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    <ng-container *ngIf="filteredUsers!.length > 0; else noData">
+                        <tr *ngFor="let user of filteredUsers" class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{user.code}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{user.identifier}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{user.login}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{user.fullName}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{user.profile?.label}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-3">
+                                    <button (click)="selectedUser = user; toggleForm('user-details')"
+                                        class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                                        <i class="ri-eye-line text-lg"></i>
+                                    </button>
+                                    <button (click)="editUser(user)"
+                                        class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                        <i class="ri-edit-line text-lg"></i>
+                                    </button>
+                                    <button (click)="deleteUser(user)"
+                                        class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                        <i class="ri-delete-bin-line text-lg"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="100%" class="py-8 text-center">
+                                <div class="flex flex-col items-center justify-center space-y-2">
+                                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
                 </tbody>
             </table>
         </div>
@@ -210,24 +220,10 @@
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="ri-search-line text-gray-400"></i>
                 </div>
-                <input type="text" placeholder="Search..."
+                <input type="text" placeholder="Search..." [(ngModel)]="profileSearchTerm" name="profileSearchTerm"
+                    (input)="profileSearch()"
                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
             </div>
-            <!-- <div class="w-full sm:w-auto">
-                <div class="relative">
-                    <select
-                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
-                        <option value="">All Profiles</option>
-                        <option value="">ADMIN</option>
-                        <option value="">EMPLOYEE</option>
-                        <option value="">ACCOUNTANT</option>
-                        <option value="">DATA ANALYST</option>
-                        <option *ngFor="let status of statuses" [value]="status">
-                            {{ status.ctsLabe }}
-                        </option>
-                    </select>
-                </div>
-            </div> -->
         </div>
     </div>
 
@@ -257,33 +253,44 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr class="hover:bg-gray-50 transition duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">1</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">UPR-2507100000-ABCD</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">ADMIN</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex items-center justify-end space-x-3">
-                                <button (click)="toggleForm('profile-details')"
-                                    class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
-                                    <i class="ri-eye-line text-lg"></i>
-                                </button>
-                                <button
-                                    class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
-                                    <i class="ri-edit-line text-lg"></i>
-                                </button>
-                                <button
-                                    class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
-                                    <i class="ri-delete-bin-line text-lg"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    <ng-container *ngIf="filteredProfiles!.length > 0; else noData">
+                        <tr *ngFor="let profile of filteredProfiles" class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{profile.code}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{profile.identifier}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{profile.label}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-3">
+                                    <button (click)="selectedProfile = profile; toggleForm('profile-details')"
+                                        class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                                        <i class="ri-eye-line text-lg"></i>
+                                    </button>
+                                    <button (click)="editProfile(profile)"
+                                        class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                        <i class="ri-edit-line text-lg"></i>
+                                    </button>
+                                    <button (click)="deleteProfile(profile)"
+                                        class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                        <i class="ri-delete-bin-line text-lg"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="100%" class="py-8 text-center">
+                                <div class="flex flex-col items-center justify-center space-y-2">
+                                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
                 </tbody>
             </table>
         </div>
@@ -344,7 +351,8 @@
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="ri-search-line text-gray-400"></i>
                 </div>
-                <input type="text" placeholder="Search..."
+                <input type="text" placeholder="Search..." [(ngModel)]="moduleSearchTerm" name="moduleSearchTerm"
+                    (input)="moduleSearch()"
                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
             </div>
             <!-- <div class="w-full sm:w-auto">
@@ -399,41 +407,53 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr class="hover:bg-gray-50 transition duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">1</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">MOD-2507100000-ABCD</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">ACCOUNTING</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">
-                                <i class="ri-calculator-line ri-lg"></i>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">3</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex items-center justify-end space-x-3">
-                                <!-- <button (click)="toggleForm('module-details')"
-                                    class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
-                                    <i class="ri-eye-line text-lg"></i>
-                                </button> -->
-                                <button
-                                    class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
-                                    <i class="ri-edit-line text-lg"></i>
-                                </button>
-                                <button
-                                    class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
-                                    <i class="ri-delete-bin-line text-lg"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    <ng-container *ngIf="filteredModules!.length > 0; else noData">
+                        <tr *ngFor="let module of filteredModules" class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{module.code}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{module.identifier}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{module.label}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">
+                                    <i [class]="module!.logo" class="text-2xl"></i>
+                                    <!-- <i class="ri-calculator-line ri-lg"></i> -->
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{module.order}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-3">
+                                    <!-- <button (click)="selectedModule = module; toggleForm('module-details')"
+                                        class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                                        <i class="ri-eye-line text-lg"></i>
+                                    </button> -->
+                                    <button (click)="editModule(module)"
+                                        class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                        <i class="ri-edit-line text-lg"></i>
+                                    </button>
+                                    <button (click)="deleteModule(module)"
+                                        class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                        <i class="ri-delete-bin-line text-lg"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="100%" class="py-8 text-center">
+                                <div class="flex flex-col items-center justify-center space-y-2">
+                                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
                 </tbody>
             </table>
         </div>
@@ -494,21 +514,15 @@
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="ri-search-line text-gray-400"></i>
                 </div>
-                <input type="text" placeholder="Search..."
+                <input type="text" placeholder="Search..." [(ngModel)]="optionSearchTerm" name="optionSearchTerm" (input)="filterOptions()"
                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
             </div>
             <div class="w-full sm:w-auto">
                 <div class="relative">
-                    <select
+                    <select  [(ngModel)]="selectedModule" name="selectedModule" (ngModelChange)="filterOptions()"
                         class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
-                        <option value="">All Modules</option>
-                        <option value="">WALLETS</option>
-                        <option value="">ACCOUNTING</option>
-                        <option value="">CUSTOMERS</option>
-                        <option value="">PRODUCTS</option>
-                        <!-- <option *ngFor="let status of statuses" [value]="status">
-                            {{ status.ctsLabe }}
-                        </option> -->
+                        <option [ngValue]="undefined">All Modules</option>
+                        <option *ngFor="let module of allModules" [ngValue]="module">{{module.label}}</option>
                     </select>
                 </div>
             </div>
@@ -545,36 +559,205 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr class="hover:bg-gray-50 transition duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">1</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">MOP-2507100000-ABCD</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">Fee rule</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">ACCOUNTING</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex items-center justify-end space-x-3">
-                                <button (click)="toggleForm('option-details')"
-                                    class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
-                                    <i class="ri-eye-line text-lg"></i>
-                                </button>
-                                <button
-                                    class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
-                                    <i class="ri-edit-line text-lg"></i>
-                                </button>
-                                <button
-                                    class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
-                                    <i class="ri-delete-bin-line text-lg"></i>
-                                </button>
-                            </div>
-                        </td>
+                    <ng-container *ngIf="filteredOptions!.length > 0; else noData">
+                        <tr *ngFor="let option of filteredOptions" class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{option.code}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{option.identifier}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{option.label}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{option.module?.label}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-3">
+                                    <!-- <button (click)="selectedOption = option; toggleForm('option-details')"
+                                        class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                                        <i class="ri-eye-line text-lg"></i>
+                                    </button> -->
+                                    <button (click)="editOption(option)"
+                                        class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                        <i class="ri-edit-line text-lg"></i>
+                                    </button>
+                                    <button (click)="deleteOption(option)"
+                                        class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                        <i class="ri-delete-bin-line text-lg"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="100%" class="py-8 text-center">
+                                <div class="flex flex-col items-center justify-center space-y-2">
+                                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <div class="flex items-center text-sm text-gray-500">
+                <span>Showing 1-10 of ...</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled>
+                    <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
+                <button
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                    <i class="ri-arrow-right-s-line"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- profile options content -->
+<div id="tab-profile-options" class="tab-content hidden">
+    <!-- Header Section -->
+    <div
+        class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white rounded-xl shadow-lg mb-6">
+        <div class="mb-4 sm:mb-0">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Profiles Menu Options Management
+            </h2>
+        </div>
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+            <button
+                class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-download-2-line mr-2"></i> Export Data
+            </button>
+            <button (click)="toggleForm('profile-option-form')" id="newSchemaBtn"
+                class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
+                <i class="ri-add-line mr-2"></i> New Profile - Option
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+            <!-- Search -->
+            <!-- <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="ri-search-line text-gray-400"></i>
+                </div>
+                <input type="text" placeholder="Search..." [(ngModel)]="profileOptionSearchTerm" name="profileOptionSearchTerm" (input)="filterProfileOptions()"
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+            </div> -->
+            <div class="w-full sm:w-auto">
+                <div class="relative">
+                    <select [(ngModel)]="selectedProfile" name="selectedProfile" (ngModelChange)="filterProfileOptions()"
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+                        <option [ngValue]="undefined">All Profiles</option>
+                        <option *ngFor="let profile of allProfiles" [ngValue]="profile">{{profile.label}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="w-full sm:w-auto">
+                <div class="relative">
+                    <select [(ngModel)]="selectedModule" name="selectedModule" (ngModelChange)="onModuleChange(selectedModule!); filterProfileOptions()"
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+                        <option [ngValue]="undefined">All Modules</option>
+                        <option *ngFor="let module of allModules" [ngValue]="module">{{module.label}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="w-full sm:w-auto">
+                <div class="relative">
+                    <select [(ngModel)]="selectedOption" name="selectedOption" (ngModelChange)="filterProfileOptions()"
+                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
+                        <option [ngValue]="undefined">All Options</option>
+                        <option *ngFor="let option of optionsByModule" [ngValue]="option">{{option.label}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Code
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Profile
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Menu Option
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Actions
+                        </th>
                     </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <ng-container *ngIf="filteredProfileOptions!.length > 0; else noData">
+                        <tr *ngFor="let upmo of filteredProfileOptions"
+                            class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{upmo.id}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{upmo.profile?.label}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{upmo.menuOption?.label}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-3">
+                                    <button (click)="selectedProfileOption = upmo; toggleForm('profile-option-details')"
+                                        class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                                        <i class="ri-eye-line text-lg"></i>
+                                    </button>
+                                    <button (click)="editProfileOption(upmo)"
+                                        class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                                        <i class="ri-edit-line text-lg"></i>
+                                    </button>
+                                    <button (click)="deleteProfileOption(upmo)"
+                                        class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                                        <i class="ri-delete-bin-line text-lg"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="100%" class="py-8 text-center">
+                                <div class="flex flex-col items-center justify-center space-y-2">
+                                    <p class="text-sm text-gray-400">The table is currently empty</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
                 </tbody>
             </table>
         </div>
@@ -607,7 +790,8 @@
 
 <div *ngIf="isAnyModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[50]">
     <!-- user details -->
-    <div *ngIf="isUserDetailsVisible" id="user-details-modal" class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
+    <div *ngIf="isUserDetailsVisible" id="user-details-modal"
+        class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
             <h3 class="text-lg font-semibold text-gray-800">Customer Details</h3>
             <button id="close-customer-detail" class="text-gray-400 hover:text-gray-500">
@@ -627,10 +811,10 @@
                                 <i class="ri-contacts-line ri-2x"></i>
                             </div>
                             <h4 class="text-lg font-semibold mt-2">
-                                JOHN DOE
+                                {{selectedUser?.fullName}}
                             </h4>
                             <p class="text-sm text-gray-500">
-                                john
+                                {{selectedUser?.login}}
                             </p>
                         </div>
                     </div>
@@ -652,7 +836,7 @@
                                             <div>
                                                 <label class="block text-xs text-gray-500 mb-1">User Code</label>
                                                 <div class="text-sm font-medium text-gray-800">
-                                                    101
+                                                    {{selectedUser?.code}}
                                                 </div>
                                             </div>
                                         </div>
@@ -661,7 +845,7 @@
                                             <div>
                                                 <label class="block text-xs text-gray-500 mb-1">Identifier</label>
                                                 <div class="text-sm font-medium text-gray-800">
-                                                    USR-2507171214-AB12
+                                                    {{selectedUser?.identifier}}
                                                 </div>
                                             </div>
                                         </div>
@@ -670,7 +854,7 @@
                                             <div>
                                                 <label class="block text-xs text-gray-500 mb-1">Full Name</label>
                                                 <div class="text-sm font-medium text-gray-800">
-                                                    John Doe
+                                                    {{selectedUser?.fullName}}
                                                 </div>
                                             </div>
                                         </div>
@@ -679,7 +863,7 @@
                                             <div>
                                                 <label class="block text-xs text-gray-500 mb-1">Username</label>
                                                 <div class="text-sm font-medium text-gray-800">
-                                                    john
+                                                    {{selectedUser?.login}}
                                                 </div>
                                             </div>
                                         </div>
@@ -699,7 +883,7 @@
                                             <div>
                                                 <label class="block text-xs text-gray-500 mb-1">Email</label>
                                                 <div class="text-sm font-medium text-gray-800">
-                                                    john&#64;uib.com
+                                                    {{selectedUser?.email}}
                                                 </div>
                                             </div>
                                         </div>
@@ -709,7 +893,7 @@
                                             <div>
                                                 <label class="block text-xs text-gray-500 mb-1">Phone</label>
                                                 <div class="text-sm font-medium text-gray-800">
-                                                    +21612345678
+                                                    {{selectedUser?.phone}}
                                                 </div>
                                             </div>
                                         </div>
@@ -719,7 +903,7 @@
                                             <div>
                                                 <label class="block text-xs text-gray-500 mb-1">Fax</label>
                                                 <div class="text-sm font-medium text-gray-800">
-                                                    98765432
+                                                    {{selectedUser?.fax}}
                                                 </div>
                                             </div>
                                         </div>
@@ -736,8 +920,9 @@
                                         <i class="ri-user-3-line ri-lg"></i>
                                     </div>
                                     <div class="ml-4">
-                                        <div class="text-sm font-medium">ADMIN</div>
-                                        <div class="text-xs text-gray-500">Profile ID: UPR-2507100000-ABCD</div>
+                                        <div class="text-sm font-medium">{{selectedUser?.profile?.label}}</div>
+                                        <div class="text-xs text-gray-500">Profile ID:
+                                            {{selectedUser?.profile?.identifier}}</div>
                                         <div class="flex items-center mt-1">
                                         </div>
                                     </div>
@@ -756,699 +941,887 @@
         </div>
     </div>
 
-        <!-- user form -->
-        <div *ngIf="isUserFormVisible" id="user-modal"
-            class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-800">Add New User</h3>
-                <button (click)="closeForm('user-form')" id="close-user-form" class="text-gray-400 hover:text-gray-500">
-                    <div class="w-6 h-6 flex items-center justify-center">
-                        <i class="ri-close-line ri-lg"></i>
-                    </div>
-                </button>
-            </div>
-
-            <form ngNativeValidate id="UserForm" class="p-6 space-y-8 overflow-y-auto">
-                <!-- Personal Information Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-5">
-                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                        <h4 class="text-lg font-semibold text-gray-900">Personal Information</h4>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="form-field">
-                            <label class="form-label flex items-center">
-                                Login
-                                <span class="text-primary ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="text" id="USE_LOGI" name="USE_LOGI" required class="form-input pl-10">
-                            </div>
-                        </div>
-
-                        <div class="form-field">
-                            <label class="form-label flex items-center">
-                                First Name
-                                <span class="text-primary ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="text" id="USE_FIRS_NAME" name="USE_FIRS_NAME" required
-                                    class="form-input pl-10">
-                            </div>
-                        </div>
-
-                        <div class="form-field">
-                            <label class="form-label">Middle Name</label>
-                            <div class="relative">
-                                <input type="text" id="USE_MIDD_NAME" name="USE_MIDD_NAME" class="form-input pl-10">
-                            </div>
-                        </div>
-
-                        <div class="form-field">
-                            <label class="form-label flex items-center">
-                                Last Name
-                                <span class="text-primary ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="text" id="USE_LAST_NAME" name="USE_LAST_NAME" required
-                                    class="form-input pl-10">
-                            </div>
-                        </div>
-                    </div>
+    <!-- user form -->
+    <div *ngIf="isUserFormVisible" id="user-modal"
+        class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">
+                {{selectedUser ? "Update" : "Add New"}} User</h3>
+            <button (click)="closeForm('user-form')" id="close-user-form" class="text-gray-400 hover:text-gray-500">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-close-line ri-lg"></i>
                 </div>
-
-                <!-- Professional Information Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-5">
-                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                        <h4 class="text-lg font-semibold text-gray-900">Professional Information</h4>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="form-field">
-                            <label class="form-label">Profile</label>
-                            <div class="relative">
-                                <select id="USE_UPR_CODE" name="USE_UPR_CODE" class="form-input pl-10">
-                                    <option value="">Select Profile</option>
-                                    <option value="Administrator">Administrator</option>
-                                    <option value="Manager">Manager</option>
-                                    <option value="Supervisor">Supervisor</option>
-                                    <option value="Employee">Employee</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-field">
-                            <label class="form-label">Function</label>
-                            <div class="relative">
-                                <input type="text" id="USE_FUNC" name="USE_FUNC" class="form-input pl-10">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Contact Information Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-5">
-                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                        <h4 class="text-lg font-semibold text-gray-900">Contact Information</h4>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="form-field">
-                            <label class="form-label">Phone</label>
-                            <div class="relative">
-                                <input type="tel" id="USE_PHONE" name="USE_PHONE" class="form-input pl-10">
-                            </div>
-                        </div>
-
-                        <div class="form-field">
-                            <label class="form-label">Fax</label>
-                            <div class="relative">
-                                <input type="tel" id="USE_FAX" name="USE_FAX" class="form-input pl-10">
-                            </div>
-                        </div>
-
-                        <div class="form-field md:col-span-2">
-                            <label class="form-label flex items-center">
-                                Email
-                                <span class="text-primary ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="email" id="USE_MAIL" name="USE_MAIL" required class="form-input pl-10">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Security Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-5">
-                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                        <h4 class="text-lg font-semibold text-gray-900">Security</h4>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="form-field">
-                            <label class="form-label flex items-center">
-                                Password
-                                <span class="text-primary ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="password" id="password" name="password" required class="form-input pl-10">
-                            </div>
-                        </div>
-
-                        <div class="form-field">
-                            <label class="form-label flex items-center">
-                                Confirm Password
-                                <span class="text-primary ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="password" id="confirmPassword" name="confirmPassword" required
-                                    class="form-input pl-10">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                    <button (click)="closeForm('user-form')" id="cancel-user-form"
-                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
-                        Cancel
-                    </button>
-                    <button type="submit" form="UserForm" id="submit-user-form"
-                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
-                        Add User
-                    </button>
-                </div>
-            </form>
+            </button>
         </div>
 
-        <!-- profile details -->
-        <div *ngIf="isProfileDetailsVisible" id="profile-details-modal"
-            class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-800">Profile Details</h3>
-                <button id="close-customer-detail" class="text-gray-400 hover:text-gray-500">
-                    <div class="w-6 h-6 flex items-center justify-center">
-                        <i (click)="closeForm('profile-details')" class="ri-close-line ri-lg"></i>
+        <form ngNativeValidate (ngSubmit)="selectedUser ? updateUser() : addUser()" #UserForm="ngForm"
+            class="p-6 space-y-8 overflow-y-auto">
+            <!-- Personal Information Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Personal Information</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Login
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="USE_LOGI" [(ngModel)]="userForm.login" name="login" required
+                                class="form-input pl-10">
+                        </div>
+                        <div class="error-message" id="usernameRef"></div>
                     </div>
-                </button>
+
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            First Name
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="USE_FIRS_NAME" [(ngModel)]="userForm.firstName" name="firstName"
+                                required class="form-input pl-10">
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label">Middle Name</label>
+                        <div class="relative">
+                            <input type="text" id="USE_MIDD_NAME" [(ngModel)]="userForm.middleName" name="middleName"
+                                class="form-input pl-10">
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Last Name
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="USE_LAST_NAME" [(ngModel)]="userForm.lastName" name="lastName"
+                                required class="form-input pl-10">
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="p-6 space-y-8 overflow-y-auto">
-                <!-- Basic Information Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-5">
-                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                        <h4 class="text-lg font-semibold text-gray-900">Basic Information</h4>
+            <!-- Professional Information Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Professional Information</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="form-field">
+                        <label class="form-label">Profile</label>
+                        <div class="relative">
+                            <select id="USE_UPR_CODE" [(ngModel)]="userForm.profile" name="profile"
+                                class="form-input pl-10" [compareWith]="compareBy('code')">
+                                <option [ngValue]="undefined" disabled>Select Profile</option>
+                                <option [ngValue]="profile" *ngFor="let profile of allProfiles">{{profile.label}}
+                                </option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div class="space-y-4">
-                        <div class="flex justify-between py-2 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-500">Profile Code</span>
-                            <span class="text-sm font-medium text-gray-900">10101</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-500">Full Denomination</span>
-                            <span class="text-sm font-medium text-gray-900">UPR-2507100000-ABCD</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-500">Profile Name</span>
-                            <span class="text-sm font-medium text-gray-900">ADMIN</span>
-                        </div>
-                        <div class="flex justify-between py-2">
-                            <span class="text-sm font-medium text-gray-500">Created On</span>
-                            <span class="text-sm font-medium text-gray-900">17-07-25</span>
+                    <div class="form-field">
+                        <label class="form-label">Function</label>
+                        <div class="relative">
+                            <input type="text" id="USE_FUNC" name="USE_FUNC" class="form-input pl-10">
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Permissions Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-5">
-                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                        <h4 class="text-lg font-semibold text-gray-900">System Permissions</h4>
+            <!-- Contact Information Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Contact Information</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="form-field">
+                        <label class="form-label">Phone</label>
+                        <div class="relative">
+                            <ngx-intl-tel-input class="form-input pl-10" name="phone" (ngModelChange)="phoneExists()"
+                                [formControl]="phoneForm.controls['phone']" [enableAutoCountrySelect]="true"
+                                [enablePlaceholder]="true" [selectFirstCountry]="false" [searchCountryFlag]="true"
+                                [phoneValidation]="true" required>
+                            </ngx-intl-tel-input>
+                            <div class="error-message" id="phoneRef"></div>
+                        </div>
                     </div>
 
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">VIEW BANK</span>
-                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
-                                Enabled
-                            </span>
+                    <div class="form-field">
+                        <label class="form-label">Fax</label>
+                        <div class="relative">
+                            <input type="tel" id="USE_FAX" [(ngModel)]="userForm.fax" name="fax"
+                                class="form-input pl-10">
                         </div>
+                    </div>
 
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">VIEW BRANCH</span>
-                            <span class="text-sm font-medium" [class.text-primary]="false" [class.text-gray-400]="true">
-                                Disabled
-                            </span>
+                    <div class="form-field md:col-span-2">
+                        <label class="form-label flex items-center">
+                            Email
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="email" id="USE_MAIL" [(ngModel)]="userForm.email" name="email" required
+                                class="form-input pl-10">
                         </div>
+                        <div class="error-message" id="emailRef"></div>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">VIEW CHILD</span>
-                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
-                                Enabled / Disabled
-                            </span>
+            <!-- Security Section -->
+            <div *ngIf="!selectedUser" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Security</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Password
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10 pr-10" [(ngModel)]="userForm.password" #password="ngModel"
+                                name="password" type="password" required minlength="6">
                         </div>
-
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">VIEW CUSTOMER - MERCHANT</span>
-                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
-                                Enabled / Disabled
-                            </span>
+                        <div *ngIf="password.invalid && password.touched" class="error-message">
+                            <div *ngIf="password.errors?.['required']">Password is required</div>
+                            <div *ngIf="password.errors?.['minlength']">Minimum 6 characters</div>
                         </div>
+                    </div>
 
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">GRANT</span>
-                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
-                                Enabled / Disabled
-                            </span>
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Confirm Password
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10 pr-10" #confirm="ngModel" [(ngModel)]="confirmPassword"
+                                name="confirmPassword" type="password" [disabled]="!userForm.password"
+                                [required]="userForm.password != confirm.value" minlength="6">
                         </div>
-
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">CRYP PAN</span>
-                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
-                                Enabled / Disabled
-                            </span>
+                        <div *ngIf="UserForm.submitted && userForm.password !== confirm.value" class="error">
+                            Passwords don't match
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button (click)="closeForm('user-form')" id="cancel-user-form"
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                    Cancel
+                </button>
+                <button type="submit" id="submit-user-form"
+                    class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                    {{selectedUser ? "Update" : "Add"}} User
+                </button>
+            </div>
+        </form>
+    </div>
 
-                <!-- Associated Modules Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between mb-5">
-                        <div class="flex items-center">
-                            <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                            <h4 class="text-lg font-semibold text-gray-900">Assigned Modules</h4>
-                        </div>
-                        <span class="text-xs text-gray-500">6 modules</span>
+    <!-- profile details -->
+    <div *ngIf="isProfileDetailsVisible" id="profile-details-modal"
+        class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">Profile Details</h3>
+            <button id="close-customer-detail" class="text-gray-400 hover:text-gray-500">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i (click)="closeForm('profile-details')" class="ri-close-line ri-lg"></i>
+                </div>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-8 overflow-y-auto">
+            <!-- Basic Information Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Basic Information</h4>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-500">Profile Code</span>
+                        <span class="text-sm font-medium text-gray-900">{{selectedProfile?.code}}</span>
                     </div>
-
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i _ngcontent-ng-c3705239543="" class="ri-calculator-line ri-lg"></i>
-                                <!-- <i *ngIf="module.mod_logo" class="{{ module.mod_logo }} text-gray-600 mr-3"></i> -->
-                                <span class="text-sm font-medium text-gray-700">accounting</span>
-                                <span class="text-xs text-gray-500">Order: 1</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i _ngcontent-ng-c3054506934="" class="ri-wallet-3-line ri-lg"></i>
-                                <!-- <i *ngIf="module.mod_logo" class="{{ module.mod_logo }} text-gray-600 mr-3"></i> -->
-                                <span class="text-sm font-medium text-gray-700">wallets</span>
-                                <span class="text-xs text-gray-500">Order: 2</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i _ngcontent-ng-c3054506934="" class="ri-contacts-line ri-lg"></i>
-                                <!-- <i *ngIf="module.mod_logo" class="{{ module.mod_logo }} text-gray-600 mr-3"></i> -->
-                                <span class="text-sm font-medium text-gray-700">customers</span>
-                                <span class="text-xs text-gray-500">Order: 3</span>
-                            </div>
-                        </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-500">Identifier</span>
+                        <span class="text-sm font-medium text-gray-900">{{selectedProfile?.identifier}}</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-500">Profile Label</span>
+                        <span class="text-sm font-medium text-gray-900">{{selectedProfile?.label}}</span>
                     </div><!-- 
+                    <div class="flex justify-between py-2">
+                        <span class="text-sm font-medium text-gray-500">Created On</span>
+                        <span class="text-sm font-medium text-gray-900">17-07-25</span>
+                    </div> -->
+                </div>
+            </div>
+
+            <!-- Permissions Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">System Permissions</h4>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">VIEW BANK</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfile?.viewBank"
+                            [class.text-red-400]="!selectedProfile?.viewBank">
+                            {{ selectedProfile?.viewBank ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">VIEW BRANCH</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfile?.viewBranch"
+                            [class.text-red-400]="!selectedProfile?.viewBranch">
+                            {{ selectedProfile?.viewBranch ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">VIEW CHILD</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfile?.viewChild"
+                            [class.text-red-400]="!selectedProfile?.viewChild">
+                            {{ selectedProfile?.viewChild ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">VIEW CUSTOMER - MERCHANT</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfile?.viewCustomerMerchant"
+                            [class.text-red-400]="!selectedProfile?.viewCustomerMerchant">
+                            {{ selectedProfile?.viewCustomerMerchant ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">GRANT</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfile?.grantPermission"
+                            [class.text-red-400]="!selectedProfile?.grantPermission">
+                            {{ selectedProfile?.grantPermission ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">CRYP PAN</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfile?.canDecryptPan"
+                            [class.text-red-400]="!selectedProfile?.canDecryptPan">
+                            {{ selectedProfile?.canDecryptPan ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Associated Modules Section -->
+            <!-- <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center">
+                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                        <h4 class="text-lg font-semibold text-gray-900">Assigned Modules</h4>
+                    </div>
+                    <span class="text-xs text-gray-500">{{selectedProfile?.modules?.length}} modules</span>
+                </div>
+
+                <div class="space-y-2" *ngIf="selectedProfile!.modules!.length; else noModules">
+                    <div *ngFor="let module of selectedProfile?.modules"
+                        class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <i _ngcontent-ng-c3705239543="module.logo"></i>
+                            <i *ngIf="module.mod_logo" class="{{ module.mod_logo }} text-gray-600 mr-3"></i> 
+                            <span class="text-sm font-medium text-gray-700">{{module.label}}</span>
+                            <span class="text-xs text-gray-500">Order: {{module.order}}</span>
+                        </div>
+                    </div>
+                </div>
                 <ng-template #noModules>
                     <div class="text-center py-4 text-gray-400 text-sm">
                         No modules assigned to this profile
                     </div>
-                </ng-template> -->
+                </ng-template>
+            </div> -->
+        </div>
+
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+            <button (click)="closeForm('profile-details')" id="close-customer-detail-btn"
+                class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- add/edit profile -->
+    <div *ngIf="isProfileFormVisible" id="create-profile-modal"
+        class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">
+                {{selectedProfile ? "Update" : "Create New"}} Profile</h3>
+            <button (click)="closeForm('profile-form')" id="close-create-profile"
+                class="text-gray-400 hover:text-gray-500">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-close-line ri-lg"></i>
+                </div>
+            </button>
+        </div>
+
+        <form ngNativeValidate (ngSubmit)="selectedProfile ? updateProfile() : addProfile()" #ProfileForm="ngForm"
+            class="p-6 space-y-8 overflow-y-auto">
+            <!-- Basic Information Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Basic Information</h4>
+                </div>
+
+                <div class="space-y-5">
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Profile Name
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="profileForm.label" name="label" type="text"
+                                required (ngModelChange)="profileForm.label = $event.toUpperCase()"
+                                placeholder="e.g. Administrator Profile">
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
-                <button (click)="closeForm('profile-details')" id="close-customer-detail-btn"
-                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
-                    Close
-                </button>
-            </div>
-        </div>
+            <!-- Permissions Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">System Permissions</h4>
+                </div>
 
-        <!-- add/edit profile -->
-        <div *ngIf="isProfileFormVisible" id="create-profile-modal"
-            class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-800">Create New Profile</h3>
-                <button (click)="closeForm('profile-form')" id="close-create-profile"
-                    class="text-gray-400 hover:text-gray-500">
-                    <div class="w-6 h-6 flex items-center justify-center">
-                        <i class="ri-close-line ri-lg"></i>
-                    </div>
-                </button>
-            </div>
-
-            <form ngNativeValidate #profileForm="ngForm" class="p-6 space-y-8 overflow-y-auto">
-                <!-- Basic Information Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-5">
-                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                        <h4 class="text-lg font-semibold text-gray-900">Basic Information</h4>
-                    </div>
-
-                    <div class="space-y-5">
-                        <div class="form-field">
-                            <label class="form-label flex items-center">
-                                Profile Name
-                                <span class="text-primary ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <input class="form-input pl-10" name="profileName" type="text" required
-                                    placeholder="e.g. Administrator Profile">
+                <div class="space-y-2">
+                    <!-- Permission Toggles - Compact Style -->
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">VIEW BANK</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileForm.viewBank" name="viewBank"
+                                class="sr-only peer">
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Permissions Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-5">
-                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                        <h4 class="text-lg font-semibold text-gray-900">System Permissions</h4>
+                        </label>
                     </div>
 
-                    <div class="space-y-2">
-                        <!-- Permission Toggles - Compact Style -->
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">VIEW BANK</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="viewBank" class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                                </div>
-                            </label>
-                        </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">VIEW BRANCH</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileForm.viewBranch" name="viewBranch"
+                                class="sr-only peer">
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                            </div>
+                        </label>
+                    </div>
 
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">VIEW BRANCH</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="viewBranch" class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                                </div>
-                            </label>
-                        </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">VIEW CHILD</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileForm.viewChild" name="viewChild"
+                                class="sr-only peer">
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                            </div>
+                        </label>
+                    </div>
 
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">VIEW CHILD</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="viewChild" class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                                </div>
-                            </label>
-                        </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">VIEW CUSTOMER - MERCHANT</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileForm.viewCustomerMerchant"
+                                name="viewCustomerMerchant" class="sr-only peer">
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                            </div>
+                        </label>
+                    </div>
 
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">VIEW CUSTOMER - MERCHANT</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="viewCustomerMerchant" class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                                </div>
-                            </label>
-                        </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">GRANT</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileForm.grantPermission" name="grantPermission"
+                                class="sr-only peer">
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                            </div>
+                        </label>
+                    </div>
 
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">GRANT</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="grant" class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                                </div>
-                            </label>
-                        </div>
-
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">CRYP PAN</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="crypPan" class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                                </div>
-                            </label>
-                        </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">CRYP PAN</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileForm.canDecryptPan" name="canDecryptPan"
+                                class="sr-only peer">
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                            </div>
+                        </label>
                     </div>
                 </div>
-                <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                    <button (click)="closeForm('profile-form')" id="cancel-create-profile"
-                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
-                        Cancel
-                    </button>
-                    <button type="submit" form="profileForm" id="submit-create-profile"
-                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
-                        Create Profile
-                    </button>
-                </div>
-            </form>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button (click)="closeForm('profile-form')" id="cancel-create-profile"
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                    Cancel
+                </button>
+                <button type="submit" id="submit-create-profile"
+                    class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                    {{selectedProfile ? "Update" : "Create"}} Profile
+                </button>
+            </div>
+        </form>
 
-        </div>
+    </div>
 
-        <!-- module details -->
-        <!-- <div *ngIf="isModuleDetailsVisible" id="module-details-modal"
+    <!-- module details -->
+    <!-- <div *ngIf="isModuleDetailsVisible" id="module-details-modal"
         class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
     </div> -->
 
-        <!-- add/edit module -->
-        <div *ngIf="isModuleFormVisible" id="create-module-modal"
-            class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-800">Add New Module</h3>
-                <button (click)="closeForm('module-form')" class="text-gray-400 hover:text-gray-500">
-                    <i class="ri-close-line ri-lg"></i>
-                </button>
-            </div>
-
-            <form ngNativeValidate class="p-6 space-y-6 overflow-y-auto">
-                <!-- Module Information Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-5">
-                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                        <h4 class="text-lg font-semibold text-gray-900">Module Details</h4>
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-5">
-                        <!-- Label Field -->
-                        <div class="form-field">
-                            <label class="form-label flex items-center">
-                                Label
-                                <span class="text-primary ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <input class="form-input pl-10" name="label" type="text" required>
-                            </div>
-                        </div>
-
-                        <!-- Logo Selection -->
-                        <div class="form-field">
-                            <label class="form-label">Logo</label>
-                            <div class="relative">
-                                <select class="form-input pl-10" name="logo">
-                                    <option value="">Select a logo</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Order Field -->
-                        <div class="form-field">
-                            <label class="form-label flex items-center">
-                                Order
-                                <span class="text-primary ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <input class="form-input pl-10" name="order" type="number" min="1" required>
-                            </div>
-                        </div>
-
-                        <!-- Access Toggle -->
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">ACCESS</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="access" class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                    <button (click)="closeForm('module-form')"
-                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
-                        Cancel
-                    </button>
-                    <button type="submit"
-                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
-                        Add Module
-                    </button>
-                </div>
-            </form>
+    <!-- add/edit module -->
+    <div *ngIf="isModuleFormVisible" id="create-module-modal"
+        class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">
+                {{selectedModule ? "Update" : "Add New"}} Module</h3>
+            <button (click)="closeForm('module-form')" class="text-gray-400 hover:text-gray-500">
+                <i class="ri-close-line ri-lg"></i>
+            </button>
         </div>
 
-        <!-- option details -->
-        <div *ngIf="isOptionDetailsVisible" id="option-details-modal"
-            class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-800">Profile Details</h3>
-                <button id="close-customer-detail" class="text-gray-400 hover:text-gray-500">
-                    <div class="w-6 h-6 flex items-center justify-center">
-                        <i (click)="closeForm('option-details')" class="ri-close-line ri-lg"></i>
+        <form ngNativeValidate (ngSubmit)="selectedModule ? updateModule() : addModule()"
+            class="p-6 space-y-6 overflow-y-auto">
+            <!-- Module Information Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Module Details</h4>
+                </div>
+
+                <div class="grid grid-cols-1 gap-5">
+                    <!-- Label Field -->
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Label
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="moduleForm.label" name="label" type="text"
+                                required>
+                        </div>
                     </div>
+
+                    <!-- Logo Selection -->
+                    <div class="form-field">
+                        <label class="form-label">Logo</label>
+                        <div class="relative">
+                            <div class="grid grid-cols-5 gap-4 max-h-36 overflow-y-auto p-1 border rounded-lg">
+                                <button *ngFor="let logo of logos" (click)="moduleForm.logo = logo" type="button"
+                                    [class.border-primary]="moduleForm.logo === logo"
+                                    class="p-3 border rounded-lg hover:border-primary focus:outline-none">
+                                    <i [class]="logo" class="text-2xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Field -->
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Order
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="moduleForm.order" name="order" type="number"
+                                min="1" required>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Access Path
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="moduleForm.accessPath" name="accessPath"
+                                placeholder="module  access path" type="text" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button (click)="closeForm('module-form')"
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                    Cancel
+                </button>
+                <button type="submit"
+                    class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                    {{selectedModule ? "Update" : 'Add'}} Module
                 </button>
             </div>
+        </form>
+    </div>
 
-            <div class="p-6 space-y-8 overflow-y-auto">
-                <!-- Basic Information Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-5">
-                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                        <h4 class="text-lg font-semibold text-gray-900">Basic Information</h4>
+    <!-- option details -->
+    <div *ngIf="isOptionDetailsVisible" id="option-details-modal"
+        class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">Menu Option Details</h3>
+            <button id="close-customer-detail" class="text-gray-400 hover:text-gray-500">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i (click)="closeForm('option-details')" class="ri-close-line ri-lg"></i>
+                </div>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-8 overflow-y-auto">
+            <!-- Basic Information Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Basic Information</h4>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-500">Option Code</span>
+                        <span class="text-sm font-medium text-gray-900">{{selectedOption?.code}}</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-500">Label</span>
+                        <span class="text-sm font-medium text-gray-900">{{selectedOption?.label}}</span>
                     </div>
 
-                    <div class="space-y-4">
-                        <div class="flex justify-between py-2 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-500">Option Code</span>
-                            <span class="text-sm font-medium text-gray-900">222</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-500">Label</span>
-                            <span class="text-sm font-medium text-gray-900">Fee rule</span>
-                        </div><!-- 
-                    <div class="flex justify-between py-2">
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-500">Module</span>
+                        <span class="text-sm font-medium text-gray-900">{{selectedOption?.module?.label}}</span>
+                    </div>
+                    <!-- <div class="flex justify-between py-2">
                         <span class="text-sm font-medium text-gray-500">Associated Form</span>
                         <span class="text-sm font-medium text-gray-900">{{ selectedOption.map_form_name || 'None'
                             }}</span>
                     </div> -->
-                    </div>
                 </div>
-
-                <!-- Access Permissions Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between mb-5">
-                        <div class="flex items-center">
-                            <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                            <h4 class="text-lg font-semibold text-gray-900">Access Permissions</h4>
-                        </div>
-                        <span class="text-xs text-gray-500">3 active</span>
-                    </div>
-
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">VIEW ACCESS</span>
-                            <span class="text-sm font-medium" [class.text-primary]="true">
-                                Enabled
-                            </span>
-                        </div>
-
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">INSERT</span>
-                            <span class="text-sm font-medium" [class.text-gray-400]="false">
-                                Disabled
-                            </span>
-                        </div>
-
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">UPDATE</span>
-                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
-                                {{ true ? 'Enabled' : 'Disabled' }}
-                            </span>
-                        </div>
-
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">DELETE</span>
-                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
-                                {{ false ? 'Enabled' : 'Disabled' }}
-                            </span>
-                        </div>
-
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">EDIT</span>
-                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
-                                {{ false ? 'Enabled' : 'Disabled' }}
-                            </span>
-                        </div>
-
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">PRINT</span>
-                            <span class="text-sm font-medium" [class.text-primary]="true" [class.text-gray-400]="false">
-                                {{ true ? 'Enabled' : 'Disabled' }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Associated Profiles Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between mb-5">
-                        <div class="flex items-center">
-                            <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                            <h4 class="text-lg font-semibold text-gray-900">Assigned Profiles</h4>
-                        </div>
-                        <span class="text-xs text-gray-500">3 profiles</span>
-                    </div>
-
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">ADMIN</span>
-                            <span class="text-xs text-gray-500">Code: 101</span>
-                        </div>
-
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="text-sm font-medium text-gray-700">ACCOUNTANT</span>
-                            <span class="text-xs text-gray-500">Code: 222</span>
-                        </div>
-                    </div>
-                    <ng-template #noProfiles>
-                        <div class="text-center py-4 text-gray-400 text-sm">
-                            No profiles have access to this option
-                        </div>
-                    </ng-template>
-                </div>
-            </div>
-
-            <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
-                <button (click)="closeForm('option-details')" id="close-customer-detail-btn"
-                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
-                    Close
-                </button>
             </div>
         </div>
 
-        <!-- add/edit option -->
-        <div *ngIf="isOptionFormVisible" id="create-option-modal"
-            class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-800">Add New Module</h3>
-                <button (click)="closeForm('option-form')" class="text-gray-400 hover:text-gray-500">
-                    <i class="ri-close-line ri-lg"></i>
-                </button>
-            </div>
-
-            <form ngNativeValidate class="p-6 space-y-6 overflow-y-auto">
-                <!-- Module Information Section -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-5">
-                        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                        <h4 class="text-lg font-semibold text-gray-900">Menu Option Details</h4>
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-5">
-                        <!-- Label Field -->
-                        <div class="form-field">
-                            <label class="form-label flex items-center">
-                                Label
-                                <span class="text-primary ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <input class="form-input pl-10" name="label" type="text" required>
-                            </div>
-                        </div>
-
-                        <!-- Logo Selection -->
-                        <div class="form-field">
-                            <label class="form-label">Module</label>
-                            <div class="relative">
-                                <select class="form-input pl-10" name="logo">
-                                    <option value="">Select a logo</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                    <button (click)="closeForm('option-form')"
-                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
-                        Cancel
-                    </button>
-                    <button type="submit"
-                        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
-                        Add Module
-                    </button>
-                </div>
-            </form>
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+            <button (click)="closeForm('option-details')" id="close-customer-detail-btn"
+                class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                Close
+            </button>
         </div>
     </div>
+
+    <!-- add/edit option -->
+    <div *ngIf="isOptionFormVisible" id="create-option-modal" class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">
+                {{selectedOption ? "Update" : "Add New"}} Menu Option</h3>
+            <button (click)="closeForm('option-form')" class="text-gray-400 hover:text-gray-500">
+                <i class="ri-close-line ri-lg"></i>
+            </button>
+        </div>
+
+        <form ngNativeValidate class="p-6 space-y-6 overflow-y-auto"
+            (ngSubmit)="selectedOption ? updateOption() : addOption()">
+            <!-- Module Information Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Menu Option Details</h4>
+                </div>
+
+                <div class="grid grid-cols-1 gap-5">
+                    <!-- Label Field -->
+                    <div class="form-field">
+                        <label class="form-label flex items-center">
+                            Label
+                            <span class="text-primary ml-1">*</span>
+                        </label>
+                        <div class="relative">
+                            <input class="form-input pl-10" [(ngModel)]="optionForm.label" name="label" type="text"
+                                required>
+                        </div>
+                    </div>
+
+                    <!-- Logo Selection -->
+                    <div class="form-field">
+                        <label class="form-label">Module</label>
+                        <div class="relative">
+                            <select class="form-input pl-10" [(ngModel)]="optionForm.module" name="module" required
+                                [compareWith]="compareBy('code')">
+                                <option [ngValue]="undefined" disabled>Select a module</option>
+                                <option [ngValue]="module" *ngFor="let module of allModules">{{module.label}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button (click)="closeForm('option-form')"
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                    Cancel
+                </button>
+                <button type="submit"
+                    class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                    Add Module
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- association details -->
+    <div *ngIf="isProfileOptionDetailsVisible"
+        class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">
+                Menu Option Permissions
+            </h3>
+            <button (click)="closeForm('profile-option-details')" class="text-gray-400 hover:text-gray-500">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-close-line ri-lg"></i>
+                </div>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-8 overflow-y-auto">
+            <!-- Basic Info -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Basic Info</h4>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm text-gray-500">Profile</span>
+                        <span class="text-sm font-medium text-gray-900">
+                            {{selectedProfileOption?.profile?.label}}
+                        </span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm text-gray-500">Menu Option</span>
+                        <span class="text-sm font-medium text-gray-900">
+                            {{selectedProfileOption?.menuOption?.label}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Permissions -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Permissions</h4>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Access</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfileOption?.canAccess"
+                            [class.text-red-400]="!selectedProfileOption?.canAccess">
+                            {{ selectedProfileOption?.canAccess ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Can Insert</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfileOption?.canInsert"
+                            [class.text-red-400]="!selectedProfileOption?.canInsert">
+                            {{ selectedProfileOption?.canInsert ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Can Update</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfileOption?.canUpdate"
+                            [class.text-red-400]="!selectedProfileOption?.canUpdate">
+                            {{ selectedProfileOption?.canUpdate ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Can Delete</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfileOption?.canDelete"
+                            [class.text-red-400]="!selectedProfileOption?.canDelete">
+                            {{ selectedProfileOption?.canDelete ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Can Edit</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfileOption?.canEdit"
+                            [class.text-red-400]="!selectedProfileOption?.canEdit">
+                            {{ selectedProfileOption?.canEdit ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Can Print</span>
+                        <span class="text-sm font-medium" [class.text-green-400]="selectedProfileOption?.canPrint"
+                            [class.text-red-400]="!selectedProfileOption?.canPrint">
+                            {{ selectedProfileOption?.canPrint ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+            <button (click)="closeForm('profile-option-details')"
+                class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <div *ngIf="isProfileOptionFormVisible"
+        class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">
+                {{selectedProfileOption ? "Update" : "Create"}} Menu Option Permissions
+            </h3>
+            <button (click)="closeForm('profile-option-form')" class="text-gray-400 hover:text-gray-500">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-close-line ri-lg"></i>
+                </div>
+            </button>
+        </div>
+
+        <form (ngSubmit)="selectedProfileOption ? updateProfileOption() : addProfileOption()"
+            class="p-6 space-y-8 overflow-y-auto">
+            <!-- Profile & Option Select -->
+            <div class="form-field">
+                <label class="form-label">Profile</label>
+                <select [(ngModel)]="profileOptionForm.profile" name="profile" [compareWith]="compareBy('code')"
+                    class="form-input" required>
+                    <option *ngFor="let profile of allProfiles" [ngValue]="profile">{{ profile.label }}</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label class="form-label">Menu Option</label>
+                <select [(ngModel)]="profileOptionForm.menuOption" name="menuOption" [compareWith]="compareBy('code')"
+                    class="form-input" required>
+                    <option *ngFor="let option of allOptions" [ngValue]="option">{{ option.label }}</option>
+                </select>
+            </div>
+
+            <!-- Permissions -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="text-sm font-medium text-gray-700">Can Access</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" [(ngModel)]="profileOptionForm.canAccess" name="canAccess"
+                            class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+               peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
+               after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
+               after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="text-sm font-medium text-gray-700">Can Insert</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" [(ngModel)]="profileOptionForm.canInsert" name="canInsert"
+                            class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+               peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
+               after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
+               after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="text-sm font-medium text-gray-700">Can Update</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" [(ngModel)]="profileOptionForm.canUpdate" name="canUpdate"
+                            class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+               peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
+               after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
+               after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="text-sm font-medium text-gray-700">Can Delete</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" [(ngModel)]="profileOptionForm.canDelete" name="canDelete"
+                            class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+               peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
+               after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
+               after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="text-sm font-medium text-gray-700">Can Edit</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" [(ngModel)]="profileOptionForm.canEdit" name="canEdit"
+                            class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+               peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
+               after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
+               after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="text-sm font-medium text-gray-700">Can Print</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" [(ngModel)]="profileOptionForm.canPrint" name="canPrint"
+                            class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+               peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
+               after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
+               after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button type="button" (click)="closeForm('profile-option-form')"
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+                    Cancel
+                </button>
+                <button type="submit"
+                    class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
