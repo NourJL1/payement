@@ -23,6 +23,10 @@ import { filter } from 'rxjs';
 import { Customer } from '../../../entities/customer';
 import { AccountList } from '../../../entities/account-list';
 import { AccountListService } from '../../../services/account-list.service';
+import { Account } from '../../../entities/account';
+import { Bank } from '../../../entities/bank';
+import { AccountService } from '../../../services/account.service';
+import { BankService } from '../../../services/bank.service';
 
 @Component({
   selector: 'app-wallet-mng',
@@ -99,6 +103,15 @@ filteredCardListsList: CardList[] = [];
   selectedAccountList: AccountList | null = null;
   isAccountListEditMode: boolean = false;
 
+  // Add these properties to your component class
+accountsList: Account[] = [];
+filteredAccountsList: Account[] = [];
+searchAccountTerm: string = '';
+newAccount: Account = new Account();
+selectedAccount: Account | null = null;
+isAccountEditMode: boolean = false;
+banksList: Bank[] = []; // You'll need to create a BankService to fetch this
+
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
@@ -129,6 +142,8 @@ filteredCardListsList: CardList[] = [];
     private walletService: WalletService,
     private accountTypeService: AccountTypeService,
     private accountListService: AccountListService,
+    private accountService: AccountService,
+    private bankService: BankService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -157,6 +172,8 @@ filteredCardListsList: CardList[] = [];
     this.loadAccountLists();
     this.loadWalletStats();
     this.loadWallets(); // this should internally fetch and assign to `wallets` and `filteredWallets`
+    this.loadAccounts();
+    this.loadBanks(); // Load banks for the bank dropdown in account form
   }
 
 
@@ -179,6 +196,164 @@ filteredCardListsList: CardList[] = [];
     this.errorMessage = null;
     this.cdr.detectChanges();
   }
+
+
+// Add these methods to your component class
+loadBanks(): void {
+  this.errorMessage = null;
+  this.bankService.getAll().subscribe({
+    next: (banks: Bank[]) => {
+      this.banksList = banks;
+      this.cdr.detectChanges();
+    },
+    error: (error: HttpErrorResponse) => {
+      const message = error.status
+        ? `Failed to load banks: ${error.status} ${error.statusText}`
+        : 'Failed to load banks: Server error';
+      this.showErrorMessage(message);
+      console.error('Error loading banks:', error);
+    }
+  });
+}
+// Load accounts
+loadAccounts(): void {
+  this.errorMessage = null;
+  this.accountService.getAllAccounts().subscribe({
+    next: (accounts: Account[]) => {
+      this.accountsList = accounts;
+      this.filteredAccountsList = [...accounts];
+      this.cdr.detectChanges();
+    },
+    error: (error: HttpErrorResponse) => {
+      const message = error.status
+        ? `Failed to load accounts: ${error.status} ${error.statusText}`
+        : 'Failed to load accounts: Server error';
+      this.showErrorMessage(message);
+      console.error('Error loading accounts:', error);
+    }
+  });
+}
+
+// Search accounts
+searchAccounts(): void {
+  if (!this.searchAccountTerm || this.searchAccountTerm.trim() === '') {
+    this.filteredAccountsList = [...this.accountsList];
+  } else {
+    const searchTerm = this.searchAccountTerm.toLowerCase().trim();
+    this.filteredAccountsList = this.accountsList.filter(account => {
+      return (
+        (account.accCode?.toString().includes(searchTerm)) ||
+        (account.accIden?.toLowerCase().includes(searchTerm)) ||
+        (account.accRib?.toLowerCase().includes(searchTerm)) ||
+        (account.accountList?.aliLabe?.toLowerCase().includes(searchTerm)) ||
+        (account.accountType?.atyLabe?.toLowerCase().includes(searchTerm)) ||
+        (account.bank?.banCorpName?.toLowerCase().includes(searchTerm))
+      );
+    });
+  }
+  this.cdr.detectChanges();
+}
+
+// Save account (create or update)
+saveAccount(): void {
+  this.errorMessage = null;
+  if (!this.newAccount.accountList || !this.newAccount.accountType || !this.newAccount.bank) {
+    this.showErrorMessage('Please fill in all required fields: List, Type, and Bank.');
+    return;
+  }
+
+  const accountPayload: Account = {
+    accIden: this.newAccount.accIden,
+    accRib: this.newAccount.accRib,
+    accKey: this.newAccount.accKey,
+    accountList: this.newAccount.accountList,
+    accountType: this.newAccount.accountType,
+    bank: this.newAccount.bank
+  };
+
+  if (this.isAccountEditMode && this.selectedAccount?.accCode) {
+    this.accountService.updateAccount(this.selectedAccount.accCode, accountPayload).subscribe({
+      next: (updatedAccount: Account) => {
+        const index = this.accountsList.findIndex(a => a.accCode === updatedAccount.accCode);
+        if (index !== -1) {
+          this.accountsList[index] = updatedAccount;
+          this.accountsList = [...this.accountsList];
+        }
+        this.newAccount = new Account();
+        this.selectedAccount = null;
+        this.isAccountEditMode = false;
+        this.isAccountFormVisible = false;
+        this.showSuccessMessage('Account updated successfully');
+        this.searchAccounts();
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status
+          ? `Failed to update account: ${error.status} ${error.statusText}`
+          : 'Failed to update account: Server error';
+        this.showErrorMessage(message);
+        console.error('Error updating account:', error);
+      }
+    });
+  } else {
+    this.accountService.createAccount(accountPayload).subscribe({
+      next: (createdAccount: Account) => {
+        this.accountsList.push(createdAccount);
+        this.newAccount = new Account();
+        this.isAccountFormVisible = false;
+        this.showSuccessMessage('Account added successfully');
+        this.searchAccounts();
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status
+          ? `Failed to create account: ${error.status} ${error.statusText}`
+          : 'Failed to create account: Server error';
+        this.showErrorMessage(message);
+        console.error('Error creating account:', error);
+      }
+    });
+  }
+}
+
+// Edit account
+editAccount(account: Account): void {
+  this.errorMessage = null;
+  this.selectedAccount = account;
+  this.newAccount = { 
+    ...account,
+    accountList: account.accountList ? { ...account.accountList } : undefined,
+    accountType: account.accountType ? { ...account.accountType } : undefined,
+    bank: account.bank ? { ...account.bank } : undefined
+  };
+  this.isAccountEditMode = true;
+  this.isAccountFormVisible = true;
+  this.cdr.detectChanges();
+}
+
+// Delete account
+deleteAccount(accCode: number | undefined): void {
+  this.errorMessage = null;
+  if (accCode && confirm('Are you sure you want to delete this account?')) {
+    this.accountService.deleteAccount(accCode).subscribe({
+      next: () => {
+        this.accountsList = this.accountsList.filter(a => a.accCode !== accCode);
+        this.searchAccounts();
+        this.showSuccessMessage('Account deleted successfully');
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status
+          ? `Failed to delete account: ${error.status} ${error.statusText}`
+          : 'Failed to delete account: Server error';
+        this.showErrorMessage(message);
+        console.error('Error deleting account:', error);
+      }
+    });
+  }
+}
+
+// Don't forget to call loadAccounts() in your ngOnInit()
 
   // Load account lists
   loadAccountLists(): void {

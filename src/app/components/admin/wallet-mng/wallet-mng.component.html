@@ -953,83 +953,90 @@
       Accounts List</button>
   </div>
   <!-- accounts Content-->
-  <div id="accounts-tab-overview" class="accounts-tab-content">
-    <!-- Header Section -->
-    <div class="bg-white rounded-lg shadow p-4 mb-6">
-      <div class="flex flex-col md:flex-row gap-4">
-        <div class="relative flex-grow">
-          <h2 class="text-2xl font-semibold text-gray-800">
-            Accounts Management
-          </h2>
-        </div>
-        <!-- Search -->
-        <div class="relative flex-grow">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i class="ri-search-line text-gray-400"></i>
-          </div>
-          <input type="text" placeholder="Search accounts..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
-        </div>
-        <button id="btn-add-account" (click)="toggleForm('create-account')"
-          class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
-          <i class="ri-add-line mr-1"></i> Add Account
-        </button>
+<div id="accounts-tab-overview" class="accounts-tab-content">
+  <!-- Header Section -->
+  <div class="bg-white rounded-lg shadow p-4 mb-6">
+    <div class="flex flex-col md:flex-row gap-4">
+      <div class="relative flex-grow">
+        <h2 class="text-2xl font-semibold text-gray-800">
+          Accounts Management
+        </h2>
       </div>
+      <!-- Search -->
+      <div class="relative flex-grow">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="ri-search-line text-gray-400"></i>
+        </div>
+        <input type="text" placeholder="Search accounts..." [(ngModel)]="searchAccountTerm" (input)="searchAccounts()"
+          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+      </div>
+      <button id="btn-add-account" (click)="toggleForm('create-account')"
+        class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+        <i class="ri-add-line mr-1"></i> Add Account
+      </button>
     </div>
-    <!-- Table Section -->
-    <div class="bg-white rounded-xl shadow overflow-hidden">
-      <!-- Table -->
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead>
-            <tr class="border-b border-gray-200">
-              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Code
-              </th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Bank
-              </th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                List
-              </th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Type
-              </th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr class="hover:bg-gray-50 transition duration-150">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">1</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">UIB</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">CHEKINGS</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">...</div>
-              </td>
-              <!-- <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div class="flex items-center justify-end space-x-3">
-                            <button (click)="editAccount(account)"
-                                class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
-                                <i class="ri-edit-line text-lg"></i>
-                            </button>
-                            <button (click)="deleteAccount(account.accCode)"
-                                class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
-                                <i class="ri-delete-bin-line text-lg"></i>
-                            </button>
-                        </div>
-                    </td> -->
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  </div>
+  <!-- Table Section -->
+  <div class="bg-white rounded-xl shadow overflow-hidden">
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+          <tr class="border-b border-gray-200">
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Code
+            </th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Identifier
+            </th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Bank
+            </th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              List
+            </th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Type
+            </th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let account of filteredAccountsList" class="hover:bg-gray-50 transition duration-150">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">{{account.accCode}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">{{account.accIden}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{account.bank?.banCorpName || 'N/A'}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{account.accountList?.aliLabe || 'N/A'}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{account.accountType?.atyLabe || 'N/A'}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="flex items-center justify-end space-x-3">
+                <button (click)="editAccount(account)"
+                  class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                  <i class="ri-edit-line text-lg"></i>
+                </button>
+                <button (click)="deleteAccount(account.accCode)"
+                  class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                  <i class="ri-delete-bin-line text-lg"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
       <!-- Pagination -->
       <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
@@ -1276,7 +1283,6 @@
       </div>
     </div>
   </div>
-</div>
 
 <!-- Modals -->
 <div *ngIf="isAnyModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[50] ">
@@ -2223,10 +2229,12 @@
     </div>
   </div>
 
-  <!-- Create account Modal -->
+   <!-- Create account Modal -->
   <div *ngIf="isAccountFormVisible" id="create-card-modal" class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-800">Create New Account</h3>
+      <h3 class="text-lg font-semibold text-gray-800">
+        {{isAccountEditMode ? 'Edit Account' : 'Create New Account'}}
+      </h3>
       <button (click)="closeForm('create-account')" id="close-create-wallet" class="text-gray-400 hover:text-gray-500">
         <div class="w-6 h-6 flex items-center justify-center">
           <i class="ri-close-line ri-lg"></i>
@@ -2235,61 +2243,51 @@
     </div>
     <form ngNativeValidate id="create-wallet-form" class="p-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- <div>
+        <!--<div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Identifier</label>
-          <input type="text" id="walLabe" name="walLabe"
+          <input type="text" id="accIden" name="accIden" [(ngModel)]="newAccount.accIden"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
             placeholder="Identifier">
         </div> -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Label</label>
-          <input type="text" id="walLabe" name="walLabe"
+          <label class="block text-sm font-medium text-gray-700 mb-1">RIB</label>
+          <input type="text" id="accRib" name="accRib" [(ngModel)]="newAccount.accRib"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
-            placeholder="Label">
+            placeholder="RIB">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Key</label>
+          <input type="text" id="accKey" name="accKey" [(ngModel)]="newAccount.accKey"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
+            placeholder="Key">
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">List</label>
           <div class="relative">
-            <select id="walFinId" name="walFinId"
+            <select id="accountList" name="accountList" [(ngModel)]="newAccount.accountList"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
-              <option value="" disabled selected>Pick a List</option>
-              <option value="1">CHECKING</option>
-              <option value="2">SAVINGS</option>
+              <option [ngValue]="null" disabled selected>Pick a List</option>
+              <option *ngFor="let list of accountListsList" [ngValue]="list">{{list.aliLabe}}</option>
             </select>
           </div>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
           <div class="relative">
-            <select id="customer" name="customer"
+            <select id="accountType" name="accountType" [(ngModel)]="newAccount.accountType"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
-              <option value="" disabled selected>pick a type</option>
-              <option value="1">BUSINESS</option>
-              <option value="2">INDIVIDUAL</option>
+              <option [ngValue]="null" disabled selected>Pick a type</option>
+              <option *ngFor="let type of accountTypesList" [ngValue]="type">{{type.atyLabe}}</option>
             </select>
           </div>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Bank</label>
           <div class="relative">
-            <select id="walletStatus" name="walletStatus"
+            <select id="bank" name="bank" [(ngModel)]="newAccount.bank"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
-              <option value="" disabled selected>pick a bank</option>
-              <option value="active">BAN-001</option>
-              <option value="inactive">BAN-002</option>
-              <option value="suspended">BAN-003</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Wallet</label>
-          <div class="relative">
-            <select id="walletStatus" name="walletStatus"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
-              <option value="" disabled selected>pick a wallet</option>
-              <option value="active">WAL-001</option>
-              <option value="inactive">WAL-002</option>
-              <option value="suspended">WAL-003</option>
+              <option [ngValue]="null" disabled selected>Pick a bank</option>
+              <option *ngFor="let bank of banksList" [ngValue]="bank">{{bank.banCorpName}}</option>
             </select>
           </div>
         </div>
@@ -2298,12 +2296,13 @@
     <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
       <button (click)="closeForm('create-account')" id="cancel-create-wallet"
         class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">Cancel</button>
-      <button id="submit-create-wallet"
-        class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 transition text-sm whitespace-nowrap">Create
-        Account</button>
+      <button id="submit-create-wallet" (click)="saveAccount()"
+        class="px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 transition text-sm whitespace-nowrap">
+        {{isAccountEditMode ? 'Update' : 'Create'}} Account
+      </button>
     </div>
   </div>
-
+</div>
   <!-- Add/Edit Account Type Modal -->
   <div *ngIf="isAccountTypeVisible" id="add-type-modal"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -2395,4 +2394,3 @@
     </div>
   </div>
 
-</div>
