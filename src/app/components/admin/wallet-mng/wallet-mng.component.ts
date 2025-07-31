@@ -757,25 +757,96 @@ loadAccountTypes(): void {
     });
   }
 
-  // Edit wallet
-  editWallet(wallet: Wallet): void {
+editWallet(wallet: Wallet): void {
     this.errorMessage = null;
-    this.selectedWallet = wallet;
-    console.log('editWallet: Opening edit form for wallet:', this.selectedWallet);
-    // Placeholder: Implement edit wallet form logic
+    this.selectedWallet = {
+      ...wallet,
+      walletStatus: wallet.walletStatus ? { ...wallet.walletStatus } : new WalletStatus(),
+      walletType: wallet.walletType ? { ...wallet.walletType } : new WalletType(),
+      walletCategory: wallet.walletCategory ? { ...wallet.walletCategory } : new WalletCategory(),
+      walFinId: wallet.walFinId // Ensure Financial ID is included
+    };
     this.isWalletFormVisible = true;
     this.isWalletDetailsVisible = false;
-    // TODO: Populate form with selectedWallet data and implement save logic
     this.cdr.detectChanges();
   }
 
+saveWallet(): void {
+  this.errorMessage = null;
+  if (!this.selectedWallet.walletStatus?.wstCode || !this.selectedWallet.walletType?.wtyCode || 
+      !this.selectedWallet.walletCategory?.wcaCode || !this.selectedWallet.walFinId) {
+    this.showErrorMessage('Please select all required fields: Status, Type, Category, and Financial ID.');
+    return;
+  }
+
+  const walletPayload: Wallet = {
+    walIden: this.selectedWallet.walIden,
+    walLabe: this.selectedWallet.walLabe,
+    walFinId: this.selectedWallet.walFinId,
+    walletStatus: {
+      wstCode: this.selectedWallet.walletStatus.wstCode,
+      wstIden: this.selectedWallet.walletStatus.wstIden,
+      wstLabe: this.selectedWallet.walletStatus.wstLabe
+    },
+    walletType: {
+      wtyCode: this.selectedWallet.walletType.wtyCode,
+      wtyIden: this.selectedWallet.walletType.wtyIden,
+      wtyLabe: this.selectedWallet.walletType.wtyLabe
+    },
+    walletCategory: {
+      wcaCode: this.selectedWallet.walletCategory.wcaCode,
+      wcaIden: this.selectedWallet.walletCategory.wcaIden,
+      wcaLabe: this.selectedWallet.walletCategory.wcaLabe,
+      wcaFinId: this.selectedWallet.walletCategory.wcaFinId
+    },
+    walEffBal: this.selectedWallet.walEffBal,
+    walLogicBalance: this.selectedWallet.walLogicBalance,
+    walSpecificBalance: this.selectedWallet.walSpecificBalance
+  };
+
+  if (this.selectedWallet.walCode) {
+    this.walletService.update(this.selectedWallet.walCode, walletPayload).subscribe({
+      next: (updatedWallet: Wallet) => {
+        // Find and update the wallet in both lists
+        const updateWalletInList = (list: Wallet[]) => {
+          const index = list.findIndex(w => w.walCode === updatedWallet.walCode);
+          if (index !== -1) {
+            // Merge the updated properties while preserving other properties
+            list[index] = {
+              ...list[index],
+              ...updatedWallet,
+              walletStatus: updatedWallet.walletStatus || list[index].walletStatus,
+              walletType: updatedWallet.walletType || list[index].walletType,
+              walletCategory: updatedWallet.walletCategory || list[index].walletCategory,
+              walFinId: updatedWallet.walFinId || list[index].walFinId
+            };
+          }
+          return [...list]; // Return new array to trigger change detection
+        };
+
+        this.walletsList = updateWalletInList(this.walletsList);
+        this.filteredWallets = updateWalletInList(this.filteredWallets);
+
+        this.isWalletFormVisible = false;
+        this.selectedWallet = new Wallet();
+        this.showSuccessMessage('Wallet updated successfully');
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status
+          ? `Failed to update wallet: ${error.status} ${error.statusText}`
+          : 'Failed to update wallet: Server error';
+        this.showErrorMessage(message);
+        console.error('Error updating wallet:', error);
+      }
+    });
+  }
+}
   deleteWallet(wallet: Wallet) {
     this.errorMessage = null;
-    // console.log('deleteCard: carCode:', carCode);
-    if (wallet.walCode && confirm('Are you sure you want to delete this card?')) {
+    if (wallet.walCode && confirm('Are you sure you want to delete this wallet?')) {
       this.walletService.delete(wallet.walCode).subscribe({
         next: () => {
-          // console.log('deleteCard: Success, carCode:', carCode);
           this.walletsList = this.walletsList.filter(w => w.walCode !== wallet.walCode);
           this.filteredWallets = this.filteredWallets.filter(w => w.walCode !== wallet.walCode);
           this.showSuccessMessage('Wallet deleted successfully');
@@ -790,11 +861,9 @@ loadAccountTypes(): void {
     }
   }
 
-  // Change wallet status
-  changeWalletStatus(): void {
+changeWalletStatus(): void {
     this.errorMessage = null;
     console.log('changeWalletStatus: Opening status change form for wallet:', this.selectedWallet);
-    // Placeholder: Implement status change logic
     this.isWalletStatusVisible = true;
     this.isStatusEditMode = true;
     this.selectedStatus = this.selectedWallet.walletStatus || new WalletStatus();
@@ -1498,5 +1567,8 @@ saveCardList(): void {
   onExpiryDateChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.newCard.carExpiryDate = this.parseDate(input.value);
+  }
+  compareBy(property: string): (a: any, b: any) => boolean {
+    return (a: any, b: any) => a && b && a[property] === b[property];
   }
 }

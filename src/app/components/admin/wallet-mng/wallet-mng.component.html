@@ -140,65 +140,64 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <ng-container *ngIf="filteredWallets!.length > 0; else noData">
-            <tr *ngFor="let wallet of filteredWallets" class="hover:bg-gray-50 transition duration-150 cursor-pointer">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ wallet.walIden }}</div>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ wallet.walLabe }}</div>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ wallet.createdAt | date:'short' }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full" [ngClass]="{
-                  'bg-green-100 text-green-800': wallet.walletStatus!.wstLabe === 'ACTIVE',
-                  'bg-yellow-100 text-yellow-800': wallet.walletStatus!.wstLabe === 'PENDING',
-                  'bg-red-100 text-red-800': wallet.walletStatus!.wstLabe === 'INACTIVE'
-                }">
-                  {{ wallet.walletStatus!.wstLabe }}
-                </span>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ wallet.walletType!.wtyLabe }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-500">{{ wallet.walletCategory!.wcaLabe}}</div>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-500">{{ wallet.walFinId}}</div>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <div class="flex items-center justify-end space-x-3">
-                  <button (click)="selectedWallet = wallet; toggleForm('wallet-details')"
-                    class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
-                    <i class="ri-eye-line text-lg"></i>
-                  </button>
-
-                  <button (click)="deleteWallet(wallet)"
-                    class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
-                    <i class="ri-delete-bin-line text-lg"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </ng-container>
-          <ng-template #noData>
-            <tr>
-              <td colspan="100%" class="py-8 text-center">
-                <div class="flex flex-col items-center justify-center space-y-2">
-                  <p class="text-sm text-gray-400">The table is currently empty</p>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </tbody>
+        <ng-container *ngIf="filteredWallets!.length > 0; else noData">
+          <tr *ngFor="let wallet of filteredWallets" class="hover:bg-gray-50 transition duration-150 cursor-pointer">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ wallet.walIden }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ wallet.walLabe }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ wallet.createdAt | date:'short' }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full" [ngClass]="{
+                'bg-yellow-100 text-yellow-800': wallet.walletStatus!.wstLabe === 'PENDING',
+                'bg-green-100 text-green-800': wallet.walletStatus!.wstLabe === 'ACTIVE',
+                'bg-red-100 text-red-800': wallet.walletStatus!.wstLabe === 'BLOCKED',
+                'bg-blue-100 text-blue-800': wallet.walletStatus!.wstLabe === 'SUSPENDED'
+              }">
+                {{ wallet.walletStatus!.wstLabe }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ wallet.walletType!.wtyLabe }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-500">{{ wallet.walletCategory!.wcaLabe}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-500">{{ wallet!.walFinId}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="flex items-center justify-end space-x-3">
+                <button (click)="selectedWallet = wallet; toggleForm('wallet-details')"
+                  class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
+                  <i class="ri-eye-line text-lg"></i>
+                </button>
+                <button (click)="editWallet(wallet)"
+                  class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
+                  <i class="ri-edit-line text-lg"></i>
+                </button>
+                <button (click)="deleteWallet(wallet)"
+                  class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
+                  <i class="ri-delete-bin-line text-lg"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-template #noData>
+          <tr>
+            <td colspan="100%" class="py-8 text-center">
+              <div class="flex flex-col items-center justify-center space-y-2">
+                <p class="text-sm text-gray-400">The table is currently empty</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
       </table>
     </div>
 
@@ -1331,14 +1330,7 @@
                   }}</span>
               </div>
             </div>
-            <div class="mt-6 space-y-2">
-              <button
-                class="w-full px-4 py-2 bg-primary text-white rounded-button hover:bg-red-700 transition text-sm whitespace-nowrap">
-                Edit Wallet </button>
-              <button
-                class="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
-                Change Status </button>
-            </div>
+          
           </div>
         </div>
         <div class="md:w-2/3">
@@ -1385,7 +1377,7 @@
                   <div class="space-y-4">
                     <div>
                       <label class="block text-xs text-gray-500 mb-1">Financial ID</label>
-                      <div class="text-sm font-medium">{{ selectedWallet.walFinId }}</div>
+                      <div class="text-sm font-medium">{{ selectedWallet!.walFinId }}</div>
                     </div>
                     <div>
                       <label class="block text-xs text-gray-500 mb-1">Creation Date</label>
@@ -1842,6 +1834,89 @@
         Close </button>
     </div>
   </div>
+  <!-- Edit Wallet Modal -->
+<div *ngIf="isWalletFormVisible" id="edit-wallet-modal"
+     class="bg-white rounded-lg shadow-lg w-full max-w-2xl h-[90vh] flex flex-col">
+  <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+    <h3 class="text-lg font-semibold text-gray-800">Edit Wallet Details</h3>
+    <button (click)="closeForm('create-wallet')" id="close-edit-wallet"
+            class="text-gray-400 hover:text-gray-500">
+      <div class="w-6 h-6 flex items-center justify-center">
+        <i class="ri-close-line ri-lg"></i>
+      </div>
+    </button>
+  </div>
+  <form ngNativeValidate (ngSubmit)="saveWallet()" #WalletForm="ngForm"
+        id="edit-wallet-form" class="p-6 space-y-8 overflow-y-auto">
+    <!-- Wallet Details Section -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <div class="flex items-center mb-5">
+        <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+        <h4 class="text-lg font-semibold text-gray-900">Wallet Details</h4>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="form-field">
+          <label class="form-label flex items-center">
+            Wallet Status
+            <span class="text-primary ml-1">*</span>
+          </label>
+          <div class="relative">
+            <select class="form-input pl-10" [(ngModel)]="selectedWallet.walletStatus" name="walletStatus" required
+                    [compareWith]="compareBy('wstCode')">
+              <option [ngValue]="undefined" disabled selected>Select status</option>
+              <option *ngFor="let status of walletStatuses" [ngValue]="status">{{ status.wstLabe }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label flex items-center">
+            Wallet Type
+            <span class="text-primary ml-1">*</span>
+          </label>
+          <div class="relative">
+            <select class="form-input pl-10" [(ngModel)]="selectedWallet.walletType" name="walletType" required
+                    [compareWith]="compareBy('wtyCode')">
+              <option [ngValue]="undefined" disabled selected>Select type</option>
+              <option *ngFor="let type of walletTypesList" [ngValue]="type">{{ type.wtyLabe }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label flex items-center">
+            Wallet Category
+            <span class="text-primary ml-1">*</span>
+          </label>
+          <div class="relative">
+            <select class="form-input pl-10" [(ngModel)]="selectedWallet.walletCategory" name="walletCategory" required
+                    [compareWith]="compareBy('wcaCode')">
+              <option [ngValue]="undefined" disabled selected>Select category</option>
+              <option *ngFor="let category of walletCategories" [ngValue]="category">{{ category.wcaLabe }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label flex items-center">
+            Financial ID
+            <span class="text-primary ml-1">*</span>
+          </label>
+          <div class="relative">
+            <input class="form-input pl-10" type="text" [(ngModel)]="selectedWallet.walFinId" name="walFinId" required placeholder="Enter Financial ID">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+      <button (click)="closeForm('create-wallet')" id="cancel-edit-wallet"
+              class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
+        Cancel
+      </button>
+      <button type="submit" id="submit-edit-wallet"
+              class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
+        Update Wallet
+      </button>
+    </div>
+  </form>
+</div>
   <!-- Add/Edit Status Modal -->
   <div *ngIf="isWalletStatusVisible" id="add-status-modal"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
