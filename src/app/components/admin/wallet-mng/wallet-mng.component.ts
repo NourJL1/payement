@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { WalletStatusService } from '../../../services/wallet-status.service';
@@ -27,6 +27,10 @@ import { Account } from '../../../entities/account';
 import { Bank } from '../../../entities/bank';
 import { AccountService } from '../../../services/account.service';
 import { BankService } from '../../../services/bank.service';
+import * as XLSX from 'xlsx';
+import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-wallet-mng',
@@ -130,7 +134,7 @@ banksList: Bank[] = []; // You'll need to create a BankService to fetch this
   categorySearchTerm?: string;
   filteredWallets: Wallet[] = [];
 
-
+showExportMenu: boolean = false;
 
   constructor(
     private walletStatusService: WalletStatusService,
@@ -196,6 +200,104 @@ banksList: Bank[] = []; // You'll need to create a BankService to fetch this
     this.errorMessage = null;
     this.cdr.detectChanges();
   }
+
+  toggleExportMenu(): void {
+  this.showExportMenu = !this.showExportMenu;
+}
+
+exportData(format: 'pdf' | 'excel'): void {
+  this.showExportMenu = false;
+  
+  if (format === 'pdf') {
+    this.exportToPDF();
+  } else {
+    this.exportToExcel();
+  }
+}
+
+private exportToExcel(): void {
+  // Prepare data
+  const data = this.filteredWallets.map(wallet => ({
+    'Identifier': wallet.walIden,
+    'Name': wallet.walLabe,
+    'Created At': wallet.createdAt ? new Date(wallet.createdAt).toLocaleString() : '',
+    'Status': wallet.walletStatus?.wstLabe || '',
+    'Type': wallet.walletType?.wtyLabe || '',
+    'Category': wallet.walletCategory?.wcaLabe || '',
+    'Fin Id': wallet.walFinId || ''
+  }));
+
+  // Create worksheet
+  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+  
+  // Create workbook
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Wallets');
+  
+  // Generate file and download
+  XLSX.writeFile(wb, 'wallets_export.xlsx');
+}
+
+private exportToPDF(): void {
+  const doc = new jsPDF({
+    orientation: 'landscape' // Optional: use 'portrait' if you prefer
+  });
+
+  // Add title
+  doc.setFontSize(16);
+  doc.setTextColor(40);
+  doc.text('Wallet Management Report', 14, 16);
+
+  // Prepare data
+  const headers = [['Identifier', 'Name', 'Created At', 'Status', 'Type', 'Category', 'Fin Id']];
+  
+  const data = this.filteredWallets.map(wallet => [
+    wallet.walIden || '',
+    wallet.walLabe || '',
+    wallet.createdAt ? new Date(wallet.createdAt).toLocaleString() : '',
+    wallet.walletStatus?.wstLabe || '',
+    wallet.walletType?.wtyLabe || '',
+    wallet.walletCategory?.wcaLabe || '',
+    wallet.walFinId || ''
+  ]);
+
+  // Add table
+  autoTable(doc, {
+    head: headers,
+    body: data,
+    startY: 25,
+    theme: 'grid', // or 'striped', 'plain'
+    headStyles: {
+      fillColor: [41, 128, 185],
+      textColor: 255,
+      fontStyle: 'bold'
+    },
+    styles: {
+      fontSize: 9,
+      cellPadding: 3,
+      overflow: 'linebreak'
+    },
+    columnStyles: {
+      0: { cellWidth: 20 },
+      1: { cellWidth: 30 },
+      2: { cellWidth: 30 },
+      3: { cellWidth: 20 },
+      4: { cellWidth: 20 },
+      5: { cellWidth: 20 },
+      6: { cellWidth: 15 }
+    }
+  });
+
+  // Save the PDF
+  doc.save('wallets_export_' + new Date().toISOString().slice(0, 10) + '.pdf');
+}
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent): void {
+  const target = event.target as HTMLElement;
+  if (!target.closest('.relative.inline-block.text-left')) {
+    this.showExportMenu = false;
+  }
+}
 
 
 // Add these methods to your component class
