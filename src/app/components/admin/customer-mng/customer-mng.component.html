@@ -43,10 +43,29 @@
             </h2>
         </div>
         <div class="flex items-center space-x-3 w-full sm:w-auto">
-            <button
-                class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
-                <i class="ri-download-2-line mr-2"></i> Export Data
-            </button>
+            <div class="relative inline-block text-left">
+  <button
+    class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg"
+    (click)="toggleExportMenu()">
+    <i class="ri-download-2-line mr-2"></i> Export Data
+  </button>
+  
+  <!-- Export Dropdown Menu -->
+  <div *ngIf="showExportMenu" class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+    <div class="py-1">
+      <button 
+        (click)="exportData('pdf')"
+        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+        Export as PDF
+      </button>
+      <button 
+        (click)="exportData('excel')"
+        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+        Export as Excel
+      </button>
+    </div>
+  </div>
+</div>
             <button (click)="toggleForm('customer-add')" id="newSchemaBtn"
                 class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
                 <i class="ri-add-line mr-2"></i> New Customer
