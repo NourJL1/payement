@@ -63,4 +63,17 @@ export class CardTypeService {
       })
     );
   }
+
+  // Add this method to your CardTypeService
+searchCardTypes(searchWord: string): Observable<CardType[]> {
+  return this.http.get<CardType[]>(`${this.apiUrl}/search?word=${encodeURIComponent(searchWord)}`, { 
+    headers: this.getHeaders(true) 
+  }).pipe(
+    map(cardTypes => cardTypes.map(cardType => new CardType(cardType))),
+    catchError(error => {
+      console.error('searchCardTypes: Error:', error);
+      return throwError(() => new Error('Failed to search card types'));
+    })
+  );
+}
 }

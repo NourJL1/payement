@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CountryService } from '../../../services/country.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -23,6 +23,9 @@ import { CustomerIdentityService } from '../../../services/customer-identity.ser
 import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from "@angular/router";
+import * as XLSX from 'xlsx';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface PhoneNumber {
   number?: string;
@@ -127,6 +130,8 @@ export class CustomerMngComponent {
   walletCategories?: WalletCategory[]
   walletTypes?: WalletType[]
 
+  showExportMenu: boolean = false;
+
 
   ngOnInit(): void {
     if (history.state?.customerToEdit) {  // <-- Check history.state
@@ -146,6 +151,108 @@ export class CustomerMngComponent {
     this.loadWalletCategories();
     this.loadWalletTypes(); */
   }
+
+  toggleExportMenu(): void {
+  this.showExportMenu = !this.showExportMenu;
+}
+
+exportData(format: 'pdf' | 'excel'): void {
+  this.showExportMenu = false;
+  
+  if (format === 'pdf') {
+    this.exportCustomersToPDF();
+  } else {
+    this.exportCustomersToExcel();
+  }
+}
+
+private exportCustomersToExcel(): void {
+  // Prepare data
+  const data = this.filteredCustomers.map(customer => ({
+    'Identifier': customer.cusIden,
+    'Username': customer.username,
+    'Email': customer.cusMailAddress,
+    'Name': customer.fullName,
+    'Status': customer.status?.ctsLabe || '',
+    'Phone': customer.cusPhoneNbr,
+    'Country': customer.country?.ctrLabe || '',
+    'City': customer.city?.ctyLabe || ''
+  }));
+
+  // Create worksheet
+  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+  
+  // Create workbook
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Customers');
+  
+  // Generate file and download
+  XLSX.writeFile(wb, 'customers_export.xlsx');
+}
+
+private exportCustomersToPDF(): void {
+  const doc = new jsPDF({
+    orientation: 'landscape' // Optional: use 'portrait' if you prefer
+  });
+
+  // Add title
+  doc.setFontSize(16);
+  doc.setTextColor(40);
+  doc.text('Customer Management Report', 14, 16);
+
+  // Prepare data
+  const headers = [['Identifier', 'Username', 'Email', 'Name', 'Status', 'Phone', 'Country', 'City']];
+  
+  const data = this.filteredCustomers.map(customer => [
+    customer.cusIden || '',
+    customer.username || '',
+    customer.cusMailAddress || '',
+    customer.fullName || '',
+    customer.status?.ctsLabe || '',
+    customer.cusPhoneNbr || '',
+    customer.country?.ctrLabe || '',
+    customer.city?.ctyLabe || ''
+  ]);
+
+  // Add table
+  autoTable(doc, {
+    head: headers,
+    body: data,
+    startY: 25,
+    theme: 'grid', // or 'striped', 'plain'
+    headStyles: {
+      fillColor: [41, 128, 185],
+      textColor: 255,
+      fontStyle: 'bold'
+    },
+    styles: {
+      fontSize: 8,
+      cellPadding: 2,
+      overflow: 'linebreak'
+    },
+    columnStyles: {
+      0: { cellWidth: 15 },
+      1: { cellWidth: 20 },
+      2: { cellWidth: 30 },
+      3: { cellWidth: 25 },
+      4: { cellWidth: 15 },
+      5: { cellWidth: 20 },
+      6: { cellWidth: 20 },
+      7: { cellWidth: 15 }
+    }
+  });
+
+  // Save the PDF
+  doc.save('customers_export_' + new Date().toISOString().slice(0, 10) + '.pdf');
+}
+
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent): void {
+  const target = event.target as HTMLElement;
+  if (!target.closest('.relative.inline-block.text-left')) {
+    this.showExportMenu = false;
+  }
+}
 
   loadAllCustomers() {
     this.customerService.getAllCustomers().subscribe({

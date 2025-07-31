@@ -64,9 +64,13 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i class="ri-search-line text-gray-400"></i>
           </div>
-          <input type="text" placeholder="Search..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
-        </div>
+          <input 
+    type="text" 
+    placeholder="Search..."
+    [(ngModel)]="searchFeesTerm"
+    (input)="searchFees()"
+    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+</div>
         <button id="btn-add-fees" (click)="toggleForm('fee')"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Fee </button>
@@ -111,7 +115,7 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <ng-container *ngIf="feesList!.length > 0; else noData">
-              <tr *ngFor="let fee of feesList" class="hover:bg-gray-50 transition duration-150">
+              <tr *ngFor="let fee of filteredFeesList" class="hover:bg-gray-50 transition duration-150">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ fee.feeCode }}</div>
                 </td>
@@ -203,9 +207,13 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i class="ri-search-line text-gray-400"></i>
           </div>
-          <input type="text" placeholder="Search..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
-        </div>
+          <input 
+    type="text" 
+    placeholder="Search..."
+    [(ngModel)]="searchFeeSchemaTerm"
+    (input)="searchFeeSchemas()"
+    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+</div>
         <button id="btn-add-status" (click)="toggleForm('fee-schema')"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Fee Schema
@@ -236,7 +244,7 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <ng-container *ngIf="feeSchemasList!.length > 0; else noData">
-              <tr *ngFor="let schema of feeSchemasList" class="hover:bg-gray-50 transition duration-150">
+               <tr *ngFor="let schema of filteredFeeSchemasList" class="hover:bg-gray-50 transition duration-150">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ schema.fscCode }}</div>
                 </td>
@@ -746,7 +754,10 @@
                   <div class="text-sm text-gray-900">{{ wotm.wotmDispAmount }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wotm.fees!.feeLabel }}</div>
+                  <div class="text-sm text-gray-900">{{ wotm.periodicity.perLabe }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ wotm.fees.feeLabel }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center justify-end space-x-3">
@@ -816,8 +827,10 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i class="ri-search-line text-gray-400"></i>
           </div>
-          <input type="text" placeholder="Search..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+          <input type="text" placeholder="Search..." 
+  [(ngModel)]="searchWcotmTerm"
+  (input)="searchWcotm()"
+  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
         <button id="btn-add-status" (click)="toggleForm('operation-wcotm')"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
@@ -858,24 +871,24 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <ng-container *ngIf="wcotmList!.length > 0; else noData">
-              <tr *ngFor="let wcotm of wcotmList" class="hover:bg-gray-50 transition duration-150">
+              <tr *ngFor="let wcotm of filteredWcotmList" class="hover:bg-gray-50 transition duration-150">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ wcotm.id }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wcotm.walletCategory!.wcaLabe }}</div>
+                  <div class="text-sm text-gray-900">{{ wcotm.walletCategory?.wcaLabe }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wcotm.operationType!.optLabe }}</div>
+                  <div class="text-sm text-gray-900">{{ wcotm.operationType?.optLabe }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm text-gray-900">{{ wcotm.limitMax }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wcotm.periodicity!.perLabe }}</div>
+                  <div class="text-sm text-gray-900">{{ wcotm.periodicity?.perLabe }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ wcotm.fees!.feeLabel }}</div>
+                  <div class="text-sm text-gray-900">{{ wcotm.fees?.feeLabel }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center justify-end space-x-3">
@@ -1402,7 +1415,7 @@
       </div>
     </div>
   </div>
-
+  <!-- add wotm-->
   <div *ngIf="isWotmVisible" id="add-wotm-modal" class="bg-white rounded-lg shadow-lg w-full max-w-md">
     <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
       <h3 class="text-lg font-medium text-gray-900">{{ selectedWotm ? 'Edit Wallet Operation Type Map' : 'Add Wallet Operation Type Map' }}</h3>
@@ -1471,7 +1484,7 @@
       </div>
     </form>
   </div>
-
+  <!-- add wcotm  -->
   <div *ngIf="isWcotmVisible" id="add-wcotm-modal" class="bg-white rounded-lg shadow-lg w-full max-w-md">
     <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
       <h3 class="text-lg font-medium text-gray-900">{{ selectedWcotm ? 'Edit Wallet Category Operation Type Map' : 'Add Wallet Category Operation Type Map' }}</h3>
