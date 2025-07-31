@@ -817,53 +817,57 @@ loadAccountTypes(): void {
 }
 
   // Save account type
-  saveAccountType(): void {
-    this.errorMessage = null;
-    // console.log('saveAccountType: Saving account type:', this.newAccountType);
-    if (/* !this.newAccountType.atyIden ||  */!this.newAccountType.atyLabe || !this.newAccountType.atyFinId) {
-      this.showErrorMessage('Please fill in all required fields: Type Label, and Financial Institution ID.');
-      return;
-    }
-    if (this.isAccountTypeEditMode && this.selectedAccountType?.atyCode) {
-      this.accountTypeService.update(this.selectedAccountType.atyCode, this.newAccountType).subscribe({
-        next: (updatedAccountType: AccountType) => {
-          // console.log('saveAccountType: Account type updated:', updatedAccountType);
-          const index = this.accountTypesList.findIndex(t => t.atyCode === updatedAccountType.atyCode);
-          if (index !== -1) {
-            this.accountTypesList[index] = updatedAccountType;
-            this.accountTypesList = [...this.accountTypesList];
-          }
-          this.newAccountType = new AccountType();
-          this.selectedAccountType = null;
-          this.isAccountTypeEditMode = false;
-          this.isAccountTypeVisible = false;
-          this.showSuccessMessage('Account type updated successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to update account type: ${error.status} ${error.statusText}` : 'Failed to update account type: Server error';
-          this.showErrorMessage(message);
-          console.error('Error updating account type:', error);
-        }
-      });
-    } else {
-      this.accountTypeService.create(this.newAccountType).subscribe({
-        next: (createdAccountType: AccountType) => {
-          // console.log('saveAccountType: Account type created:', createdAccountType);
-          this.accountTypesList.push(createdAccountType);
-          this.newAccountType = new AccountType();
-          this.isAccountTypeVisible = false;
-          this.showSuccessMessage('Account type added successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to create account type: ${error.status} ${error.statusText}` : 'Failed to create account type: Server error';
-          this.showErrorMessage(message);
-          console.error('Error creating account type:', error);
-        }
-      });
-    }
+saveAccountType(): void {
+  this.errorMessage = null;
+  if (!this.newAccountType.atyLabe || !this.newAccountType.atyFinId) {
+    this.showErrorMessage('Please fill in all required fields: Type Label, and Financial Institution ID.');
+    return;
   }
+  if (this.isAccountTypeEditMode && this.selectedAccountType?.atyCode) {
+    this.accountTypeService.update(this.selectedAccountType.atyCode, this.newAccountType).subscribe({
+      next: (updatedAccountType: AccountType) => {
+        const index = this.accountTypesList.findIndex(t => t.atyCode === updatedAccountType.atyCode);
+        if (index !== -1) {
+          this.accountTypesList[index] = updatedAccountType;
+          this.accountTypesList = [...this.accountTypesList];
+        }
+        // Update filtered list
+        const filteredIndex = this.filteredAccountTypesList.findIndex(t => t.atyCode === updatedAccountType.atyCode);
+        if (filteredIndex !== -1) {
+          this.filteredAccountTypesList[filteredIndex] = updatedAccountType;
+          this.filteredAccountTypesList = [...this.filteredAccountTypesList];
+        }
+        this.newAccountType = new AccountType();
+        this.selectedAccountType = null;
+        this.isAccountTypeEditMode = false;
+        this.isAccountTypeVisible = false;
+        this.showSuccessMessage('Account type updated successfully');
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to update account type: ${error.status} ${error.statusText}` : 'Failed to update account type: Server error';
+        this.showErrorMessage(message);
+        console.error('Error updating account type:', error);
+      }
+    });
+  } else {
+    this.accountTypeService.create(this.newAccountType).subscribe({
+      next: (createdAccountType: AccountType) => {
+        this.accountTypesList.push(createdAccountType);
+        this.filteredAccountTypesList.push(createdAccountType); // Add this line
+        this.newAccountType = new AccountType();
+        this.isAccountTypeVisible = false;
+        this.showSuccessMessage('Account type added successfully');
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to create account type: ${error.status} ${error.statusText}` : 'Failed to create account type: Server error';
+        this.showErrorMessage(message);
+        console.error('Error creating account type:', error);
+      }
+    });
+  }
+}
 
   // Edit account type
   editAccountType(accountType: AccountType): void {
@@ -878,24 +882,23 @@ loadAccountTypes(): void {
 
   // Delete account type
   deleteAccountType(atyCode: number | undefined): void {
-    this.errorMessage = null;
-    // console.log('deleteAccountType: atyCode:', atyCode);
-    if (atyCode && confirm('Are you sure you want to delete this account type?')) {
-      this.accountTypeService.delete(atyCode).subscribe({
-        next: () => {
-          // console.log('deleteAccountType: Success, atyCode:', atyCode);
-          this.accountTypesList = this.accountTypesList.filter(t => t.atyCode !== atyCode);
-          this.showSuccessMessage('Account type deleted successfully');
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          const message = error.status ? `Failed to delete account type: ${error.status} ${error.statusText}` : 'Failed to delete account type: Server error';
-          this.showErrorMessage(message);
-          console.error('Error deleting account type:', error);
-        }
-      });
-    }
+  this.errorMessage = null;
+  if (atyCode && confirm('Are you sure you want to delete this account type?')) {
+    this.accountTypeService.delete(atyCode).subscribe({
+      next: () => {
+        this.accountTypesList = this.accountTypesList.filter(t => t.atyCode !== atyCode);
+        this.filteredAccountTypesList = this.filteredAccountTypesList.filter(t => t.atyCode !== atyCode); // Add this line
+        this.showSuccessMessage('Account type deleted successfully');
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        const message = error.status ? `Failed to delete account type: ${error.status} ${error.statusText}` : 'Failed to delete account type: Server error';
+        this.showErrorMessage(message);
+        console.error('Error deleting account type:', error);
+      }
+    });
   }
+}
 
   // Load wallet statuses
   loadWalletStatuses(): void {
