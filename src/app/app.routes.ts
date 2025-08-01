@@ -6,7 +6,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { WalletComponent } from './components/wallet/wallet.component';
 //import { walletStatusGuard } from './guards/wallet-status.guard';
-import { SideNavComponent } from './components/admin/side-nav/side-nav.component'; 
+import { AdminComponent } from './components/admin/admin.component'; 
 import { DashboardComponent } from './components/admin/dashboard/dashboard.component';
 import { AccountingComponent } from './components/admin/accounting/accounting.component';
 import { WalletMngComponent } from './components/admin/wallet-mng/wallet-mng.component';
@@ -56,7 +56,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin', 
-    component: SideNavComponent, 
+    component: AdminComponent, 
     canActivate: [AuthGuard],
     data: { requiredRole: 'ROLE_USER' },
     children:

@@ -1,17 +1,15 @@
 import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from "@angular/router";
-import { Customer } from '../../../entities/customer';
-import { CustomerService } from '../../../services/customer.service';
 import { CommonModule } from '@angular/common';
-import { CustomerMngComponent } from '../customer-mng/customer-mng.component';
+import { Customer, CustomerService } from '../../services/customer.service';
 
 @Component({
-  selector: 'app-side-nav',
+  selector: 'app-admin',
   imports: [RouterOutlet, RouterModule, CommonModule],
-  templateUrl: './side-nav.component.html',
-  styleUrls: ['./side-nav.component.css']
+  templateUrl: './admin.component.html',
+  styleUrls: ['./admin.component.css']
 })
-export class SideNavComponent implements OnInit {
+export class AdminComponent implements OnInit {
 
   constructor(private router: Router, private customerService: CustomerService) { }
 
