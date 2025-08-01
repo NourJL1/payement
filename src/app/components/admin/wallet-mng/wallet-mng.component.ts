@@ -434,6 +434,7 @@ editAccount(account: Account): void {
 }
 
 // Delete account
+// Delete account
 deleteAccount(accCode: number | undefined): void {
   this.errorMessage = null;
   if (accCode && confirm('Are you sure you want to delete this account?')) {
