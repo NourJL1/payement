@@ -429,25 +429,7 @@ deleteFee(feeCode: number | undefined): void {
     });
   }
 }
-  addFeeSchema(): void {
-    // console.log('addFeeSchema: Adding fee schema:', this.newFeeSchema);
-    this.feeSchemaService.create(this.newFeeSchema, this.getHttpOptions()).subscribe({
-      next: (createdFeeSchema: FeeSchema) => {
-        // console.log('addFeeSchema: Fee schema added:', createdFeeSchema);
-        this.feeSchemasList.push(createdFeeSchema);
-        this.newFeeSchema = new FeeSchema();
-        this.isFeeSchemaVisible = false;
-        this.  showSuccessMessage('Fee schema added successfully');
-        this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.error('addFeeSchema: Error:', err);
-        this.showErrorMessage('Failed to add fee schema: ' + (err.error?.message || 'Please check the form.'));
-      }
-    });
-  }
-
-  editFeeSchema(schema: FeeSchema): void {
+editFeeSchema(schema: FeeSchema): void {
     // console.log('editFeeSchema: Fee schema object:', schema);
     this.selectedFeeSchema = schema;
     this.newFeeSchema = { ...schema };
@@ -455,50 +437,69 @@ deleteFee(feeCode: number | undefined): void {
     this.cdr.detectChanges();
   }
 
-  updateFeeSchema(): void {
-    // console.log('updateFeeSchema: Updating fee schema:', this.newFeeSchema);
-    if (this.selectedFeeSchema?.fscCode) {
-      this.feeSchemaService.update(this.selectedFeeSchema.fscCode, this.newFeeSchema, this.getHttpOptions()).subscribe({
-        next: (updatedFeeSchema: FeeSchema) => {
-          // console.log('updateFeeSchema: Fee schema updated:', updatedFeeSchema);
-          const index = this.feeSchemasList.findIndex(f => f.fscCode === updatedFeeSchema.fscCode);
-          if (index !== -1) {
-            this.feeSchemasList[index] = updatedFeeSchema;
-            this.feeSchemasList = [...this.feeSchemasList];
-          }
-          this.newFeeSchema = new FeeSchema();
-          this.selectedFeeSchema = null;
-          this.isFeeSchemaVisible = false;
-          this.  showSuccessMessage('Fee schema updated successfully');
-          this.cdr.detectChanges();
-        },
-        error: (err: any) => {
-          console.error('updateFeeSchema: Error:', err);
-          this.showErrorMessage('Failed to update fee schema: ' + (err.error?.message || 'Please try again.'));
-        }
-      });
-    } else {
-      this.showErrorMessage('No fee schema selected for update.');
+  addFeeSchema(): void {
+  this.feeSchemaService.create(this.newFeeSchema, this.getHttpOptions()).subscribe({
+    next: (createdFeeSchema: FeeSchema) => {
+      // Create new arrays instead of mutating existing ones
+      this.feeSchemasList = [...this.feeSchemasList, createdFeeSchema];
+      this.filteredFeeSchemasList = [...this.feeSchemasList]; // Update filtered list
+      this.newFeeSchema = new FeeSchema();
+      this.isFeeSchemaVisible = false;
+      this.showSuccessMessage('Fee schema added successfully');
+      // No need for cdr.detectChanges() if using proper array updates
+    },
+    error: (err: any) => {
+      console.error('addFeeSchema: Error:', err);
+      this.showErrorMessage('Failed to add fee schema: ' + (err.error?.message || 'Please check the form.'));
     }
-  }
+  });
+}
 
-  deleteFeeSchema(fscCode: number | undefined): void {
-    // console.log('deleteFeeSchema: fscCode:', fscCode);
-    if (fscCode && confirm('Are you sure you want to delete this fee schema?')) {
-      this.feeSchemaService.delete(fscCode, this.getHttpOptions()).subscribe({
-        next: () => {
-          // console.log('deleteFeeSchema: Success, fscCode:', fscCode);
-          this.feeSchemasList = this.feeSchemasList.filter(f => f.fscCode !== fscCode);
-          this.  showSuccessMessage('Fee schema deleted successfully');
-          this.cdr.detectChanges();
-        },
-        error: (err: any) => {
-          console.error('deleteFeeSchema: Error:', err);
-          this.showErrorMessage('Failed to delete fee schema: ' + (err.error?.message || 'Please try again.'));
+updateFeeSchema(): void {
+  if (this.selectedFeeSchema?.fscCode) {
+    this.feeSchemaService.update(this.selectedFeeSchema.fscCode, this.newFeeSchema, this.getHttpOptions()).subscribe({
+      next: (updatedFeeSchema: FeeSchema) => {
+        const index = this.feeSchemasList.findIndex(f => f.fscCode === updatedFeeSchema.fscCode);
+        if (index !== -1) {
+          // Create new array with updated item
+          this.feeSchemasList = [
+            ...this.feeSchemasList.slice(0, index),
+            updatedFeeSchema,
+            ...this.feeSchemasList.slice(index + 1)
+          ];
+          this.filteredFeeSchemasList = [...this.feeSchemasList]; // Update filtered list
         }
-      });
-    }
+        this.newFeeSchema = new FeeSchema();
+        this.selectedFeeSchema = null;
+        this.isFeeSchemaVisible = false;
+        this.showSuccessMessage('Fee schema updated successfully');
+      },
+      error: (err: any) => {
+        console.error('updateFeeSchema: Error:', err);
+        this.showErrorMessage('Failed to update fee schema: ' + (err.error?.message || 'Please try again.'));
+      }
+    });
+  } else {
+    this.showErrorMessage('No fee schema selected for update.');
   }
+}
+
+deleteFeeSchema(fscCode: number | undefined): void {
+  if (fscCode && confirm('Are you sure you want to delete this fee schema?')) {
+    this.feeSchemaService.delete(fscCode, this.getHttpOptions()).subscribe({
+      next: () => {
+        // Filter both lists
+        this.feeSchemasList = this.feeSchemasList.filter(f => f.fscCode !== fscCode);
+        this.filteredFeeSchemasList = this.filteredFeeSchemasList.filter(f => f.fscCode !== fscCode);
+        this.showSuccessMessage('Fee schema deleted successfully');
+      },
+      error: (err: any) => {
+        console.error('deleteFeeSchema: Error:', err);
+        this.showErrorMessage('Failed to delete fee schema: ' + (err.error?.message || 'Please try again.'));
+      }
+    });
+  }
+}
 
   addFeeRuleType(): void {
     // console.log('addFeeRuleType: Adding fee rule type:', this.newFeeRuleType);
