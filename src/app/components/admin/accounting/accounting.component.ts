@@ -368,78 +368,67 @@ searchWcotm(): void {
       }
     })
   }
-
-  addFee(): void {
-    // console.log('addFee: Adding fee:', this.newFee);
-    this.feesService.create(this.newFee, this.getHttpOptions()).subscribe({
-      next: (createdFee: Fees) => {
-        // console.log('addFee: Fee added:', createdFee);
-        this.feesList.push(createdFee);
-        this.newFee = new Fees();
-        this.isFeeVisible = false;
-        this.  showSuccessMessage('Fee added successfully');
-        this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.error('addFee: Error:', err);
-        this.showErrorMessage('Failed to add fee: ' + (err.error?.message || 'Please check the form.'));
-      }
-    });
-  }
-
-  editFee(fee: Fees): void {
+editFee(fee: Fees): void {
     // console.log('editFee: Fee object:', fee);
     this.selectedFee = fee;
     this.newFee = { ...fee };
     this.isFeeVisible = true;
     this.cdr.detectChanges();
   }
-
-  updateFee(): void {
-    // console.log('updateFee: Updating fee:', this.newFee);
-    if (this.selectedFee?.feeCode) {
-      this.feesService.update(this.selectedFee.feeCode, this.newFee, this.getHttpOptions()).subscribe({
-        next: (updatedFee: Fees) => {
-          // console.log('updateFee: Fee updated:', updatedFee);
-          const index = this.feesList.findIndex(f => f.feeCode === updatedFee.feeCode);
-          if (index !== -1) {
-            this.feesList[index] = updatedFee;
-            this.feesList = [...this.feesList];
-          }
-          this.newFee = new Fees();
-          this.selectedFee = null;
-          this.isFeeVisible = false;
-          this.  showSuccessMessage('Fee updated successfully');
-          this.cdr.detectChanges();
-        },
-        error: (err: any) => {
-          console.error('updateFee: Error:', err);
-          this.showErrorMessage('Failed to update fee: ' + (err.error?.message || 'Please try again.'));
-        }
-      });
-    } else {
-      this.showErrorMessage('No fee selected for update.');
+  addFee(): void {
+  this.feesService.create(this.newFee, this.getHttpOptions()).subscribe({
+    next: (createdFee: Fees) => {
+      this.feesList = [...this.feesList, createdFee]; // Create new array
+      this.filteredFeesList = [...this.feesList]; // Update filtered list
+      this.newFee = new Fees();
+      this.isFeeVisible = false;
+      this.showSuccessMessage('Fee added successfully');
+      // No need for cdr.detectChanges() if using proper array updates
+    },
+    error: (err: any) => {
+      console.error('addFee: Error:', err);
+      this.showErrorMessage('Failed to add fee: ' + (err.error?.message || 'Please check the form.'));
     }
-  }
+  });
+}
 
-  deleteFee(feeCode: number | undefined): void {
-    // console.log('deleteFee: feeCode:', feeCode);
-    if (feeCode && confirm('Are you sure you want to delete this fee?')) {
-      this.feesService.delete(feeCode, this.getHttpOptions()).subscribe({
-        next: () => {
-          // console.log('deleteFee: Success, feeCode:', feeCode);
-          this.feesList = this.feesList.filter(f => f.feeCode !== feeCode);
-          this.  showSuccessMessage('Fee deleted successfully');
-          this.cdr.detectChanges();
-        },
-        error: (err: any) => {
-          console.error('deleteFee: Error:', err);
-          this.showErrorMessage('Failed to delete fee: ' + (err.error?.message || 'Please try again.'));
+updateFee(): void {
+  if (this.selectedFee?.feeCode) {
+    this.feesService.update(this.selectedFee.feeCode, this.newFee, this.getHttpOptions()).subscribe({
+      next: (updatedFee: Fees) => {
+        const index = this.feesList.findIndex(f => f.feeCode === updatedFee.feeCode);
+        if (index !== -1) {
+          this.feesList = [...this.feesList.slice(0, index), updatedFee, ...this.feesList.slice(index + 1)];
+          this.filteredFeesList = [...this.feesList]; // Update filtered list
         }
-      });
-    }
+        this.newFee = new Fees();
+        this.selectedFee = null;
+        this.isFeeVisible = false;
+        this.showSuccessMessage('Fee updated successfully');
+      },
+      error: (err: any) => {
+        console.error('updateFee: Error:', err);
+        this.showErrorMessage('Failed to update fee: ' + (err.error?.message || 'Please try again.'));
+      }
+    });
   }
+}
 
+deleteFee(feeCode: number | undefined): void {
+  if (feeCode && confirm('Are you sure you want to delete this fee?')) {
+    this.feesService.delete(feeCode, this.getHttpOptions()).subscribe({
+      next: () => {
+        this.feesList = this.feesList.filter(f => f.feeCode !== feeCode);
+        this.filteredFeesList = this.filteredFeesList.filter(f => f.feeCode !== feeCode);
+        this.showSuccessMessage('Fee deleted successfully');
+      },
+      error: (err: any) => {
+        console.error('deleteFee: Error:', err);
+        this.showErrorMessage('Failed to delete fee: ' + (err.error?.message || 'Please try again.'));
+      }
+    });
+  }
+}
   addFeeSchema(): void {
     // console.log('addFeeSchema: Adding fee schema:', this.newFeeSchema);
     this.feeSchemaService.create(this.newFeeSchema, this.getHttpOptions()).subscribe({
