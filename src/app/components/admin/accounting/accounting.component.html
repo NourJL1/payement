@@ -322,8 +322,11 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i class="ri-search-line text-gray-400"></i>
           </div>
-          <input type="text" placeholder="Search..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+          <!-- Change your search input to this -->
+<input type="text" placeholder="Search..." 
+  [(ngModel)]="searchFeeRuleTypeTerm" 
+  (input)="searchFeeRuleTypes()"
+  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
         <button id="btn-add-type" (click)="toggleForm('fee-rule-type')"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
@@ -353,8 +356,8 @@
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <ng-container *ngIf="feeRuleTypesList!.length > 0; else noData">
-              <tr *ngFor="let type of feeRuleTypesList" class="hover:bg-gray-50 transition duration-150">
+            <ng-container *ngIf="filteredFeeRuleTypesList.length > 0; else noData">
+  <tr *ngFor="let type of filteredFeeRuleTypesList" class="hover:bg-gray-50 transition duration-150">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ type.frtCode }}</div>
                 </td>
