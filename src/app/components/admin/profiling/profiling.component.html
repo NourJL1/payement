@@ -134,7 +134,7 @@
                                 <div class="text-sm text-gray-900">{{user.profile?.label}}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center justify-end space-x-3">
+                                <div class="flex items-center space-x-3">
                                     <button (click)="selectedUser = user; toggleForm('user-details')"
                                         class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                                         <i class="ri-eye-line text-lg"></i>
@@ -265,7 +265,7 @@
                                 <div class="text-sm text-gray-900">{{profile.label}}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center justify-end space-x-3">
+                                <div class="flex items-center space-x-3">
                                     <button (click)="selectedProfile = profile; toggleForm('profile-details')"
                                         class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                                         <i class="ri-eye-line text-lg"></i>
@@ -428,7 +428,7 @@
                                 <div class="text-sm text-gray-900">{{module.order}}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center justify-end space-x-3">
+                                <div class="flex items-center space-x-3">
                                     <!-- <button (click)="selectedModule = module; toggleForm('module-details')"
                                         class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                                         <i class="ri-eye-line text-lg"></i>
@@ -514,12 +514,13 @@
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="ri-search-line text-gray-400"></i>
                 </div>
-                <input type="text" placeholder="Search..." [(ngModel)]="optionSearchTerm" name="optionSearchTerm" (input)="filterOptions()"
+                <input type="text" placeholder="Search..." [(ngModel)]="optionSearchTerm" name="optionSearchTerm"
+                    (input)="filterOptions()"
                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
             </div>
             <div class="w-full sm:w-auto">
                 <div class="relative">
-                    <select  [(ngModel)]="selectedModule" name="selectedModule" (ngModelChange)="filterOptions()"
+                    <select [(ngModel)]="selectedModule" name="selectedModule" (ngModelChange)="filterOptions()"
                         class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
                         <option [ngValue]="undefined">All Modules</option>
                         <option *ngFor="let module of allModules" [ngValue]="module">{{module.label}}</option>
@@ -574,7 +575,7 @@
                                 <div class="text-sm text-gray-900">{{option.module?.label}}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center justify-end space-x-3">
+                                <div class="flex items-center space-x-3">
                                     <!-- <button (click)="selectedOption = option; toggleForm('option-details')"
                                         class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                                         <i class="ri-eye-line text-lg"></i>
@@ -665,7 +666,8 @@
             </div> -->
             <div class="w-full sm:w-auto">
                 <div class="relative">
-                    <select [(ngModel)]="selectedProfile" name="selectedProfile" (ngModelChange)="filterProfileOptions()"
+                    <select [(ngModel)]="selectedProfile" name="selectedProfile"
+                        (ngModelChange)="filterProfileOptions()"
                         class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
                         <option [ngValue]="undefined">All Profiles</option>
                         <option *ngFor="let profile of allProfiles" [ngValue]="profile">{{profile.label}}</option>
@@ -674,7 +676,8 @@
             </div>
             <div class="w-full sm:w-auto">
                 <div class="relative">
-                    <select [(ngModel)]="selectedModule" name="selectedModule" (ngModelChange)="onModuleChange(selectedModule!); filterProfileOptions()"
+                    <select [(ngModel)]="selectedModule" name="selectedModule"
+                        (ngModelChange)="onModuleChange(selectedModule!); filterProfileOptions()"
                         class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
                         <option [ngValue]="undefined">All Modules</option>
                         <option *ngFor="let module of allModules" [ngValue]="module">{{module.label}}</option>
@@ -710,6 +713,10 @@
                         </th>
                         <th scope="col"
                             class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Module
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                             Menu Option
                         </th>
                         <th scope="col"
@@ -729,10 +736,13 @@
                                 <div class="text-sm text-gray-900">{{upmo.profile?.label}}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{upmo.menuOption?.module?.label}}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900">{{upmo.menuOption?.label}}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center justify-end space-x-3">
+                                <div class="flex items-center space-x-3">
                                     <button (click)="selectedProfileOption = upmo; toggleForm('profile-option-details')"
                                         class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                                         <i class="ri-eye-line text-lg"></i>
@@ -1119,7 +1129,7 @@
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                <button (click)="closeForm('user-form')" id="cancel-user-form"
+                <button type="button" (click)="closeForm('user-form')" id="cancel-user-form"
                     class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
                     Cancel
                 </button>
@@ -1231,7 +1241,7 @@
             </div>
 
             <!-- Associated Modules Section -->
-            <!-- <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <div class="flex items-center justify-between mb-5">
                     <div class="flex items-center">
                         <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
@@ -1240,14 +1250,27 @@
                     <span class="text-xs text-gray-500">{{selectedProfile?.modules?.length}} modules</span>
                 </div>
 
-                <div class="space-y-2" *ngIf="selectedProfile!.modules!.length; else noModules">
+                <div class="space-y-3" *ngIf="selectedProfile?.modules?.length; else noModules">
                     <div *ngFor="let module of selectedProfile?.modules"
-                        class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i _ngcontent-ng-c3705239543="module.logo"></i>
-                            <i *ngIf="module.mod_logo" class="{{ module.mod_logo }} text-gray-600 mr-3"></i> 
-                            <span class="text-sm font-medium text-gray-700">{{module.label}}</span>
-                            <span class="text-xs text-gray-500">Order: {{module.order}}</span>
+                        class="flex items-center justify-between p-4 bg-white rounded-lg shadow-xs hover:shadow-sm transition-shadow border border-gray-100">
+
+                        <!-- Module Icon and Info -->
+                        <div class="flex items-center space-x-4">
+                            <div class="p-2 rounded-md bg-primary-50 text-primary-600">
+                                <i [class]="module.logo" class="text-lg"></i>
+                            </div>
+
+                            <div>
+                                <h4 class="text-sm font-semibold text-gray-800">{{module.label}}</h4>
+                                <div class="flex items-center space-x-3 mt-1">
+                                    <span class="text-xs text-gray-500">
+                                        <i class="ri-arrow-up-down-line mr-1"></i> Order: {{module.order}}
+                                    </span>
+                                    <!-- <span class="text-xs text-gray-500">
+                        <i class="ri-link mr-1"></i> {{module.accessPath}}
+                    </span> -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1256,7 +1279,7 @@
                         No modules assigned to this profile
                     </div>
                 </ng-template>
-            </div> -->
+            </div>
         </div>
 
         <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
@@ -1284,22 +1307,43 @@
         <form ngNativeValidate (ngSubmit)="selectedProfile ? updateProfile() : addProfile()" #ProfileForm="ngForm"
             class="p-6 space-y-8 overflow-y-auto">
             <!-- Basic Information Section -->
+
+            <div class="space-y-5 p-6">
+                <div class="form-field">
+                    <label class="form-label flex items-center">
+                        Profile Name
+                        <span class="text-primary ml-1">*</span>
+                    </label>
+                    <div class="relative">
+                        <input class="form-input pl-10" [(ngModel)]="profileForm.label" name="label" type="text"
+                            required (ngModelChange)="profileForm.label = $event.toUpperCase()"
+                            placeholder="e.g. Administrator Profile">
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <div class="flex items-center mb-5">
                     <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                    <h4 class="text-lg font-semibold text-gray-900">Basic Information</h4>
+                    <h4 class="text-lg font-semibold text-gray-900">Modules</h4>
                 </div>
+                <button type="button"
+                    (click)="profileForm.modules = (profileForm.modules!.length === allModules!.length) ? [] : allModules"
+                    class="text-sm text-primary hover:underline">
+                    {{profileForm.modules!.length === allModules!.length ? 'Deselect All' : 'Select All'}}
+                </button>
 
                 <div class="space-y-5">
                     <div class="form-field">
-                        <label class="form-label flex items-center">
-                            Profile Name
-                            <span class="text-primary ml-1">*</span>
-                        </label>
                         <div class="relative">
-                            <input class="form-input pl-10" [(ngModel)]="profileForm.label" name="label" type="text"
-                                required (ngModelChange)="profileForm.label = $event.toUpperCase()"
-                                placeholder="e.g. Administrator Profile">
+                            <div class="grid grid-cols-3 gap-4 max-h-36">
+                                <button type="button" *ngFor="let module of allModules; let i = index;" (click)="toggleModule(module)"
+                                    [class.border-primary]="isModuleSelected(module)"
+                                    [class.bg-primary-50]="isModuleSelected(module)"
+                                    class="p-3 border rounded-lg hover:border-primary focus:outline-none">
+                                    <span>{{module.label}}</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1382,7 +1426,7 @@
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                <button (click)="closeForm('profile-form')" id="cancel-create-profile"
+                <button type="button" (click)="closeForm('profile-form')" id="cancel-create-profile"
                     class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
                     Cancel
                 </button>
@@ -1414,65 +1458,60 @@
         <form ngNativeValidate (ngSubmit)="selectedModule ? updateModule() : addModule()"
             class="p-6 space-y-6 overflow-y-auto">
             <!-- Module Information Section -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <div class="flex items-center mb-5">
-                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                    <h4 class="text-lg font-semibold text-gray-900">Module Details</h4>
+
+
+            <div class="grid grid-cols-1 gap-5">
+                <!-- Label Field -->
+                <div class="form-field">
+                    <label class="form-label flex items-center">
+                        Label
+                        <span class="text-primary ml-1">*</span>
+                    </label>
+                    <div class="relative">
+                        <input class="form-input pl-10" [(ngModel)]="moduleForm.label" name="label" type="text"
+                            required>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-5">
-                    <!-- Label Field -->
-                    <div class="form-field">
-                        <label class="form-label flex items-center">
-                            Label
-                            <span class="text-primary ml-1">*</span>
-                        </label>
-                        <div class="relative">
-                            <input class="form-input pl-10" [(ngModel)]="moduleForm.label" name="label" type="text"
-                                required>
+                <!-- Logo Selection -->
+                <div class="form-field">
+                    <label class="form-label">Logo</label>
+                    <div class="relative">
+                        <div class="grid grid-cols-5 gap-4 max-h-36 overflow-y-auto p-1 border rounded-lg">
+                            <button *ngFor="let logo of logos" (click)="moduleForm.logo = logo" type="button"
+                                [class.border-primary]="moduleForm.logo === logo"
+                                class="p-3 border rounded-lg hover:border-primary focus:outline-none">
+                                <i [class]="logo" class="text-2xl"></i>
+                            </button>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Logo Selection -->
-                    <div class="form-field">
-                        <label class="form-label">Logo</label>
-                        <div class="relative">
-                            <div class="grid grid-cols-5 gap-4 max-h-36 overflow-y-auto p-1 border rounded-lg">
-                                <button *ngFor="let logo of logos" (click)="moduleForm.logo = logo" type="button"
-                                    [class.border-primary]="moduleForm.logo === logo"
-                                    class="p-3 border rounded-lg hover:border-primary focus:outline-none">
-                                    <i [class]="logo" class="text-2xl"></i>
-                                </button>
-                            </div>
-                        </div>
+                <!-- Order Field -->
+                <div class="form-field">
+                    <label class="form-label flex items-center">
+                        Order
+                        <span class="text-primary ml-1">*</span>
+                    </label>
+                    <div class="relative">
+                        <input class="form-input pl-10" [(ngModel)]="moduleForm.order" name="order" type="number"
+                            min="1" required>
                     </div>
+                </div>
 
-                    <!-- Order Field -->
-                    <div class="form-field">
-                        <label class="form-label flex items-center">
-                            Order
-                            <span class="text-primary ml-1">*</span>
-                        </label>
-                        <div class="relative">
-                            <input class="form-input pl-10" [(ngModel)]="moduleForm.order" name="order" type="number"
-                                min="1" required>
-                        </div>
-                    </div>
-
-                    <div class="form-field">
-                        <label class="form-label flex items-center">
-                            Access Path
-                            <span class="text-primary ml-1">*</span>
-                        </label>
-                        <div class="relative">
-                            <input class="form-input pl-10" [(ngModel)]="moduleForm.accessPath" name="accessPath"
-                                placeholder="module  access path" type="text" required>
-                        </div>
+                <div class="form-field">
+                    <label class="form-label flex items-center">
+                        Access Path
+                        <span class="text-primary ml-1">*</span>
+                    </label>
+                    <div class="relative">
+                        <input class="form-input pl-10" [(ngModel)]="moduleForm.accessPath" name="accessPath"
+                            placeholder="module  access path" type="text" required>
                     </div>
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                <button (click)="closeForm('module-form')"
+                <button type="button" (click)="closeForm('module-form')"
                     class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
                     Cancel
                 </button>
@@ -1528,7 +1567,7 @@
         </div>
 
         <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
-            <button (click)="closeForm('option-details')" id="close-customer-detail-btn"
+            <button type="button" (click)="closeForm('option-details')" id="close-customer-detail-btn"
                 class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
                 Close
             </button>
@@ -1548,40 +1587,33 @@
         <form ngNativeValidate class="p-6 space-y-6 overflow-y-auto"
             (ngSubmit)="selectedOption ? updateOption() : addOption()">
             <!-- Module Information Section -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <div class="flex items-center mb-5">
-                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
-                    <h4 class="text-lg font-semibold text-gray-900">Menu Option Details</h4>
+            <div class="grid grid-cols-1 gap-5">
+                <!-- Label Field -->
+                <div class="form-field">
+                    <label class="form-label flex items-center">
+                        Label
+                        <span class="text-primary ml-1">*</span>
+                    </label>
+                    <div class="relative">
+                        <input class="form-input pl-10" [(ngModel)]="optionForm.label" name="label" type="text"
+                            required>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-5">
-                    <!-- Label Field -->
-                    <div class="form-field">
-                        <label class="form-label flex items-center">
-                            Label
-                            <span class="text-primary ml-1">*</span>
-                        </label>
-                        <div class="relative">
-                            <input class="form-input pl-10" [(ngModel)]="optionForm.label" name="label" type="text"
-                                required>
-                        </div>
-                    </div>
-
-                    <!-- Logo Selection -->
-                    <div class="form-field">
-                        <label class="form-label">Module</label>
-                        <div class="relative">
-                            <select class="form-input pl-10" [(ngModel)]="optionForm.module" name="module" required
-                                [compareWith]="compareBy('code')">
-                                <option [ngValue]="undefined" disabled>Select a module</option>
-                                <option [ngValue]="module" *ngFor="let module of allModules">{{module.label}}</option>
-                            </select>
-                        </div>
+                <!-- Module Selection -->
+                <div class="form-field">
+                    <label class="form-label">Module</label>
+                    <div class="relative">
+                        <select class="form-input pl-10" [(ngModel)]="optionForm.module" name="module" required
+                            [compareWith]="compareBy('code')">
+                            <option [ngValue]="undefined" disabled>Select a module</option>
+                            <option [ngValue]="module" *ngFor="let module of allModules">{{module.label}}</option>
+                        </select>
                     </div>
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                <button (click)="closeForm('option-form')"
+                <button type="button" (click)="closeForm('option-form')"
                     class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
                     Cancel
                 </button>
@@ -1690,7 +1722,7 @@
         </div>
 
         <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
-            <button (click)="closeForm('profile-option-details')"
+            <button type="button" (click)="closeForm('profile-option-details')"
                 class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
                 Close
             </button>
@@ -1710,109 +1742,137 @@
             </button>
         </div>
 
-        <form (ngSubmit)="selectedProfileOption ? updateProfileOption() : addProfileOption()"
+        <form (ngSubmit)="(selectedProfileOption ? updateProfileOption() : addProfileOption())"
             class="p-6 space-y-8 overflow-y-auto">
             <!-- Profile & Option Select -->
-            <div class="form-field">
-                <label class="form-label">Profile</label>
-                <select [(ngModel)]="profileOptionForm.profile" name="profile" [compareWith]="compareBy('code')"
-                    class="form-input" required>
-                    <option *ngFor="let profile of allProfiles" [ngValue]="profile">{{ profile.label }}</option>
-                </select>
-            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Details</h4>
+                </div>
+                <div class="form-field p-1">
+                    <label class="form-label">Profile</label>
+                    <select [(ngModel)]="profileOptionForm.profile" name="profile" [compareWith]="compareBy('code')"
+                        (click)="profileOptionForm.profile ? selectedModule = undefined : null"
+                        (ngModelChange)="getUnassignedOptions()"
+                        class="form-input" required>
+                        <option [ngValue]="undefined" disabled>select profile</option>
+                        <option *ngFor="let profile of allProfiles" [ngValue]="profile">
+                            {{ profile.label }}</option>
+                    </select>
+                </div>
 
-            <div class="form-field">
-                <label class="form-label">Menu Option</label>
-                <select [(ngModel)]="profileOptionForm.menuOption" name="menuOption" [compareWith]="compareBy('code')"
-                    class="form-input" required>
-                    <option *ngFor="let option of allOptions" [ngValue]="option">{{ option.label }}</option>
-                </select>
+                <div class="form-field p-1">
+                    <label class="form-label">Module</label>
+                    <select [(ngModel)]="selectedModule" name="selectedModule" (click)="onModuleChange(selectedModule!)"
+                        [compareWith]="compareBy('code')" class="form-input" required>
+                        <option [ngValue]="undefined" disabled>select Module</option>
+                        <option *ngFor="let module of profileOptionForm.profile?.modules" [ngValue]="module">
+                            {{ module.label }}</option>
+                    </select>
+                </div>
+
+                <div class="form-field p-1">
+                    <label class="form-label">Menu Option</label>
+                    <select [(ngModel)]="profileOptionForm.menuOption" name="menuOption"
+                        [compareWith]="compareBy('code')" class="form-input" required>
+                        <option [ngValue]="undefined" disabled>select an option</option>
+                        <!-- <option *ngIf="selectedModule" [ngValue]="optionsByModule" selected>select all module options</option> -->
+                        <option *ngFor="let option of getUnassignedOptions()" [ngValue]="option">
+                            {{ option.label }}</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Permissions -->
-            <div class="space-y-3">
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Can Access</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" [(ngModel)]="profileOptionForm.canAccess" name="canAccess"
-                            class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
-               peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
-               after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
-               after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                        </div>
-                    </label>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center mb-5">
+                    <div class="w-1.5 h-6 bg-primary rounded-full mr-3"></div>
+                    <h4 class="text-lg font-semibold text-gray-900">Permissions</h4>
                 </div>
-
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Can Insert</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" [(ngModel)]="profileOptionForm.canInsert" name="canInsert"
-                            class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Can Access</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileOptionForm.canAccess" name="canAccess"
+                                class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
                peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
                after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
                after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                        </div>
-                    </label>
-                </div>
+                            </div>
+                        </label>
+                    </div>
 
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Can Update</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" [(ngModel)]="profileOptionForm.canUpdate" name="canUpdate"
-                            class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Can Insert</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileOptionForm.canInsert" name="canInsert"
+                                class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
                peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
                after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
                after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                        </div>
-                    </label>
-                </div>
+                            </div>
+                        </label>
+                    </div>
 
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Can Delete</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" [(ngModel)]="profileOptionForm.canDelete" name="canDelete"
-                            class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Can Update</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileOptionForm.canUpdate" name="canUpdate"
+                                class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
                peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
                after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
                after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                        </div>
-                    </label>
-                </div>
+                            </div>
+                        </label>
+                    </div>
 
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Can Edit</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" [(ngModel)]="profileOptionForm.canEdit" name="canEdit"
-                            class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Can Delete</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileOptionForm.canDelete" name="canDelete"
+                                class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
                peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
                after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
                after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                        </div>
-                    </label>
-                </div>
+                            </div>
+                        </label>
+                    </div>
 
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span class="text-sm font-medium text-gray-700">Can Print</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" [(ngModel)]="profileOptionForm.canPrint" name="canPrint"
-                            class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Can Edit</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileOptionForm.canEdit" name="canEdit"
+                                class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
                peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
                after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
                after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
-                        </div>
-                    </label>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Can Print</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="profileOptionForm.canPrint" name="canPrint"
+                                class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full 
+               peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 
+               after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full 
+               after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+                            </div>
+                        </label>
+                    </div>
                 </div>
             </div>
 
-
             <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                <button type="button" (click)="closeForm('profile-option-form')"
+                <button type="button" type="button" (click)="closeForm('profile-option-form')"
                     class="px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition text-sm whitespace-nowrap">
                     Cancel
                 </button>
@@ -1823,5 +1883,4 @@
             </div>
         </form>
     </div>
-
 </div>

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { UserProfile } from '../entities/user-profile';
+import Module from 'node:module';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,10 @@ export class UserProfilesService {
 
   getAllUserProfiles() {
     return this.http.get<UserProfile[]>(`${this.apiUrl}`)
+  }
+
+  getByIdentifier(identifier: string) {
+    return this.http.get<UserProfile>(`${this.apiUrl}/getByIdentifier/${identifier}`);
   }
 
   // Update
@@ -57,8 +62,13 @@ export class UserProfilesService {
   getProfilesWithModuleAccess(moduleCode: number) {
     return this.http.get<UserProfile[]>(`${this.apiUrl}/with-module/${moduleCode}`)
   }
-  
-    search(criteria: any) {
-      return this.http.get<UserProfile[]>(`${this.apiUrl}/search?word=${criteria}`);
-    }
+
+  getProfileModules(code: number) {
+    return this.http.get<Module[]>(`${this.apiUrl}/get-modules/${code}`);
+  }
+
+  search(criteria: any) {
+    console.log(`${this.apiUrl}/search?word=${criteria}`);
+    return this.http.get<UserProfile[]>(`${this.apiUrl}/search?word=${criteria}`);
+  }
 }

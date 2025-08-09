@@ -21,6 +21,10 @@ export class ModuleService {
     return this.http.get<Module>(`${this.apiUrl}/${code}`)
   }
 
+  getByIdentifier(identifier: string) {
+    return this.http.get<Module>(`${this.apiUrl}/getByIdentifier/${identifier}`);
+  }
+
   // Create a new module
   createModule(module: Module) {
     return this.http.post<Module>(`${this.apiUrl}`, module)
@@ -35,8 +39,8 @@ export class ModuleService {
   deleteModule(code: number) {
     return this.http.delete(`${this.apiUrl}/${code}`)
   }
-  
-    search(criteria: any) {
-      return this.http.get<Module[]>(`${this.apiUrl}/search?word=${criteria}`);
-    }
+
+  search(criteria: any) {
+    return this.http.get<Module[]>(`${this.apiUrl}/search?word=${criteria}`);
+  }
 }

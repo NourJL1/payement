@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
 
   canActivate( route: ActivatedRouteSnapshot, state: RouterStateSnapshot ): boolean {
     const authoritiesString = localStorage.getItem('authorities') || '';
-    const authorities = authoritiesString.split(',').map(r => r.trim());
+    const authorities = authoritiesString.split(',').map(a => a.trim());
 
     const requiredRole = route.data['requiredRole'] as string;
     const requiredStatus = route.data['requiredStatus'] as string;

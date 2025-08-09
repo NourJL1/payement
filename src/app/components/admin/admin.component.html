@@ -28,7 +28,17 @@
                         <span class="ml-3">Dashboard</span>
                     </a>
                 </li>
-                <li>
+                <li *ngFor="let module of modules">
+                    <a [routerLink]="'/admin/' + module.accessPath" routerLinkActive="bg-primary bg-opacity-90 !text-white"
+                        [routerLinkActiveOptions]="{ exact: true }"
+                        class="nav-item flex items-center p-3 text-gray-600 rounded transition-all">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i [class]="module.logo"></i>
+                        </div>
+                        <span class="ml-3">{{module.label}}</span>
+                    </a>
+                </li>
+                <!-- <li>
                     <a routerLink="/admin/wallets" routerLinkActive="bg-primary bg-opacity-90 !text-white"
                         [routerLinkActiveOptions]="{ exact: true }"
                         class="nav-item flex items-center p-3 text-gray-600 rounded transition-all">
@@ -48,7 +58,6 @@
                         <span class="ml-3">Accounting Schema</span>
                     </a>
                 </li>
-
                 <li>
                     <a routerLink="/admin/customers" routerLinkActive="bg-primary bg-opacity-90 !text-white"
                         [routerLinkActiveOptions]="{ exact: true }"
@@ -59,9 +68,6 @@
                         <span class="ml-3">Customer Management</span>
                     </a>
                 </li>
-
-                 
-
                 <li>
                     <a routerLink="/admin/profiling" routerLinkActive="bg-primary bg-opacity-90 !text-white"
                         [routerLinkActiveOptions]="{ exact: true }"
@@ -72,7 +78,6 @@
                         <span class="ml-3">Users Profiling</span>
                     </a>
                 </li>
-
                 <li>
                     <a routerLink="/admin/" routerLinkActive="bg-primary bg-opacity-90 !text-white"
                         [routerLinkActiveOptions]="{ exact: true }"
@@ -82,7 +87,7 @@
                         </div>
                         <span class="ml-3">Products</span>
                     </a>
-                </li>
+                </li> -->
             </ul>
         </nav>
 

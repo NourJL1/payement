@@ -24,6 +24,10 @@ export class MenuOptionService {
     return this.http.get<MenuOption[]>(`${this.apiUrl}`)
   }
 
+  getByIdentifier(identifier: string) {
+    return this.http.get<MenuOption>(`${this.apiUrl}/getByIdentifier/${identifier}`);
+  }
+
   getMenuOptionsByModule(moduleCode: number) {
     return this.http.get<MenuOption[]>(`${this.apiUrl}/by-module/${moduleCode}`)
   }

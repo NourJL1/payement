@@ -16,7 +16,6 @@ import { CustomerMngComponent } from './components/admin/customer-mng/customer-m
 import { PendingComponent } from './components/wallet/pending/pending.component';
 import { OverviewComponent } from './components/wallet/overview/overview.component';
 import { SuspendedComponent } from './components/wallet/suspended/suspended.component';
-import { Role } from './entities/role';
 import { TransactionsComponent } from './components/wallet/transactions/transactions.component';
 import { SettingsComponent } from './components/wallet/settings/settings.component';
 
