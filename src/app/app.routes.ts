@@ -18,6 +18,7 @@ import { OverviewComponent } from './components/wallet/overview/overview.compone
 import { SuspendedComponent } from './components/wallet/suspended/suspended.component';
 import { TransactionsComponent } from './components/wallet/transactions/transactions.component';
 import { SettingsComponent } from './components/wallet/settings/settings.component';
+import { OperationsComponent } from './components/admin/operations/operations.component';
 
 export const routes: Routes = [
 
@@ -66,7 +67,8 @@ export const routes: Routes = [
       {path: 'wallets', component: WalletMngComponent},
       {path: 'products', component: ProductsComponent},
       {path: 'profiling', component: ProfilingComponent},
-      {path: 'customers', component: CustomerMngComponent}
+      {path: 'customers', component: CustomerMngComponent},
+      {path: 'operations', component: OperationsComponent}
     ]
   }
 ];

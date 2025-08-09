@@ -1080,26 +1080,34 @@ saveWallet(): void {
       wcaLabe: this.selectedWallet.walletCategory.wcaLabe,
       wcaFinId: this.selectedWallet.walletCategory.wcaFinId
     },
+    customer: this.selectedWallet.customer ? { 
+      cusCode: this.selectedWallet.customer.cusCode,
+      cusIden: this.selectedWallet.customer.cusIden,
+      fullName: this.selectedWallet.customer.fullName,
+      cusMailAddress: this.selectedWallet.customer.cusMailAddress,
+      cusPhoneNbr: this.selectedWallet.customer.cusPhoneNbr
+      // Include any other customer properties you need
+    } : undefined,
     walEffBal: this.selectedWallet.walEffBal,
     walLogicBalance: this.selectedWallet.walLogicBalance,
     walSpecificBalance: this.selectedWallet.walSpecificBalance
   };
-
   if (this.selectedWallet.walCode) {
     this.walletService.update(this.selectedWallet.walCode, walletPayload).subscribe({
       next: (updatedWallet: Wallet) => {
         // Create a deep merge function to properly update the wallet
         const deepMergeWallet = (existing: Wallet, updated: Wallet): Wallet => {
-          return {
-            ...existing,
-            ...updated,
-            walletStatus:  existing.walletStatus,
-            walletType:  existing.walletType,
-            walletCategory:  existing.walletCategory,
-            createdAt: existing.createdAt, // Preserve the original createdAt
-            lastUpdatedDate: updatedWallet.lastUpdatedDate || existing.lastUpdatedDate
-          };
-        };
+  return {
+    ...existing,
+    ...updated,
+    walletStatus: existing.walletStatus,
+    walletType: existing.walletType,
+    walletCategory: existing.walletCategory,
+    customer: existing.customer, // Preserve the original customer
+    createdAt: existing.createdAt, // Preserve the original createdAt
+    lastUpdatedDate: updatedWallet.lastUpdatedDate || existing.lastUpdatedDate
+  };
+};
 
         // Update walletsList
         const walletIndex = this.walletsList.findIndex(w => w.walCode === updatedWallet.walCode);
