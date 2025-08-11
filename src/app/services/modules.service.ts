@@ -12,12 +12,12 @@ export class ModuleService {
   constructor(private http: HttpClient) { }
 
   // Get all modules
-  getAllModules() {
+  getAll() {
     return this.http.get<Module[]>(`${this.apiUrl}`)
   }
 
   // Get a module by its code
-  getModuleById(code: number) {
+  getById(code: number) {
     return this.http.get<Module>(`${this.apiUrl}/${code}`)
   }
 
@@ -26,17 +26,17 @@ export class ModuleService {
   }
 
   // Create a new module
-  createModule(module: Module) {
+  create(module: Module) {
     return this.http.post<Module>(`${this.apiUrl}`, module)
   }
 
   // Update an existing module
-  updateModule(code: number, moduleDetails: Module) {
+  update(code: number, moduleDetails: Module) {
     return this.http.put<Module>(`${this.apiUrl}/${code}`, moduleDetails)
   }
 
   // Delete a module
-  deleteModule(code: number) {
+  delete(code: number) {
     return this.http.delete(`${this.apiUrl}/${code}`)
   }
 

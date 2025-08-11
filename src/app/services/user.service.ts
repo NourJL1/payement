@@ -55,9 +55,9 @@ export class UserService {
   delete(code: number) {
     return this.http.delete(`${this.apiUrl}/${code}`)
   }
-  
-    search(criteria: any) {
-      return this.http.get<User[]>(`${this.apiUrl}/search?word=${criteria}`);
-    }
+
+  search(criteria: any) {
+    return this.http.get<User[]>(`${this.apiUrl}/search?word=${criteria}`);
+  }
 }
 

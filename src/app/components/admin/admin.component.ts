@@ -52,16 +52,16 @@ export class AdminComponent implements OnInit {
   modules: Module[] = []
   options: MenuOption[] = []
 
-  loadModules(){
-    this.moduleService.getAllModules().subscribe({
+  loadModules() {
+    this.moduleService.getAll().subscribe({
       next: (modules: Module[]) => {
         this.modules = modules
       },
-      error: (err) => {console.log(err)}
+      error: (err) => { console.log(err) }
     })
   }
 
-  loadUserProfileModules(authorities: string[]) {
+  /* loadUserProfileModules(authorities: string[]) {
     this.userProfileService.getByIdentifier(authorities[1]).subscribe({
           next: (profile: UserProfile) => {
             this.modules = profile.modules!;
@@ -72,17 +72,6 @@ export class AdminComponent implements OnInit {
             console.log(error);
           }
         })
-    /* authorities.forEach(authority => {
-      if (authority.startsWith("MOD"))
-        this.moduleService.getByIdentifier(authority).subscribe({
-          next: (module: Module) => {
-            this.modules.push(module);
-          },
-          error: (error) => {
-            console.log(error);
-          }
-        })
-    }); */
   }
 
   async loadUserProfileMenuOptions(authorities: string[]) {
@@ -97,7 +86,7 @@ export class AdminComponent implements OnInit {
           }
         })
     });
-  }
+  } */
 
   toggleSidebar(): void {
     this.isCollapsed = !this.isCollapsed;

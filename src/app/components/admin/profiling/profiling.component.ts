@@ -24,14 +24,16 @@ import { UserProfileMenuOption } from '../../../entities/user-profile-menu-optio
 })
 export class ProfilingComponent {
 
-  constructor(private userService: UserService,
-    private authService: AuthService,
+  constructor(private authService: AuthService,
+    private userService: UserService,
     private userProfileService: UserProfilesService,
     private upmoService: UserProfileMenuOptionsService,
     private moduleService: ModuleService,
     private menuOptionService: MenuOptionService,
     private http: HttpClient,
     private cdr: ChangeDetectorRef) { }
+
+  tabOptions: MenuOption[] = []
 
   allUsers: User[] = []
   filteredUsers: User[] = []
@@ -91,6 +93,10 @@ export class ProfilingComponent {
     this.loadIcons()
   }
 
+  loadTabOptions() {
+
+  }
+
   loadAllUsers() {
     this.userService.getAll().subscribe({
       next: (users: User[]) => {
@@ -104,7 +110,7 @@ export class ProfilingComponent {
   }
 
   loadAllProfiles() {
-    this.userProfileService.getAllUserProfiles().subscribe({
+    this.userProfileService.getAll().subscribe({
       next: (profiles: UserProfile[]) => {
         this.allProfiles = profiles
         this.filteredProfiles = profiles
@@ -116,7 +122,7 @@ export class ProfilingComponent {
   }
 
   loadAllModules() {
-    this.moduleService.getAllModules().subscribe({
+    this.moduleService.getAll().subscribe({
       next: (modules: Module[]) => {
         this.allModules = modules
         this.filteredModules = modules
@@ -128,7 +134,7 @@ export class ProfilingComponent {
   }
 
   loadAllOptions() {
-    this.menuOptionService.getAllMenuOptions().subscribe({
+    this.menuOptionService.getAll().subscribe({
       next: (options: MenuOption[]) => {
         this.allOptions = options
         this.filteredOptions = options
@@ -140,7 +146,7 @@ export class ProfilingComponent {
   }
 
   loadAllProfileOptions() {
-    this.upmoService.getAllProfileMenuOptions().subscribe({
+    this.upmoService.getAll().subscribe({
       next: (upmo: UserProfileMenuOption[]) => {
         this.allProfileOptions = upmo
         this.filteredProfileOptions = upmo
@@ -342,7 +348,7 @@ export class ProfilingComponent {
   }
 
   addProfile() {
-    this.userProfileService.createUserProfile(this.profileForm).subscribe({
+    this.userProfileService.create(this.profileForm).subscribe({
       next: (profile: UserProfile) => {
         this.allProfiles.push(profile);
         this.profileForm = new UserProfile();
@@ -358,7 +364,7 @@ export class ProfilingComponent {
   }
 
   updateProfile() {
-    this.userProfileService.updateUserProfile(this.profileForm.code!, this.profileForm).subscribe({
+    this.userProfileService.update(this.profileForm.code!, this.profileForm).subscribe({
       next: (profile: UserProfile) => {
         const index = this.allProfiles.findIndex(up => up.code === this.profileForm.code);
         if (index !== -1) {
@@ -381,7 +387,7 @@ export class ProfilingComponent {
 
   deleteProfile(profile: UserProfile) {
     if (confirm('Are you sure you want to delete this profile?')) {
-      this.userProfileService.deleteUserProfile(profile.code!).subscribe({
+      this.userProfileService.delete(profile.code!).subscribe({
         next: () => {
           this.allProfiles = this.allProfiles.filter(up => up.code !== profile?.code);
           this.filteredProfiles = this.filteredProfiles.filter(up => up.code !== profile?.code);
@@ -400,7 +406,7 @@ export class ProfilingComponent {
       : this.profileForm.modules?.push(module);
   }
 
-  isModuleSelected(module: Module){
+  isModuleSelected(module: Module) {
     return this.profileForm.modules?.some(m => m.code === module.code)
   }
 
@@ -434,7 +440,7 @@ export class ProfilingComponent {
       this.showErrorMessage("form not valid: Logo missing")
       return;
     }
-    this.moduleService.createModule(this.moduleForm).subscribe({
+    this.moduleService.create(this.moduleForm).subscribe({
       next: (module: Module) => {
         this.allModules.push(module);
         this.moduleForm = new Module();
@@ -450,7 +456,7 @@ export class ProfilingComponent {
   }
 
   updateModule() {
-    this.moduleService.updateModule(this.moduleForm.code!, this.moduleForm).subscribe({
+    this.moduleService.update(this.moduleForm.code!, this.moduleForm).subscribe({
       next: (module: Module) => {
         const index = this.allModules.findIndex(mod => mod.code === this.moduleForm.code);
         if (index !== -1) {
@@ -473,7 +479,7 @@ export class ProfilingComponent {
 
   deleteModule(module: Module) {
     if (confirm('Are you sure you want to delete this module?')) {
-      this.moduleService.deleteModule(module.code!).subscribe({
+      this.moduleService.delete(module.code!).subscribe({
         next: () => {
           this.allModules = this.allModules.filter(mod => mod.code !== module?.code);
           this.filteredModules = this.filteredModules.filter(mod => mod.code !== module?.code);
@@ -515,7 +521,7 @@ export class ProfilingComponent {
       this.showErrorMessage("form not valid: Module missing")
       return;
     }
-    this.menuOptionService.createMenuOption(this.optionForm).subscribe({
+    this.menuOptionService.create(this.optionForm).subscribe({
       next: (option: MenuOption) => {
         this.allOptions.push(option);
         this.optionForm = new MenuOption();
@@ -535,7 +541,7 @@ export class ProfilingComponent {
       this.showErrorMessage("form not valid: Module missing")
       return;
     }
-    this.menuOptionService.updateMenuOption(this.optionForm.code!, this.optionForm).subscribe({
+    this.menuOptionService.update(this.optionForm.code!, this.optionForm).subscribe({
       next: (option: MenuOption) => {
         const index = this.allOptions.findIndex(mop => mop.code === this.optionForm.code);
         if (index !== -1) {
@@ -558,7 +564,7 @@ export class ProfilingComponent {
 
   deleteOption(option: MenuOption) {
     if (confirm('Are you sure you want to delete this option?')) {
-      this.menuOptionService.deleteMenuOption(option.code!).subscribe({
+      this.menuOptionService.delete(option.code!).subscribe({
         next: () => {
           this.allOptions = this.allOptions.filter(mop => mop.code !== option?.code);
           this.filteredOptions = this.filteredOptions.filter(mop => mop.code !== option?.code);
@@ -610,7 +616,7 @@ export class ProfilingComponent {
       this.showErrorMessage("form not valid")
       return;
     }
-    this.upmoService.createProfileMenuOption(this.profileOptionForm).subscribe({
+    this.upmoService.create(this.profileOptionForm).subscribe({
       next: (upmo: UserProfileMenuOption) => {
         this.allProfileOptions.push(upmo);
         this.profileOptionForm = new UserProfileMenuOption();
@@ -630,7 +636,7 @@ export class ProfilingComponent {
       this.showErrorMessage("form not valid")
       return;
     }
-    this.upmoService.updateProfileMenuOption(this.profileOptionForm.id!, this.profileOptionForm).subscribe({
+    this.upmoService.update(this.profileOptionForm.id!, this.profileOptionForm).subscribe({
       next: (upmo: UserProfileMenuOption) => {
         const index = this.allProfileOptions.findIndex(po => po.id === this.profileOptionForm.id);
         if (index !== -1) {
@@ -653,7 +659,7 @@ export class ProfilingComponent {
 
   deleteProfileOption(upmo: UserProfileMenuOption) {
     if (confirm('Are you sure you want to delete this profile option?')) {
-      this.upmoService.deleteProfileMenuOption(upmo.id!).subscribe({
+      this.upmoService.delete(upmo.id!).subscribe({
         next: () => {
           this.allProfileOptions = this.allProfileOptions.filter(po => po.id !== upmo?.id);
           this.filteredProfileOptions = this.filteredProfileOptions.filter(po => po.id !== upmo?.id);
@@ -713,7 +719,7 @@ export class ProfilingComponent {
       this.optionsByModule = [];
       return;
     }
-    this.menuOptionService.getMenuOptionsByModule(module!.code!).subscribe(
+    this.menuOptionService.getByModule(module!.code!).subscribe(
       {
         next: (options: MenuOption[]) => {
           this.optionsByModule = options;

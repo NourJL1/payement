@@ -13,16 +13,16 @@ export class UserProfilesService {
   constructor(private http: HttpClient) { }
 
   // Create
-  createUserProfile(userProfile: UserProfile) {
+  create(userProfile: UserProfile) {
     return this.http.post<UserProfile>(`${this.apiUrl}`, userProfile)
   }
 
   // Read
-  getUserProfileById(id: number) {
+  getById(id: number) {
     return this.http.get<UserProfile>(`${this.apiUrl}/${id}`)
   }
 
-  getAllUserProfiles() {
+  getAll() {
     return this.http.get<UserProfile[]>(`${this.apiUrl}`)
   }
 
@@ -31,12 +31,12 @@ export class UserProfilesService {
   }
 
   // Update
-  updateUserProfile(id: number, userProfile: UserProfile) {
+  update(id: number, userProfile: UserProfile) {
     return this.http.put<UserProfile>(`${this.apiUrl}/${id}`, userProfile)
   }
 
   // Delete
-  deleteUserProfile(id: number) {
+  delete(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`)
   }
 
@@ -47,15 +47,6 @@ export class UserProfilesService {
 
   canDecryptPan(id: number) {
     return this.http.get<boolean>(`${this.apiUrl}/${id}/can-decrypt-pan`)
-  }
-
-  // Module management
-  addModuleToProfile(profileId: number, moduleId: number) {
-    return this.http.post<UserProfile>(`${this.apiUrl}/${profileId}/modules/${moduleId}`, null)
-  }
-
-  removeModuleFromProfile(profileId: number, moduleId: number) {
-    return this.http.delete(`${this.apiUrl}/${profileId}/modules/${moduleId}`)
   }
 
   // Additional endpoints
