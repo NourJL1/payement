@@ -9,7 +9,6 @@ import { UserProfilesService } from '../../services/user-profiles.service';
 import { ModuleService } from '../../services/modules.service';
 import { MenuOptionService } from '../../services/menu-option.service';
 import { UserProfileMenuOptionsService } from '../../services/user-profile-menu-options.service';
-import { error } from 'node:console';
 import { Module } from '../../entities/module';
 import { UserProfile } from '../../entities/user-profile';
 
@@ -38,9 +37,8 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
 
-    const authorities: string[] = localStorage.getItem('authorities')!.split(',').map(a => a.trim())
-
-    this.loadUserProfileModules(authorities)
+    this.loadModules()
+    //this.loadUserProfileModules(this.authorities)
     //this.loadUserProfileMenuOptions(authorities)
 
     this.getNewCustomers()
@@ -48,10 +46,20 @@ export class AdminComponent implements OnInit {
   }
 
   isCollapsed = false;
+  authorities: string[] = localStorage.getItem('authorities')!.split(',').map(a => a.trim())
   fullname = localStorage.getItem('fullname');
   username = localStorage.getItem('username')
   modules: Module[] = []
   options: MenuOption[] = []
+
+  loadModules(){
+    this.moduleService.getAllModules().subscribe({
+      next: (modules: Module[]) => {
+        this.modules = modules
+      },
+      error: (err) => {console.log(err)}
+    })
+  }
 
   loadUserProfileModules(authorities: string[]) {
     this.userProfileService.getByIdentifier(authorities[1]).subscribe({

@@ -28,16 +28,19 @@
                         <span class="ml-3">Dashboard</span>
                     </a>
                 </li>
-                <li *ngFor="let module of modules">
-                    <a [routerLink]="'/admin/' + module.accessPath" routerLinkActive="bg-primary bg-opacity-90 !text-white"
-                        [routerLinkActiveOptions]="{ exact: true }"
-                        class="nav-item flex items-center p-3 text-gray-600 rounded transition-all">
-                        <div class="w-6 h-6 flex items-center justify-center">
-                            <i [class]="module.logo"></i>
-                        </div>
-                        <span class="ml-3">{{module.label}}</span>
-                    </a>
-                </li>
+                <ng-container *ngFor="let module of modules">
+                    <li *ngIf="authorities.includes('MODULE_'+module.accessPath?.toUpperCase())">
+                        <a [routerLink]="'/admin/' + module.accessPath"
+                            routerLinkActive="bg-primary bg-opacity-90 !text-white"
+                            [routerLinkActiveOptions]="{ exact: true }"
+                            class="nav-item flex items-center p-3 text-gray-600 rounded transition-all">
+                            <div class="w-6 h-6 flex items-center justify-center">
+                                <i [class]="module.logo"></i>
+                            </div>
+                            <span class="ml-3">{{module.label}}</span>
+                        </a>
+                    </li>
+                </ng-container>
                 <!-- <li>
                     <a routerLink="/admin/wallets" routerLinkActive="bg-primary bg-opacity-90 !text-white"
                         [routerLinkActiveOptions]="{ exact: true }"
@@ -160,7 +163,8 @@
                             class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg z-50 border border-gray-200">
                             <div class="p-2 font-medium border-b">New Customers ({{ newCustomers.length }})</div>
                             <div class="max-h-60 overflow-y-auto">
-                                <div *ngFor="let customer of newCustomers" (click)="editCustomerFromNotification(customer)"
+                                <div *ngFor="let customer of newCustomers"
+                                    (click)="editCustomerFromNotification(customer)"
                                     class="p-3 hover:bg-gray-50 border-b last:border-b-0">
                                     <p class="font-medium">{{ customer.fullName }}</p>
                                     <p class="text-sm text-gray-500">{{ customer.cusMailAddress }}</p>
