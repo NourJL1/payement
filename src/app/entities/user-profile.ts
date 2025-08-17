@@ -17,6 +17,7 @@ export class UserProfile {
     profileMenuOptions?: UserProfileMenuOption[]
 
     constructor(init?: Partial<UserProfile>) {
+        this.modules = []
         Object.assign(this, init);
     }
 }

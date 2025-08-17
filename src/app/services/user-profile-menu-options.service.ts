@@ -4,39 +4,39 @@ import { environment } from '../../environments/environment';
 import { UserProfileMenuOption } from '../entities/user-profile-menu-option';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class UserProfileMenuOptionsService {
-  private apiUrl = `${environment.apiUrl}/api/user-profile-menu-options`;
+    private apiUrl = `${environment.apiUrl}/api/user-profile-menu-options`;
 
-  constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) { }
 
-  // Create
-    createProfileMenuOption(profileMenuOption: UserProfileMenuOption) {
+    // Create
+    create(profileMenuOption: UserProfileMenuOption) {
         return this.http.post<UserProfileMenuOption>(`${this.apiUrl}`, profileMenuOption)
     }
 
     // Read
-    getProfileMenuOptionById(id: number) {
+    getById(id: number) {
         return this.http.get<UserProfileMenuOption>(`${this.apiUrl}/${id}`)
     }
 
-    getAllProfileMenuOptions() {
+    getAll() {
         return this.http.get<UserProfileMenuOption[]>(`${this.apiUrl}`)
     }
 
     // Update
-    updateProfileMenuOption(id: number, profileMenuOption: UserProfileMenuOption) {
+    update(id: number, profileMenuOption: UserProfileMenuOption) {
         return this.http.put<UserProfileMenuOption>(`${this.apiUrl}/${id}`, profileMenuOption)
     }
 
     // Set or Update Profile-MenuOption relationship
-    setProfileMenuOption(profileMenuOption: UserProfileMenuOption) {
+    set(profileMenuOption: UserProfileMenuOption) {
         return this.http.put<UserProfileMenuOption>(`${this.apiUrl}/set`, profileMenuOption)
     }
 
     // Delete
-    deleteProfileMenuOption(id: number) {
+    delete(id: number) {
         return this.http.delete(`${this.apiUrl}/${id}`)
     }
 
@@ -49,8 +49,8 @@ export class UserProfileMenuOptionsService {
     hasInsertPermission(profileId: number, menuOptionId: number) {
         return this.http.get(`${this.apiUrl}/check-insert/${profileId}/${menuOptionId}`)
     }
-    
-      search(criteria: any) {
+
+    search(criteria: any) {
         return this.http.get<UserProfileMenuOption[]>(`${this.apiUrl}/search?word=${criteria}`);
-      }
+    }
 }

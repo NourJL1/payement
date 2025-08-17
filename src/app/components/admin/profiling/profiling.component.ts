@@ -14,7 +14,6 @@ import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { AuthService } from '../../../services/auth.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { MatSelectModule } from '@angular/material/select';
-import { error } from 'console';
 import { UserProfileMenuOption } from '../../../entities/user-profile-menu-option';
 
 @Component({
@@ -25,14 +24,16 @@ import { UserProfileMenuOption } from '../../../entities/user-profile-menu-optio
 })
 export class ProfilingComponent {
 
-  constructor(private userService: UserService,
-    private authService: AuthService,
+  constructor(private authService: AuthService,
+    private userService: UserService,
     private userProfileService: UserProfilesService,
     private upmoService: UserProfileMenuOptionsService,
     private moduleService: ModuleService,
     private menuOptionService: MenuOptionService,
     private http: HttpClient,
     private cdr: ChangeDetectorRef) { }
+
+  tabOptions: MenuOption[] = []
 
   allUsers: User[] = []
   filteredUsers: User[] = []
@@ -92,6 +93,10 @@ export class ProfilingComponent {
     this.loadIcons()
   }
 
+  loadTabOptions() {
+
+  }
+
   loadAllUsers() {
     this.userService.getAll().subscribe({
       next: (users: User[]) => {
@@ -105,7 +110,7 @@ export class ProfilingComponent {
   }
 
   loadAllProfiles() {
-    this.userProfileService.getAllUserProfiles().subscribe({
+    this.userProfileService.getAll().subscribe({
       next: (profiles: UserProfile[]) => {
         this.allProfiles = profiles
         this.filteredProfiles = profiles
@@ -117,7 +122,7 @@ export class ProfilingComponent {
   }
 
   loadAllModules() {
-    this.moduleService.getAllModules().subscribe({
+    this.moduleService.getAll().subscribe({
       next: (modules: Module[]) => {
         this.allModules = modules
         this.filteredModules = modules
@@ -129,7 +134,7 @@ export class ProfilingComponent {
   }
 
   loadAllOptions() {
-    this.menuOptionService.getAllMenuOptions().subscribe({
+    this.menuOptionService.getAll().subscribe({
       next: (options: MenuOption[]) => {
         this.allOptions = options
         this.filteredOptions = options
@@ -141,7 +146,7 @@ export class ProfilingComponent {
   }
 
   loadAllProfileOptions() {
-    this.upmoService.getAllProfileMenuOptions().subscribe({
+    this.upmoService.getAll().subscribe({
       next: (upmo: UserProfileMenuOption[]) => {
         this.allProfileOptions = upmo
         this.filteredProfileOptions = upmo
@@ -193,7 +198,6 @@ export class ProfilingComponent {
 
     this.userService.create(this.userForm).subscribe({
       next: (user: User) => {
-        console.log('user added:', user);
         this.allUsers.push(user);
         this.confirmPassword = ''
         this.isUserFormVisible = false;
@@ -201,7 +205,7 @@ export class ProfilingComponent {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('add User: Error:', err);
+        console.log('add User: Error:', err);
         this.showErrorMessage('Failed to add user: ' + (err.error?.message || 'Please check the form.'));
       }
     })
@@ -231,7 +235,7 @@ export class ProfilingComponent {
 
       },
       error: (err) => {
-        console.error('update user: Error:', err);
+        console.log('update user: Error:', err);
         this.showErrorMessage('Failed to update user: ' + (err.error?.message || 'Please try again.'));
       }
     })
@@ -281,8 +285,6 @@ export class ProfilingComponent {
     const phoneValue = phoneControl.value;
     this.userForm.phone = phoneValue.e164Number as string;
 
-    //console.log(phoneValue)
-
     if (!this.userForm.phone || this.userForm.phone == this.selectedUser?.phone)
       return
     return this.authService.existsByPhone(this.userForm.phone).subscribe({
@@ -325,7 +327,7 @@ export class ProfilingComponent {
         error: (error: HttpErrorResponse) => {
           const message = error.status ? `Failed to search users: ${error.status} ${error.statusText}` : 'Failed to search users: Server error';
           this.showErrorMessage(message);
-          console.error('Error searching useers:', error);
+          console.log('Error searching useers:', error);
         }
       })
     }
@@ -346,7 +348,7 @@ export class ProfilingComponent {
   }
 
   addProfile() {
-    this.userProfileService.createUserProfile(this.profileForm).subscribe({
+    this.userProfileService.create(this.profileForm).subscribe({
       next: (profile: UserProfile) => {
         this.allProfiles.push(profile);
         this.profileForm = new UserProfile();
@@ -355,14 +357,14 @@ export class ProfilingComponent {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('add profile: Error:', err);
+        console.log('add profile: Error:', err);
         this.showErrorMessage('Failed to add profile: ' + (err.error?.message || 'Please check the form.'));
       }
     })
   }
 
   updateProfile() {
-    this.userProfileService.updateUserProfile(this.profileForm.code!, this.profileForm).subscribe({
+    this.userProfileService.update(this.profileForm.code!, this.profileForm).subscribe({
       next: (profile: UserProfile) => {
         const index = this.allProfiles.findIndex(up => up.code === this.profileForm.code);
         if (index !== -1) {
@@ -377,7 +379,7 @@ export class ProfilingComponent {
 
       },
       error: (err) => {
-        console.error('update profile: Error:', err);
+        console.log('update profile: Error:', err);
         this.showErrorMessage('Failed to update profile: ' + (err.error?.message || 'Please try again.'));
       }
     })
@@ -385,17 +387,27 @@ export class ProfilingComponent {
 
   deleteProfile(profile: UserProfile) {
     if (confirm('Are you sure you want to delete this profile?')) {
-      this.userProfileService.deleteUserProfile(profile.code!).subscribe({
+      this.userProfileService.delete(profile.code!).subscribe({
         next: () => {
-          console.log("deleted succ")
           this.allProfiles = this.allProfiles.filter(up => up.code !== profile?.code);
           this.filteredProfiles = this.filteredProfiles.filter(up => up.code !== profile?.code);
           this.showSuccessMessage('Profile deleted successfully');
           this.cdr.detectChanges();
         },
-        error: (err) => { console.log(err) }
+        error: (err) => { console.log(err); this.showErrorMessage(err) }
       })
     }
+  }
+
+  toggleModule(module: Module) {
+    const exists = this.profileForm.modules!.some(m => m.code === module.code);
+    exists
+      ? this.profileForm.modules = this.profileForm.modules?.filter(m => m.code !== module.code)
+      : this.profileForm.modules?.push(module);
+  }
+
+  isModuleSelected(module: Module) {
+    return this.profileForm.modules?.some(m => m.code === module.code)
   }
 
   profileSearch() {
@@ -424,7 +436,11 @@ export class ProfilingComponent {
   }
 
   addModule() {
-    this.moduleService.createModule(this.moduleForm).subscribe({
+    if (!this.moduleForm.logo) {
+      this.showErrorMessage("form not valid: Logo missing")
+      return;
+    }
+    this.moduleService.create(this.moduleForm).subscribe({
       next: (module: Module) => {
         this.allModules.push(module);
         this.moduleForm = new Module();
@@ -433,14 +449,14 @@ export class ProfilingComponent {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('add module: Error:', err);
+        console.log('add module: Error:', err);
         this.showErrorMessage('Failed to add module: ' + (err.error?.message || 'Please check the form.'));
       }
     })
   }
 
   updateModule() {
-    this.moduleService.updateModule(this.moduleForm.code!, this.moduleForm).subscribe({
+    this.moduleService.update(this.moduleForm.code!, this.moduleForm).subscribe({
       next: (module: Module) => {
         const index = this.allModules.findIndex(mod => mod.code === this.moduleForm.code);
         if (index !== -1) {
@@ -455,7 +471,7 @@ export class ProfilingComponent {
 
       },
       error: (err) => {
-        console.error('update module: Error:', err);
+        console.log('update module: Error:', err);
         this.showErrorMessage('Failed to update module: ' + (err.error?.message || 'Please try again.'));
       }
     })
@@ -463,15 +479,14 @@ export class ProfilingComponent {
 
   deleteModule(module: Module) {
     if (confirm('Are you sure you want to delete this module?')) {
-      this.moduleService.deleteModule(module.code!).subscribe({
+      this.moduleService.delete(module.code!).subscribe({
         next: () => {
-          console.log("deleted succ")
           this.allModules = this.allModules.filter(mod => mod.code !== module?.code);
           this.filteredModules = this.filteredModules.filter(mod => mod.code !== module?.code);
           this.showSuccessMessage('Module deleted successfully');
           this.cdr.detectChanges();
         },
-        error: (err) => { console.log(err) }
+        error: (err) => { console.log(err); this.showErrorMessage(err) }
       })
     }
   }
@@ -502,7 +517,11 @@ export class ProfilingComponent {
   }
 
   addOption() {
-    this.menuOptionService.createMenuOption(this.optionForm).subscribe({
+    if (!this.optionForm.module) {
+      this.showErrorMessage("form not valid: Module missing")
+      return;
+    }
+    this.menuOptionService.create(this.optionForm).subscribe({
       next: (option: MenuOption) => {
         this.allOptions.push(option);
         this.optionForm = new MenuOption();
@@ -511,14 +530,18 @@ export class ProfilingComponent {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('add option: Error:', err);
+        console.log('add option: Error:', err);
         this.showErrorMessage('Failed to add option: ' + (err.error?.message || 'Please check the form.'));
       }
     })
   }
 
   updateOption() {
-    this.menuOptionService.updateMenuOption(this.optionForm.code!, this.optionForm).subscribe({
+    if (!this.optionForm.module) {
+      this.showErrorMessage("form not valid: Module missing")
+      return;
+    }
+    this.menuOptionService.update(this.optionForm.code!, this.optionForm).subscribe({
       next: (option: MenuOption) => {
         const index = this.allOptions.findIndex(mop => mop.code === this.optionForm.code);
         if (index !== -1) {
@@ -533,7 +556,7 @@ export class ProfilingComponent {
 
       },
       error: (err) => {
-        console.error('update option: Error:', err);
+        console.log('update option: Error:', err);
         this.showErrorMessage('Failed to update option: ' + (err.error?.message || 'Please try again.'));
       }
     })
@@ -541,15 +564,14 @@ export class ProfilingComponent {
 
   deleteOption(option: MenuOption) {
     if (confirm('Are you sure you want to delete this option?')) {
-      this.menuOptionService.deleteMenuOption(option.code!).subscribe({
+      this.menuOptionService.delete(option.code!).subscribe({
         next: () => {
-          console.log("deleted succ")
           this.allOptions = this.allOptions.filter(mop => mop.code !== option?.code);
           this.filteredOptions = this.filteredOptions.filter(mop => mop.code !== option?.code);
           this.showSuccessMessage('Option deleted successfully');
           this.cdr.detectChanges();
         },
-        error: (err) => { console.log(err) }
+        error: (err) => { console.log(err); this.showErrorMessage(err) }
       })
     }
   }
@@ -574,7 +596,7 @@ export class ProfilingComponent {
         error: (error: HttpErrorResponse) => {
           const message = error.status ? `Failed to search options: ${error.status} ${error.statusText}` : 'Failed to search options: Server error';
           this.showErrorMessage(message);
-          console.error('Error searching options:', error);
+          console.log('Error searching options:', error);
         }
       })
     }
@@ -590,7 +612,11 @@ export class ProfilingComponent {
   }
 
   addProfileOption() {
-    this.upmoService.createProfileMenuOption(this.profileOptionForm).subscribe({
+    if (!this.profileOptionForm.profile || !this.selectedModule || !this.profileOptionForm.menuOption) {
+      this.showErrorMessage("form not valid")
+      return;
+    }
+    this.upmoService.create(this.profileOptionForm).subscribe({
       next: (upmo: UserProfileMenuOption) => {
         this.allProfileOptions.push(upmo);
         this.profileOptionForm = new UserProfileMenuOption();
@@ -599,14 +625,18 @@ export class ProfilingComponent {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('add profile option: Error:', err);
+        console.log('add profile option: Error:', err);
         this.showErrorMessage('Failed to add profile option: ' + (err.error?.message || 'Please check the form.'));
       }
     })
   }
 
   updateProfileOption() {
-    this.upmoService.updateProfileMenuOption(this.profileOptionForm.id!, this.profileOptionForm).subscribe({
+    if (!this.profileOptionForm.profile || !this.selectedModule || !this.profileOptionForm.menuOption) {
+      this.showErrorMessage("form not valid")
+      return;
+    }
+    this.upmoService.update(this.profileOptionForm.id!, this.profileOptionForm).subscribe({
       next: (upmo: UserProfileMenuOption) => {
         const index = this.allProfileOptions.findIndex(po => po.id === this.profileOptionForm.id);
         if (index !== -1) {
@@ -621,7 +651,7 @@ export class ProfilingComponent {
 
       },
       error: (err) => {
-        console.error('update option: Error:', err);
+        console.log('update option: Error:', err);
         this.showErrorMessage('Failed to update profile option: ' + (err.error?.message || 'Please try again.'));
       }
     })
@@ -629,17 +659,30 @@ export class ProfilingComponent {
 
   deleteProfileOption(upmo: UserProfileMenuOption) {
     if (confirm('Are you sure you want to delete this profile option?')) {
-      this.upmoService.deleteProfileMenuOption(upmo.id!).subscribe({
+      this.upmoService.delete(upmo.id!).subscribe({
         next: () => {
-          console.log("deleted succ")
           this.allProfileOptions = this.allProfileOptions.filter(po => po.id !== upmo?.id);
           this.filteredProfileOptions = this.filteredProfileOptions.filter(po => po.id !== upmo?.id);
           this.showSuccessMessage('Profile option deleted successfully');
           this.cdr.detectChanges();
         },
-        error: (err) => { console.log(err) }
+        error: (err) => { console.log(err); this.showErrorMessage(err) }
       })
     }
+  }
+
+  getUnassignedOptions(): MenuOption[] {
+    if (!this.profileOptionForm.profile || !this.selectedModule) {
+      return this.optionsByModule;
+    }
+
+    const assignedOptionIds = this.profileOptionForm.profile.profileMenuOptions
+      ?.map(pmo => pmo.menuOption?.code) || [];
+
+    // Return options not in the assigned list
+    return this.optionsByModule.filter(option =>
+      !assignedOptionIds.includes(option.code)
+    );
   }
 
   filterProfileOptions() {
@@ -664,29 +707,29 @@ export class ProfilingComponent {
         error: (error: HttpErrorResponse) => {
           const message = error.status ? `Failed to search profile option: ${error.status} ${error.statusText}` : 'Failed to search profile option: Server error';
           this.showErrorMessage(message);
-          console.error('Error searching profile options:', error);
+          console.log('Error searching profile options:', error);
         }
       })
     } */
   }
 
   onModuleChange(module: Module): void {
-      if (!module) {
-        this.selectedOption = undefined
-        this.optionsByModule = [];
-        return;
-      }
-      this.menuOptionService.getMenuOptionsByModule(module!.code!).subscribe(
-        {
-          next: (options: MenuOption[]) => {
-            this.optionsByModule = options;
-          },
-          error: (err) => {
-            console.log(err)
-          }
-        }
-      );
+    if (!module) {
+      this.selectedOption = undefined
+      this.optionsByModule = [];
+      return;
     }
+    this.menuOptionService.getByModule(module!.code!).subscribe(
+      {
+        next: (options: MenuOption[]) => {
+          this.optionsByModule = options;
+        },
+        error: (err) => {
+          console.log(err); this.showErrorMessage(err)
+        }
+      }
+    );
+  }
 
   // template
   compareBy(prop: keyof any) {
@@ -707,7 +750,17 @@ export class ProfilingComponent {
         this.profileForm = new UserProfile()
         this.isProfileFormVisible = true;
         break;
-      case 'profile-details': this.isProfileDetailsVisible = true; break;
+      case 'profile-details':
+        /* this.userProfileService.getProfileModules(this.selectedProfile!.code!).subscribe({
+          next: (modules: Module[]) => {
+            this.selectedProfile?.modules = modules
+          },
+          error: (err) => {
+            console.log(err)
+          }
+        }) */
+        this.isProfileDetailsVisible = true;
+        break;
 
       case 'module-form':
         this.selectedModule = undefined
@@ -795,7 +848,6 @@ export class ProfilingComponent {
 
   // Show success message
   showSuccessMessage(message: string): void {
-    console.log('showSuccessMessage:', message);
     (new Audio('assets/notification.mp3')).play()
     this.successMessage = message;
     this.errorMessage = null;
@@ -807,7 +859,6 @@ export class ProfilingComponent {
 
   // Show error message
   showErrorMessage(message: string): void {
-    console.log('showErrorMessage:', message);
     (new Audio('assets/notification.mp3')).play()
     this.errorMessage = message;
     this.successMessage = null;
@@ -819,7 +870,6 @@ export class ProfilingComponent {
 
   // Clear messages
   clearMessage(): void {
-    console.log('clearMessage: Clearing messages');
     this.successMessage = null;
     this.errorMessage = null;
     this.cdr.detectChanges();

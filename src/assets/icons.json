@@ -1,9 +1,11 @@
 [
+  "ri-dashboard-line ri-lg",
   "ri-wallet-3-line",
   "ri-bank-line",
   "ri-secure-payment-line",
   "ri-currency-line",
   "ri-user-line",
+  "ri-contacts-line ri-lg",
   "ri-group-line",
   "ri-id-card-line",
   "ri-passport-line",

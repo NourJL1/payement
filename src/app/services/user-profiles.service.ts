@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { UserProfile } from '../entities/user-profile';
+import Module from 'node:module';
 
 @Injectable({
   providedIn: 'root'
@@ -12,26 +13,30 @@ export class UserProfilesService {
   constructor(private http: HttpClient) { }
 
   // Create
-  createUserProfile(userProfile: UserProfile) {
+  create(userProfile: UserProfile) {
     return this.http.post<UserProfile>(`${this.apiUrl}`, userProfile)
   }
 
   // Read
-  getUserProfileById(id: number) {
+  getById(id: number) {
     return this.http.get<UserProfile>(`${this.apiUrl}/${id}`)
   }
 
-  getAllUserProfiles() {
+  getAll() {
     return this.http.get<UserProfile[]>(`${this.apiUrl}`)
   }
 
+  getByIdentifier(identifier: string) {
+    return this.http.get<UserProfile>(`${this.apiUrl}/getByIdentifier/${identifier}`);
+  }
+
   // Update
-  updateUserProfile(id: number, userProfile: UserProfile) {
+  update(id: number, userProfile: UserProfile) {
     return this.http.put<UserProfile>(`${this.apiUrl}/${id}`, userProfile)
   }
 
   // Delete
-  deleteUserProfile(id: number) {
+  delete(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`)
   }
 
@@ -44,21 +49,17 @@ export class UserProfilesService {
     return this.http.get<boolean>(`${this.apiUrl}/${id}/can-decrypt-pan`)
   }
 
-  // Module management
-  addModuleToProfile(profileId: number, moduleId: number) {
-    return this.http.post<UserProfile>(`${this.apiUrl}/${profileId}/modules/${moduleId}`, null)
-  }
-
-  removeModuleFromProfile(profileId: number, moduleId: number) {
-    return this.http.delete(`${this.apiUrl}/${profileId}/modules/${moduleId}`)
-  }
-
   // Additional endpoints
   getProfilesWithModuleAccess(moduleCode: number) {
     return this.http.get<UserProfile[]>(`${this.apiUrl}/with-module/${moduleCode}`)
   }
-  
-    search(criteria: any) {
-      return this.http.get<UserProfile[]>(`${this.apiUrl}/search?word=${criteria}`);
-    }
+
+  getProfileModules(code: number) {
+    return this.http.get<Module[]>(`${this.apiUrl}/get-modules/${code}`);
+  }
+
+  search(criteria: any) {
+    console.log(`${this.apiUrl}/search?word=${criteria}`);
+    return this.http.get<UserProfile[]>(`${this.apiUrl}/search?word=${criteria}`);
+  }
 }

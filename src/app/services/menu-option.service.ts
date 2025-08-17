@@ -11,34 +11,38 @@ export class MenuOptionService {
 
   constructor(private http: HttpClient) { }
 
-  createMenuOption(menuOption: MenuOption) {
+  create(menuOption: MenuOption) {
     return this.http.post<MenuOption>(`${this.apiUrl}`, menuOption);
   }
 
   // Read
-  getMenuOptionById(id: number) {
+  getById(id: number) {
     return this.http.get<MenuOption>(`${this.apiUrl}/${id}`)
   }
 
-  getAllMenuOptions() {
+  getAll() {
     return this.http.get<MenuOption[]>(`${this.apiUrl}`)
   }
 
-  getMenuOptionsByModule(moduleCode: number) {
+  getByIdentifier(identifier: string) {
+    return this.http.get<MenuOption>(`${this.apiUrl}/getByIdentifier/${identifier}`);
+  }
+
+  getByModule(moduleCode: number) {
     return this.http.get<MenuOption[]>(`${this.apiUrl}/by-module/${moduleCode}`)
   }
 
   // Update
-  updateMenuOption(id: number, menuOption: MenuOption) {
+  update(id: number, menuOption: MenuOption) {
     return this.http.put<MenuOption>(`${this.apiUrl}/${id}`, menuOption)
   }
 
-  changeMenuOptionModule(menuOptionId: number, newModuleId: number) {
+  changeModule(menuOptionId: number, newModuleId: number) {
     return this.http.put<MenuOption>(`${this.apiUrl}/${menuOptionId}/change-module/${newModuleId}`, null)
   }
 
   // Delete
-  deleteMenuOption(id: number) {
+  delete(id: number) {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
   
