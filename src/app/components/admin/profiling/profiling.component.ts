@@ -33,6 +33,7 @@ export class ProfilingComponent {
     private http: HttpClient,
     private cdr: ChangeDetectorRef) { }
 
+  currentModule?: Module
   tabOptions: MenuOption[] = []
 
   allUsers: User[] = []
@@ -85,16 +86,19 @@ export class ProfilingComponent {
   isProfileOptionFormVisible = false
 
   ngOnInit(): void {
+    if (history.state?.currentModule) {  // <-- Check history.state
+      const module = history.state.currentModule as Module;
+      //this.editCustomer(customer);
+      this.currentModule = module
+      history.replaceState({}, '');  // <-- This removes the customerToEdit from history
+    }
+
     this.loadAllUsers()
     this.loadAllProfiles()
     this.loadAllModules()
     this.loadAllOptions()
     this.loadAllProfileOptions()
     this.loadIcons()
-  }
-
-  loadTabOptions() {
-
   }
 
   loadAllUsers() {
@@ -166,6 +170,10 @@ export class ProfilingComponent {
         this.showErrorMessage(error)
       }
     })
+  }
+
+  loadTabOptions(){
+
   }
 
   // user methods
@@ -348,6 +356,7 @@ export class ProfilingComponent {
   }
 
   addProfile() {
+    console.log(this.profileForm)
     this.userProfileService.create(this.profileForm).subscribe({
       next: (profile: UserProfile) => {
         this.allProfiles.push(profile);
@@ -678,6 +687,9 @@ export class ProfilingComponent {
 
     const assignedOptionIds = this.profileOptionForm.profile.profileMenuOptions
       ?.map(pmo => pmo.menuOption?.code) || [];
+    console.log(this.profileOptionForm.profile)
+    console.log(this.profileOptionForm.profile.profileMenuOptions)
+    console.log(assignedOptionIds)
 
     // Return options not in the assigned list
     return this.optionsByModule.filter(option =>
@@ -777,6 +789,7 @@ export class ProfilingComponent {
       case 'option-details': this.isOptionDetailsVisible = true; break;
 
       case 'profile-option-form':
+        this.selectedModule = undefined;
         this.selectedProfileOption = undefined
         this.profileOptionForm = new UserProfileMenuOption()
         this.isProfileOptionFormVisible = true;
@@ -799,7 +812,10 @@ export class ProfilingComponent {
       case 'option-form': this.isOptionFormVisible = false; break;
       case 'option-details': this.isOptionDetailsVisible = false; break;
 
-      case 'profile-option-form': this.isProfileOptionFormVisible = false; break;
+      case 'profile-option-form': 
+        this.isProfileOptionFormVisible = false; 
+        this.selectedModule = undefined;
+        break;
       case 'profile-option-details': this.isProfileOptionDetailsVisible = false; break;
     }
   }

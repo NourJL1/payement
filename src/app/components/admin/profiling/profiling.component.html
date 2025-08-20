@@ -16,21 +16,24 @@
         <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('options')"
             id="options">Menu Options</button>
         <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors"
-            (click)="showTab('profile-options')" id="profile-options">Profile Options</button>
+            (click)="showTab('permits')" id="permits">Permits</button>
     </div>
 </div>
 
 <!-- Notification Area for Success and Error Messages -->
-<div *ngIf="successMessage" class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100]">
-    {{ successMessage }}
-    <button (click)="clearMessage()" class="ml-2 text-white hover:text-gray-200">
-        <i class="ri-close-line"></i>
+<div *ngIf="successMessage"
+    class="fixed top-6 right-6 max-w-sm w-full bg-green-500 text-white px-5 py-3 rounded-2xl shadow-lg z-[100] flex items-center justify-between animate-slide-in">
+    <span class="font-medium tracking-wide">{{ successMessage }}</span>
+    <button (click)="clearMessage()" class="ml-4 text-white/80 hover:text-white transition-colors">
+        <i class="ri-close-line text-lg"></i>
     </button>
 </div>
-<div *ngIf="errorMessage" class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100]">
-    {{ errorMessage }}
-    <button (click)="clearMessage()" class="ml-2 text-white hover:text-gray-200">
-        <i class="ri-close-line"></i>
+
+<div *ngIf="errorMessage"
+    class="fixed top-6 right-6 max-w-sm w-full bg-red-500 text-white px-5 py-3 rounded-2xl shadow-lg z-[100] flex items-center justify-between animate-slide-in">
+    <span class="font-medium tracking-wide">{{ errorMessage }}</span>
+    <button (click)="clearMessage()" class="ml-4 text-white/80 hover:text-white transition-colors">
+        <i class="ri-close-line text-lg"></i>
     </button>
 </div>
 
@@ -576,10 +579,10 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center space-x-3">
-                                    <!-- <button (click)="selectedOption = option; toggleForm('option-details')"
+                                    <button (click)="selectedOption = option; toggleForm('option-details')"
                                         class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                                         <i class="ri-eye-line text-lg"></i>
-                                    </button> -->
+                                    </button>
                                     <button (click)="editOption(option)"
                                         class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                                         <i class="ri-edit-line text-lg"></i>
@@ -632,7 +635,7 @@
 </div>
 
 <!-- profile options content -->
-<div id="tab-profile-options" class="tab-content hidden">
+<div id="tab-permits" class="tab-content hidden">
     <!-- Header Section -->
     <div
         class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white rounded-xl shadow-lg mb-6">
@@ -1337,8 +1340,8 @@
                     <div class="form-field">
                         <div class="relative">
                             <div class="grid grid-cols-3 gap-4 max-h-36">
-                                <button type="button" *ngFor="let module of allModules; let i = index;" (click)="toggleModule(module)"
-                                    [class.border-primary]="isModuleSelected(module)"
+                                <button type="button" *ngFor="let module of allModules; let i = index;"
+                                    (click)="toggleModule(module)" [class.border-primary]="isModuleSelected(module)"
                                     [class.bg-primary-50]="isModuleSelected(module)"
                                     class="p-3 border rounded-lg hover:border-primary focus:outline-none">
                                     <span>{{module.label}}</span>
@@ -1557,11 +1560,10 @@
                         <span class="text-sm font-medium text-gray-500">Module</span>
                         <span class="text-sm font-medium text-gray-900">{{selectedOption?.module?.label}}</span>
                     </div>
-                    <!-- <div class="flex justify-between py-2">
-                        <span class="text-sm font-medium text-gray-500">Associated Form</span>
-                        <span class="text-sm font-medium text-gray-900">{{ selectedOption.map_form_name || 'None'
-                            }}</span>
-                    </div> -->
+                    <div class="flex justify-between py-2" *ngIf="selectedOption?.parentOption">
+                        <span class="text-sm font-medium text-gray-500">Parent Option</span>
+                        <span class="text-sm font-medium text-gray-900">{{ selectedOption?.parentOption?.label }}</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1605,9 +1607,21 @@
                     <label class="form-label">Module</label>
                     <div class="relative">
                         <select class="form-input pl-10" [(ngModel)]="optionForm.module" name="module" required
+                            (ngModelChange)="onModuleChange(optionForm.module!)"
                             [compareWith]="compareBy('code')">
                             <option [ngValue]="undefined" disabled>Select a module</option>
                             <option [ngValue]="module" *ngFor="let module of allModules">{{module.label}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">Parent Option (optional)</label>
+                    <div class="relative">
+                        <select class="form-input pl-10" [(ngModel)]="optionForm.parentOption" name="parentOption"
+                            [compareWith]="compareBy('code')">
+                            <option [ngValue]="undefined" disabled>Select a parent Option</option>
+                            <option [ngValue]="option" *ngFor="let option of optionsByModule">{{option.label}}</option>
                         </select>
                     </div>
                 </div>
@@ -1754,8 +1768,7 @@
                     <label class="form-label">Profile</label>
                     <select [(ngModel)]="profileOptionForm.profile" name="profile" [compareWith]="compareBy('code')"
                         (click)="profileOptionForm.profile ? selectedModule = undefined : null"
-                        (ngModelChange)="getUnassignedOptions()"
-                        class="form-input" required>
+                        (ngModelChange)="getUnassignedOptions()" class="form-input" required>
                         <option [ngValue]="undefined" disabled>select profile</option>
                         <option *ngFor="let profile of allProfiles" [ngValue]="profile">
                             {{ profile.label }}</option>

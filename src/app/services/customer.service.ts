@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Role } from '../entities/role';
 import { Customer } from '../entities/customer';
 
 @Injectable({
@@ -14,8 +13,8 @@ export class CustomerService {
 
   constructor(private http: HttpClient) { }
 
-  private getHttpOptions() {
-    const roles: Role[] = JSON.parse(localStorage.getItem('roles') || '[]');
+  /* private getHttpOptions() {
+    //const roles: Role[] = JSON.parse(localStorage.getItem('roles') || '[]');
     const rolesString = roles.map((role) => role.name).join(',');
     return {
       headers: new HttpHeaders({
@@ -23,7 +22,7 @@ export class CustomerService {
         'X-Roles': rolesString,
       }),
     };
-  }
+  } */
 
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, { username, password });
@@ -95,8 +94,7 @@ export class CustomerService {
     console.log('Roles:', roleIds);
     return this.http.put<Customer>(
       `${this.apiUrl}/${username}/assignRoles`,
-      roleIds,
-      this.getHttpOptions()
+      roleIds
     );
   }
 

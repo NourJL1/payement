@@ -28,11 +28,11 @@
                         <span class="ml-3">Dashboard</span>
                     </a>
                 </li>
-                <ng-container *ngFor="let module of modules">
-                    <li *ngIf="authorities.includes('MODULE_'+module.accessPath?.toUpperCase())">
+                    <li *ngFor="let module of profile?.modules">
                         <a [routerLink]="'/admin/' + module.accessPath"
                             routerLinkActive="bg-primary bg-opacity-90 !text-white"
                             [routerLinkActiveOptions]="{ exact: true }"
+                            (click)="transferOptions(module)"
                             class="nav-item flex items-center p-3 text-gray-600 rounded transition-all">
                             <div class="w-6 h-6 flex items-center justify-center">
                                 <i [class]="module.logo"></i>
@@ -40,7 +40,6 @@
                             <span class="ml-3">{{module.label}}</span>
                         </a>
                     </li>
-                </ng-container>
                 <!-- <li>
                     <a routerLink="/admin/wallets" routerLinkActive="bg-primary bg-opacity-90 !text-white"
                         [routerLinkActiveOptions]="{ exact: true }"
@@ -100,11 +99,11 @@
             <div class="flex items-center profile">
                 <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
                     <!-- You can replace this with an actual avatar image -->
-                    <span class="text-xs font-medium text-gray-700">MA</span>
+                    <span class="text-xs font-medium text-gray-700">{{ initials }}</span>
                 </div>
                 <div class="ml-3">
                     <p class="text-sm font-medium text-gray-900">{{fullname}}</p>
-                    <!-- <p class="text-xs text-gray-500">{{role}}</p> -->
+                    <p class="text-xs text-gray-500">{{profile?.label}}</p>
                 </div>
             </div>
 

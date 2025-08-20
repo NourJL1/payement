@@ -35,6 +35,7 @@ export class LoginComponent {
         localStorage.setItem("username", response.username)
         localStorage.setItem("fullname", response.fullname)
         localStorage.setItem("authorities", response.authorities)
+        localStorage.setItem("profileCode", response.profileCode)
 
         switch (response.authorities[0]) {
           case "ROLE_USER":

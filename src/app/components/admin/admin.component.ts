@@ -11,6 +11,7 @@ import { MenuOptionService } from '../../services/menu-option.service';
 import { UserProfileMenuOptionsService } from '../../services/user-profile-menu-options.service';
 import { Module } from '../../entities/module';
 import { UserProfile } from '../../entities/user-profile';
+import { UserProfileMenuOption } from '../../entities/user-profile-menu-option';
 
 @Component({
   selector: 'app-admin',
@@ -21,12 +22,8 @@ import { UserProfile } from '../../entities/user-profile';
 export class AdminComponent implements OnInit {
 
   constructor(private router: Router,
-    private userService: UserService,
     private userProfileService: UserProfilesService,
-    private moduleService: ModuleService,
-    private menuOptionService: MenuOptionService,
     private upmoService: UserProfileMenuOptionsService,
-    private authService: AuthService,
     private customerService: CustomerService) { }
 
   showNotificationList: boolean = false;
@@ -37,56 +34,34 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.loadModules()
-    //this.loadUserProfileModules(this.authorities)
-    //this.loadUserProfileMenuOptions(authorities)
+    this.loadUserProfile(parseInt(localStorage.getItem("profileCode")!))
 
     this.getNewCustomers()
     setInterval(() => this.getNewCustomers(), 30000); // check every 30s
   }
 
   isCollapsed = false;
-  authorities: string[] = localStorage.getItem('authorities')!.split(',').map(a => a.trim())
+  profile?: UserProfile
   fullname = localStorage.getItem('fullname');
   username = localStorage.getItem('username')
   modules: Module[] = []
   options: MenuOption[] = []
 
-  loadModules() {
-    this.moduleService.getAll().subscribe({
-      next: (modules: Module[]) => {
-        this.modules = modules
+  get initials() {
+    if (!this.fullname) return '';
+    return this.fullname.split(' ').map(name => name[0]).join('');
+  };
+
+  loadUserProfile(profileCode: number) {
+    this.userProfileService.getById(profileCode).subscribe({
+      next: (profile: UserProfile) => {
+        this.profile = profile
       },
-      error: (err) => { console.log(err) }
+      error: (error) => {
+        console.log(error);
+      }
     })
   }
-
-  /* loadUserProfileModules(authorities: string[]) {
-    this.userProfileService.getByIdentifier(authorities[1]).subscribe({
-          next: (profile: UserProfile) => {
-            this.modules = profile.modules!;
-            console.log(profile)
-            console.log(profile.modules)
-          },
-          error: (error) => {
-            console.log(error);
-          }
-        })
-  }
-
-  async loadUserProfileMenuOptions(authorities: string[]) {
-    authorities.forEach(authority => {
-      if (authority.startsWith("MOP"))
-        this.menuOptionService.getByIdentifier(authority).subscribe({
-          next: (option: MenuOption) => {
-            this.options.push(option)
-          },
-          error: (error) => {
-            console.log(error)
-          }
-        })
-    });
-  } */
 
   toggleSidebar(): void {
     this.isCollapsed = !this.isCollapsed;
@@ -112,9 +87,8 @@ export class AdminComponent implements OnInit {
     this.customerService.getNewCustomersToday().subscribe({
       next: (customers: Customer[]) => {
         this.newCustomers = customers;
-        // Placeholder for percentage change from yesterday
       },
-      error: (err: any) => console.error('Error fetching new customers today:', err),
+      error: (err: any) => console.error('Error fetching new customers today:', err)
     });
   }
 
@@ -126,7 +100,19 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  currentYear: number = new Date().getFullYear();
+  transferOptions(module: Module) {
+    this.upmoService.getByProfileAndModule(this.profile!.code!, module.code!).subscribe({
+      next: (upmos: UserProfileMenuOption[]) => {
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate(['/admin/' + module.accessPath], {
+            state: { permits: upmos }
+          });
+        });
+      },
+      error: (err: any) => console.error(err)
+    })
+  }
 
+  currentYear: number = new Date().getFullYear();
 
 }

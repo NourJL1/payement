@@ -1,4 +1,3 @@
-import { Role } from './role';
 import { CustomerContacts } from './customer-contacts';
 import { CustomerStatus } from './customer-status';
 import { CustomerIdentity } from './customer-identity';
@@ -26,8 +25,6 @@ export class Customer {
   wallet?: Wallet;
   walletOperations?: WalletOperations[];
   username?: string;
-  role?: Role;
-  roles?: Role[];
   createdAt?: string;
 
   get fullName(): string {

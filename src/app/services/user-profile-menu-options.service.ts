@@ -30,24 +30,13 @@ export class UserProfileMenuOptionsService {
         return this.http.put<UserProfileMenuOption>(`${this.apiUrl}/${id}`, profileMenuOption)
     }
 
-    // Set or Update Profile-MenuOption relationship
-    set(profileMenuOption: UserProfileMenuOption) {
-        return this.http.put<UserProfileMenuOption>(`${this.apiUrl}/set`, profileMenuOption)
-    }
-
     // Delete
     delete(id: number) {
         return this.http.delete(`${this.apiUrl}/${id}`)
     }
 
-    // Permission Checks
-    hasAccessPermission(profileId: number, menuOptionId: number) {
-        return this.http.get<boolean>(`${this.apiUrl}/check-access/${profileId}/${menuOptionId}`)
-    }
-
-    // Add similar endpoints for other permission checks...
-    hasInsertPermission(profileId: number, menuOptionId: number) {
-        return this.http.get(`${this.apiUrl}/check-insert/${profileId}/${menuOptionId}`)
+    getByProfileAndModule(profileCode: number, moduleCode: number) {
+        return this.http.get<UserProfileMenuOption[]>(`${this.apiUrl}/profile/${profileCode}/module/${moduleCode}`)
     }
 
     search(criteria: any) {

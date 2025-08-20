@@ -12,6 +12,7 @@ export class UserProfileMenuOption {
     canDelete?: boolean
     canEdit?: boolean
     canPrint?: boolean
+    permits?: { [key: string]: boolean };
 
     constructor(init?: Partial<UserProfileMenuOption>) {
         Object.assign(this, init);

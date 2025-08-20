@@ -116,8 +116,6 @@ export class RegisterComponent {
 
     this.isLoading = true
 
-    this.customer.role = { id: 1, name: 'CUSTOMER' }
-
     console.log('Customer data before registration:', this.customer);
 
     this.customerService.register(this.customer).subscribe({
