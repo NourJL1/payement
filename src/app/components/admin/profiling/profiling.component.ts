@@ -86,11 +86,9 @@ export class ProfilingComponent {
   isProfileOptionFormVisible = false
 
   ngOnInit(): void {
-    if (history.state?.currentModule) {  // <-- Check history.state
-      const module = history.state.currentModule as Module;
-      //this.editCustomer(customer);
-      this.currentModule = module
-      history.replaceState({}, '');  // <-- This removes the customerToEdit from history
+    if(history.state.permits){
+      this.upmoList = history.state.permits as UserProfileMenuOption[]
+      this.showOptionContent(this.upmoList[0])
     }
 
     this.loadAllUsers()
@@ -687,9 +685,6 @@ export class ProfilingComponent {
 
     const assignedOptionIds = this.profileOptionForm.profile.profileMenuOptions
       ?.map(pmo => pmo.menuOption?.code) || [];
-    console.log(this.profileOptionForm.profile)
-    console.log(this.profileOptionForm.profile.profileMenuOptions)
-    console.log(assignedOptionIds)
 
     // Return options not in the assigned list
     return this.optionsByModule.filter(option =>
@@ -835,9 +830,27 @@ export class ProfilingComponent {
     );
   }
 
+  upmoList?: UserProfileMenuOption[]
+  activeTab?: UserProfileMenuOption
+  childTabs?: UserProfileMenuOption[]
+
+  checkIfParent(option: MenuOption): boolean {
+      return this.upmoList?.some(upmo => 
+        upmo.menuOption!.parentOption && upmo.menuOption!.parentOption.code === option.code
+      )!;
+  }
+
+  getChildren(parentUpmo: UserProfileMenuOption): UserProfileMenuOption[] {
+    const parentCode = parentUpmo!.menuOption!.code;
+    return this.upmoList!.filter(upmo =>
+      upmo.menuOption!.parentOption && upmo.menuOption!.parentOption.code === parentCode
+    );
+  }
 
   // Show specific tab
-  showTab(tabId: string, tabType?: string): void {
+  showOptionContent(upmo: UserProfileMenuOption): void {
+
+    const tabType = upmo!.menuOption!.parentOption ? upmo!.menuOption!.parentOption.formName : undefined
 
     const buttonClass = tabType ? `${tabType}-tab-button` : 'tab-button';
     const contentClass = tabType ? `${tabType}-tab-content` : 'tab-content';
@@ -852,6 +865,8 @@ export class ProfilingComponent {
 
     tabContents.forEach(content => content.classList.add('hidden'));
 
+    const tabId = upmo!.menuOption!.formName!
+
     // Activate the clicked button and show its tab content
     const activeButton = tabType ? document.getElementById(tabType + '-' + tabId) : document.getElementById(tabId);
     activeButton?.classList.add('active', 'text-primary', 'font-medium', 'border-b-2', 'border-primary', 'transition-colors');
@@ -860,6 +875,14 @@ export class ProfilingComponent {
     const activeId = tabType ? `${tabType}-tab-${tabId}` : `tab-${tabId}`;
     const activeContent = document.getElementById(activeId);
     activeContent?.classList.remove('hidden');
+
+    this.activeTab = upmo
+
+    if(this.checkIfParent(upmo!.menuOption!)){
+      this.childTabs = this.getChildren(upmo!)
+      this.showOptionContent(this.childTabs[0])
+      return;
+    }
   }
 
   // Show success message

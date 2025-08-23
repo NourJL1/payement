@@ -32,6 +32,10 @@ export class MenuOptionService {
     return this.http.get<MenuOption[]>(`${this.apiUrl}/by-module/${moduleCode}`)
   }
 
+  getChildOptions(parentCode: number) {
+        return this.http.get<MenuOption[]>(`${this.apiUrl}/getChildOptions/${parentCode}`)
+    }
+
   // Update
   update(id: number, menuOption: MenuOption) {
     return this.http.put<MenuOption>(`${this.apiUrl}/${id}`, menuOption)

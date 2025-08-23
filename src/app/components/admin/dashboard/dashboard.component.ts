@@ -48,7 +48,6 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('ngOnInit triggered');
     this.loadCustomerCounts();
     this.loadUserCounts();
     this.loadActiveWalletCount();
@@ -58,7 +57,6 @@ export class DashboardComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    console.log('ngAfterViewInit triggered');
     this.loadCustomerDistributionByCity();
   }
 
@@ -136,10 +134,8 @@ export class DashboardComponent implements OnInit {
 
   loadActiveWalletCount(): void {
     this.errorMessage = null;
-    // console.log('loadActiveWalletCount: Fetching active wallet count...');
     this.walletService.getActiveWalletCount().subscribe({
       next: (count: number) => {
-        // console.log('loadActiveWalletCount: Active wallet count received:', count);
         this.activeWalletCount = count;
         this.cdr.detectChanges();
       },
@@ -152,10 +148,8 @@ export class DashboardComponent implements OnInit {
   }
     loadPendingWalletCount(): void {
     this.errorMessage = null;
-    // console.log('loadPendingWalletCount: Fetching pending wallet count...');
     this.walletService.getPendingWalletCount().subscribe({
       next: (count: number) => {
-        // console.log('loadPendingWalletCount: Pending wallet count received:', count);
         this.pendingWalletCount = count;
         this.cdr.detectChanges();
       },
@@ -177,7 +171,6 @@ export class DashboardComponent implements OnInit {
   }
 
   createCustomerChart(cityCounts: { [key: string]: number }): void {
-    console.log('Creating chart with data:', cityCounts);
     const ctx = document.getElementById('customerChart') as HTMLCanvasElement;
     if (!ctx) {
       console.error('Canvas element #customerChart not found');
@@ -212,12 +205,10 @@ export class DashboardComponent implements OnInit {
         },
       },
     });
-    console.log('Chart created successfully');
   }
 
   // Show error message
   showErrorMessage(message: string): void {
-    // console.log('showErrorMessage:', message);
     this.errorMessage = message;
     this.successMessage = null;
     setTimeout(() => {
@@ -228,7 +219,6 @@ export class DashboardComponent implements OnInit {
 
   // Show success message
   showSuccessMessage(message: string): void {
-    // console.log('showSuccessMessage:', message);
     this.successMessage = message;
     this.errorMessage = null;
     setTimeout(() => {

@@ -6,7 +6,25 @@
 
     <!-- Tabs Section -->
     <div class="flex border-b border-gray-200">
-        <button
+        <ng-container *ngIf="upmoList?.length==0">
+            <div class="text-center w-full max-w-md mx-auto py-8">
+                <div class="w-24 h-24 rounded-full bg-red-100 flex items-center justify-center mb-6 mx-auto">
+                    <i class="ri-shield-keyhole-line text-primary text-4xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">No Permissions Granted</h2>
+                <p class="text-gray-500 mb-6">
+                    You haven't been granted any permissions yet. Please contact your system administrator to request
+                    access
+                    to the features you need.
+                </p>
+            </div>
+        </ng-container>
+        <ng-container #tabs *ngFor="let tab of upmoList">
+            <button *ngIf="!tab.menuOption?.parentOption"
+                class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showOptionContent(tab)"
+                [id]="tab.menuOption?.formName?.toLowerCase()">{{tab.menuOption?.label}}</button>
+        </ng-container>
+        <!-- <button
             class="tab-button px-6 py-3 text-sm font-medium text-primary border-b-2 border-primary transition-colors"
             (click)="showTab('users')" id="users">Users</button>
         <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('profiles')"
@@ -16,7 +34,7 @@
         <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('options')"
             id="options">Menu Options</button>
         <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors"
-            (click)="showTab('permits')" id="permits">Permits</button>
+            (click)="showTab('permits')" id="permits">Permits</button> -->
     </div>
 </div>
 
@@ -38,7 +56,7 @@
 </div>
 
 <!-- users content -->
-<div id="tab-users" class="tab-content">
+<div id="tab-users" class="tab-content hidden">
     <!-- Header Section -->
     <div
         class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white rounded-xl shadow-lg mb-6">
@@ -1602,13 +1620,23 @@
                     </div>
                 </div>
 
+                <div class="form-field">
+                    <label class="form-label flex items-center">
+                        Form name
+                        <span class="text-primary ml-1">*</span>
+                    </label>
+                    <div class="relative">
+                        <input class="form-input pl-10" [(ngModel)]="optionForm.formName" name="formName" type="text"
+                            required>
+                    </div>
+                </div>
+
                 <!-- Module Selection -->
                 <div class="form-field">
                     <label class="form-label">Module</label>
                     <div class="relative">
                         <select class="form-input pl-10" [(ngModel)]="optionForm.module" name="module" required
-                            (ngModelChange)="onModuleChange(optionForm.module!)"
-                            [compareWith]="compareBy('code')">
+                            (ngModelChange)="onModuleChange(optionForm.module!)" [compareWith]="compareBy('code')">
                             <option [ngValue]="undefined" disabled>Select a module</option>
                             <option [ngValue]="module" *ngFor="let module of allModules">{{module.label}}</option>
                         </select>
@@ -1633,7 +1661,7 @@
                 </button>
                 <button type="submit"
                     class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
-                    Add Module
+                    {{selectedOption ? 'Update' : 'Add'}} Module
                 </button>
             </div>
         </form>
@@ -1856,7 +1884,7 @@
                         </label>
                     </div>
 
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <!-- <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <span class="text-sm font-medium text-gray-700">Can Edit</span>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" [(ngModel)]="profileOptionForm.canEdit" name="canEdit"
@@ -1867,7 +1895,7 @@
                after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
                             </div>
                         </label>
-                    </div>
+                    </div> -->
 
                     <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <span class="text-sm font-medium text-gray-700">Can Print</span>

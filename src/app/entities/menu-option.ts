@@ -6,6 +6,7 @@ export class MenuOption {
     code?: number
     identifier?: string
     label?: string
+    isParent?: boolean
     parentOption?: MenuOption
     formName?: string
     module?: Module

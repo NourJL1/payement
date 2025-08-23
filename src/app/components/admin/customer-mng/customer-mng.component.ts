@@ -26,6 +26,8 @@ import { Router } from "@angular/router";
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { UserProfileMenuOption } from '../../../entities/user-profile-menu-option';
+import { MenuOption } from '../../../entities/menu-option';
 
 interface PhoneNumber {
   number?: string;
@@ -56,8 +58,6 @@ export class CustomerMngComponent {
     private docTypeService: DocTypeService,
     private countryService: CountryService,
     private cityService: CityService,
-    private walletCategoryService: WalletCategoryService,
-    private walletTypeService: WalletTypeService,
     private cdr: ChangeDetectorRef,
     private router: Router) { }
 
@@ -141,6 +141,10 @@ export class CustomerMngComponent {
       this.toggleForm('customer-details')
       history.replaceState({}, '');  // <-- This removes the customerToEdit from history
     }
+    if(history.state.permits){
+      this.upmoList = history.state.permits as UserProfileMenuOption[]
+      this.showOptionContent(this.upmoList[0])
+    }
     this.loadAllCustomers()
     this.loadAllStatuses()
     this.loadIdentityTypes()
@@ -153,106 +157,106 @@ export class CustomerMngComponent {
   }
 
   toggleExportMenu(): void {
-  this.showExportMenu = !this.showExportMenu;
-}
-
-exportData(format: 'pdf' | 'excel'): void {
-  this.showExportMenu = false;
-  
-  if (format === 'pdf') {
-    this.exportCustomersToPDF();
-  } else {
-    this.exportCustomersToExcel();
+    this.showExportMenu = !this.showExportMenu;
   }
-}
 
-private exportCustomersToExcel(): void {
-  // Prepare data
-  const data = this.filteredCustomers.map(customer => ({
-    'Identifier': customer.cusIden,
-    'Username': customer.username,
-    'Email': customer.cusMailAddress,
-    'Name': customer.fullName,
-    'Status': customer.status?.ctsLabe || '',
-    'Phone': customer.cusPhoneNbr,
-    'Country': customer.country?.ctrLabe || '',
-    'City': customer.city?.ctyLabe || ''
-  }));
-
-  // Create worksheet
-  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-  
-  // Create workbook
-  const wb: XLSX.WorkBook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Customers');
-  
-  // Generate file and download
-  XLSX.writeFile(wb, 'customers_export.xlsx');
-}
-
-private exportCustomersToPDF(): void {
-  const doc = new jsPDF({
-    orientation: 'landscape' // Optional: use 'portrait' if you prefer
-  });
-
-  // Add title
-  doc.setFontSize(16);
-  doc.setTextColor(40);
-  doc.text('Customer Management Report', 14, 16);
-
-  // Prepare data
-  const headers = [['Identifier', 'Username', 'Email', 'Name', 'Status', 'Phone', 'Country', 'City']];
-  
-  const data = this.filteredCustomers.map(customer => [
-    customer.cusIden || '',
-    customer.username || '',
-    customer.cusMailAddress || '',
-    customer.fullName || '',
-    customer.status?.ctsLabe || '',
-    customer.cusPhoneNbr || '',
-    customer.country?.ctrLabe || '',
-    customer.city?.ctyLabe || ''
-  ]);
-
-  // Add table
-  autoTable(doc, {
-    head: headers,
-    body: data,
-    startY: 25,
-    theme: 'grid', // or 'striped', 'plain'
-    headStyles: {
-      fillColor: [41, 128, 185],
-      textColor: 255,
-      fontStyle: 'bold'
-    },
-    styles: {
-      fontSize: 8,
-      cellPadding: 2,
-      overflow: 'linebreak'
-    },
-    columnStyles: {
-      0: { cellWidth: 15 },
-      1: { cellWidth: 20 },
-      2: { cellWidth: 30 },
-      3: { cellWidth: 25 },
-      4: { cellWidth: 15 },
-      5: { cellWidth: 20 },
-      6: { cellWidth: 20 },
-      7: { cellWidth: 15 }
-    }
-  });
-
-  // Save the PDF
-  doc.save('customers_export_' + new Date().toISOString().slice(0, 10) + '.pdf');
-}
-
-@HostListener('document:click', ['$event'])
-onDocumentClick(event: MouseEvent): void {
-  const target = event.target as HTMLElement;
-  if (!target.closest('.relative.inline-block.text-left')) {
+  exportData(format: 'pdf' | 'excel'): void {
     this.showExportMenu = false;
+
+    if (format === 'pdf') {
+      this.exportCustomersToPDF();
+    } else {
+      this.exportCustomersToExcel();
+    }
   }
-}
+
+  private exportCustomersToExcel(): void {
+    // Prepare data
+    const data = this.filteredCustomers.map(customer => ({
+      'Identifier': customer.cusIden,
+      'Username': customer.username,
+      'Email': customer.cusMailAddress,
+      'Name': customer.fullName,
+      'Status': customer.status?.ctsLabe || '',
+      'Phone': customer.cusPhoneNbr,
+      'Country': customer.country?.ctrLabe || '',
+      'City': customer.city?.ctyLabe || ''
+    }));
+
+    // Create worksheet
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+
+    // Create workbook
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Customers');
+
+    // Generate file and download
+    XLSX.writeFile(wb, 'customers_export.xlsx');
+  }
+
+  private exportCustomersToPDF(): void {
+    const doc = new jsPDF({
+      orientation: 'landscape' // Optional: use 'portrait' if you prefer
+    });
+
+    // Add title
+    doc.setFontSize(16);
+    doc.setTextColor(40);
+    doc.text('Customer Management Report', 14, 16);
+
+    // Prepare data
+    const headers = [['Identifier', 'Username', 'Email', 'Name', 'Status', 'Phone', 'Country', 'City']];
+
+    const data = this.filteredCustomers.map(customer => [
+      customer.cusIden || '',
+      customer.username || '',
+      customer.cusMailAddress || '',
+      customer.fullName || '',
+      customer.status?.ctsLabe || '',
+      customer.cusPhoneNbr || '',
+      customer.country?.ctrLabe || '',
+      customer.city?.ctyLabe || ''
+    ]);
+
+    // Add table
+    autoTable(doc, {
+      head: headers,
+      body: data,
+      startY: 25,
+      theme: 'grid', // or 'striped', 'plain'
+      headStyles: {
+        fillColor: [41, 128, 185],
+        textColor: 255,
+        fontStyle: 'bold'
+      },
+      styles: {
+        fontSize: 8,
+        cellPadding: 2,
+        overflow: 'linebreak'
+      },
+      columnStyles: {
+        0: { cellWidth: 15 },
+        1: { cellWidth: 20 },
+        2: { cellWidth: 30 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 15 },
+        5: { cellWidth: 20 },
+        6: { cellWidth: 20 },
+        7: { cellWidth: 15 }
+      }
+    });
+
+    // Save the PDF
+    doc.save('customers_export_' + new Date().toISOString().slice(0, 10) + '.pdf');
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.relative.inline-block.text-left')) {
+      this.showExportMenu = false;
+    }
+  }
 
   loadAllCustomers() {
     this.customerService.getAllCustomers().subscribe({
@@ -261,7 +265,7 @@ onDocumentClick(event: MouseEvent): void {
     })
   }
 
-  loadAllStatuses(){
+  loadAllStatuses() {
     this.customerStatusService.getAll().subscribe({
       next: (statuses: CustomerStatus[]) => { this.statuses = statuses; this.filteredStatuses = statuses },
       error: (err) => { console.log(err) }
@@ -459,7 +463,7 @@ onDocumentClick(event: MouseEvent): void {
   }
 
 
-  goToWalletDetails(cusCode: number){
+  goToWalletDetails(cusCode: number) {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate(['/admin/wallets'], {
         state: { walletOwner: cusCode }
@@ -524,7 +528,7 @@ onDocumentClick(event: MouseEvent): void {
         const fieldRef = document.getElementById("usernameRef") as HTMLDivElement
         fieldRef.innerHTML = response ? 'Username already in use' : '';
       },
-      error: (err) => { console.log(err.message)}
+      error: (err) => { console.log(err.message) }
     });
   }
 
@@ -554,7 +558,7 @@ onDocumentClick(event: MouseEvent): void {
       next: (response) => {
         fieldRef.innerHTML = (this.selectedCustomer?.cusPhoneNbr != this.customerForm.cusPhoneNbr && response) ? 'Phone number already in use' : '';
       },
-      error: (err) => { console.log(err.message)}
+      error: (err) => { console.log(err.message) }
     });
   }
 
@@ -566,7 +570,7 @@ onDocumentClick(event: MouseEvent): void {
         const fieldRef = document.getElementById("emailRef") as HTMLDivElement
         fieldRef.innerHTML = (this.selectedCustomer?.cusMailAddress != this.customerForm.cusMailAddress && response) ? 'Email already in use' : '';
       },
-      error: (err) => { console.log(err.message)}
+      error: (err) => { console.log(err.message) }
     });
   }
 
@@ -578,7 +582,7 @@ onDocumentClick(event: MouseEvent): void {
         const fieldRef = document.getElementById("idNumRef") as HTMLDivElement
         fieldRef.innerHTML = response ? 'ID Num already in use' : '';
       },
-      error: (err) => { console.log(err.message)}
+      error: (err) => { console.log(err.message) }
     });
   }
 
@@ -1088,6 +1092,63 @@ onDocumentClick(event: MouseEvent): void {
     activeContent?.classList.remove('hidden');
   }
 
+
+
+  upmoList?: UserProfileMenuOption[]
+  activeTab?: UserProfileMenuOption
+  childTabs?: UserProfileMenuOption[]
+
+  checkIfParent(option: MenuOption): boolean {
+    return this.upmoList?.some(upmo =>
+      upmo.menuOption!.parentOption && upmo.menuOption!.parentOption.code === option.code
+    )!;
+  }
+
+  getChildren(parentUpmo: UserProfileMenuOption): UserProfileMenuOption[] {
+    const parentCode = parentUpmo!.menuOption!.code;
+    return this.upmoList!.filter(upmo =>
+      upmo.menuOption!.parentOption && upmo.menuOption!.parentOption.code === parentCode
+    );
+  }
+
+  // Show specific tab
+  showOptionContent(upmo: UserProfileMenuOption): void {
+
+    const tabType = upmo!.menuOption!.parentOption ? upmo!.menuOption!.parentOption.formName : undefined
+
+    const buttonClass = tabType ? `${tabType}-tab-button` : 'tab-button';
+    const contentClass = tabType ? `${tabType}-tab-content` : 'tab-content';
+    const tabButtons = document.querySelectorAll(`.${buttonClass}`);
+    const tabContents = document.querySelectorAll(`.${contentClass}`);
+
+    // Reset all buttons and contents
+    tabButtons.forEach(btn => {
+      btn.classList.remove('active', 'text-primary', 'font-medium', 'border-b-2', 'border-primary', 'transition-colors');
+      btn.classList.add('text-gray-500');
+    });
+
+    tabContents.forEach(content => content.classList.add('hidden'));
+
+    const tabId = upmo!.menuOption!.formName!
+
+    // Activate the clicked button and show its tab content
+    const activeButton = tabType ? document.getElementById(tabType + '-' + tabId) : document.getElementById(tabId);
+    activeButton?.classList.add('active', 'text-primary', 'font-medium', 'border-b-2', 'border-primary', 'transition-colors');
+    activeButton?.classList.remove('text-gray-500');
+
+    const activeId = tabType ? `${tabType}-tab-${tabId}` : `tab-${tabId}`;
+    const activeContent = document.getElementById(activeId);
+    activeContent?.classList.remove('hidden');
+
+    this.activeTab = upmo
+
+    if (this.checkIfParent(upmo!.menuOption!)) {
+      this.childTabs = this.getChildren(upmo!)
+      this.showOptionContent(this.childTabs[0])
+      return;
+    }
+  }
+
   fileData: any
 
   previewDocument(customerDoc: CustomerDoc) {
@@ -1095,7 +1156,6 @@ onDocumentClick(event: MouseEvent): void {
   }
 
   closePreview() {
-
     this.selectedDoc = undefined
   }
 

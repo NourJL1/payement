@@ -18,9 +18,6 @@ import { WalletService } from '../../../services/wallet.service';
 import { Wallet } from '../../../entities/wallet';
 import { AccountTypeService } from '../../../services/account-type.service';
 import { AccountType } from '../../../entities/account-type';
-import { error } from 'console';
-import { filter } from 'rxjs';
-import { Customer } from '../../../entities/customer';
 import { AccountList } from '../../../entities/account-list';
 import { AccountListService } from '../../../services/account-list.service';
 import { Account } from '../../../entities/account';
@@ -32,6 +29,8 @@ import 'jspdf-autotable';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { UserProfileMenuOption } from '../../../entities/user-profile-menu-option';
+import { MenuOptionService } from '../../../services/menu-option.service';
+import { MenuOption } from '../../../entities/menu-option';
 
 @Component({
   selector: 'app-wallet-mng',
@@ -137,7 +136,7 @@ export class WalletMngComponent implements OnInit {
 
   showExportMenu: boolean = false;
 
-  upmoList?: UserProfileMenuOption[]
+
 
   constructor(
     private walletStatusService: WalletStatusService,
@@ -170,6 +169,7 @@ export class WalletMngComponent implements OnInit {
     }
     if(history.state.permits){
       this.upmoList = history.state.permits as UserProfileMenuOption[]
+      this.showOptionContent(this.upmoList[0])
     }
     this.loadWalletStatuses();
     this.loadWalletCategories();
@@ -1797,7 +1797,7 @@ export class WalletMngComponent implements OnInit {
   }
 
   // Show specific tab
-  showTab(tabId: string, tabType?: string): void {
+  showTab(tabId: any, tabType?: any): void {
 
     const buttonClass = tabType ? `${tabType}-tab-button` : 'tab-button';
     const contentClass = tabType ? `${tabType}-tab-content` : 'tab-content';
@@ -1820,6 +1820,61 @@ export class WalletMngComponent implements OnInit {
     const activeId = tabType ? `${tabType}-tab-${tabId}` : `tab-${tabId}`;
     const activeContent = document.getElementById(activeId);
     activeContent?.classList.remove('hidden');
+  }
+
+  upmoList?: UserProfileMenuOption[]
+  activeTab?: UserProfileMenuOption
+  childTabs?: UserProfileMenuOption[]
+
+  checkIfParent(option: MenuOption): boolean {
+      return this.upmoList?.some(upmo => 
+        upmo.menuOption!.parentOption && upmo.menuOption!.parentOption.code === option.code
+      )!;
+  }
+
+  getChildren(parentUpmo: UserProfileMenuOption): UserProfileMenuOption[] {
+    const parentCode = parentUpmo!.menuOption!.code;
+    return this.upmoList!.filter(upmo =>
+      upmo.menuOption!.parentOption && upmo.menuOption!.parentOption.code === parentCode
+    );
+  }
+
+  // Show specific tab
+  showOptionContent(upmo: UserProfileMenuOption): void {
+
+    const tabType = upmo!.menuOption!.parentOption ? upmo!.menuOption!.parentOption.formName : undefined
+
+    const buttonClass = tabType ? `${tabType}-tab-button` : 'tab-button';
+    const contentClass = tabType ? `${tabType}-tab-content` : 'tab-content';
+    const tabButtons = document.querySelectorAll(`.${buttonClass}`);
+    const tabContents = document.querySelectorAll(`.${contentClass}`);
+
+    // Reset all buttons and contents
+    tabButtons.forEach(btn => {
+      btn.classList.remove('active', 'text-primary', 'font-medium', 'border-b-2', 'border-primary', 'transition-colors');
+      btn.classList.add('text-gray-500');
+    });
+
+    tabContents.forEach(content => content.classList.add('hidden'));
+
+    const tabId = upmo!.menuOption!.formName!
+
+    // Activate the clicked button and show its tab content
+    const activeButton = tabType ? document.getElementById(tabType + '-' + tabId) : document.getElementById(tabId);
+    activeButton?.classList.add('active', 'text-primary', 'font-medium', 'border-b-2', 'border-primary', 'transition-colors');
+    activeButton?.classList.remove('text-gray-500');
+
+    const activeId = tabType ? `${tabType}-tab-${tabId}` : `tab-${tabId}`;
+    const activeContent = document.getElementById(activeId);
+    activeContent?.classList.remove('hidden');
+
+    this.activeTab = upmo
+
+    if(this.checkIfParent(upmo!.menuOption!)){
+      this.childTabs = this.getChildren(upmo!)
+      this.showOptionContent(this.childTabs[0])
+      return;
+    }
   }
 
   // Format date for display (e.g., DD-MM-YYYY)

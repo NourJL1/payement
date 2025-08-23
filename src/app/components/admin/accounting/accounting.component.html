@@ -6,14 +6,31 @@
 
   <!-- Tabs Section -->
   <div class="flex border-b border-gray-200">
-    <button class="tab-button px-6 py-3 text-sm font-medium text-primary border-b-2 border-primary transition-colors"
+    <ng-container *ngIf="upmoList?.length==0">
+      <div class="text-center w-full max-w-md mx-auto py-8">
+        <div class="w-24 h-24 rounded-full bg-red-100 flex items-center justify-center mb-6 mx-auto">
+          <i class="ri-shield-keyhole-line text-primary text-4xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-3">No Permissions Granted</h2>
+        <p class="text-gray-500 mb-6">
+          You haven't been granted any permissions yet. Please contact your system administrator to request access
+          to the features you need.
+        </p>
+      </div>
+    </ng-container>
+    <ng-container #tabs *ngFor="let tab of upmoList">
+      <button *ngIf="!tab.menuOption?.parentOption" class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors"
+        (click)="showOptionContent(tab)"
+        [id]="tab.menuOption?.formName?.toLowerCase()">{{tab.menuOption?.label}}</button>
+    </ng-container>
+    <!-- <button class="tab-button px-6 py-3 text-sm font-medium text-primary border-b-2 border-primary transition-colors"
       (click)="showTab('fees')" id="fees">
       Fees
     </button>
     <button class="tab-button px-6 py-3 text-sm text-gray-500 transition-colors" (click)="showTab('operations')"
       id="operations">
       Operations
-    </button>
+    </button> -->
   </div>
 </div>
 <!-- Notification Area for Success and Error Messages -->
@@ -31,10 +48,16 @@
 </div>
 
 <!-- Fees Content-->
-<div id="tab-fees" class="tab-content">
+<div id="tab-fees" class="tab-content hidden">
   <!-- Fees Tabs -->
   <div class="mb-6 flex flex-wrap gap-2">
-    <button id="fees-overview" (click)="showTab('overview', 'fees')"
+    <ng-container *ngFor="let tab of childTabs">
+      <button
+        class="settings-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors"
+        (click)="showOptionContent(tab)"
+        [id]="tab.menuOption!.parentOption!.formName!+'-'+tab.menuOption!.formName!">{{tab.menuOption?.label}}</button>
+    </ng-container>
+    <!-- <button id="fees-overview" (click)="showTab('overview', 'fees')"
       class="fees-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white font-medium text-primary border-b-2 border-primary transition-colors">
       Fees Overview</button>
     <button id="fees-schema" (click)="showTab('schema', 'fees')"
@@ -45,11 +68,11 @@
       Fee Rule Types</button>
     <button id="fees-rule" (click)="showTab('rule', 'fees')"
       class="fees-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
-      Fee Rules</button>
+      Fee Rules</button> -->
   </div>
 
   <!-- Fees overview -->
-  <div id="fees-tab-overview" class="fees-tab-content">
+  <div id="fees-tab-overview" class="fees-tab-content hidden">
 
     <!-- Header Section -->
     <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
@@ -64,14 +87,10 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i class="ri-search-line text-gray-400"></i>
           </div>
-          <input 
-    type="text" 
-    placeholder="Search..."
-    [(ngModel)]="searchFeesTerm"
-    (input)="searchFees()"
-    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
-</div>
-        <button id="btn-add-fees" (click)="toggleForm('fee')"
+          <input type="text" placeholder="Search..." [(ngModel)]="searchFeesTerm" (input)="searchFees()"
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+        </div>
+        <button id="btn-add-fees" (click)="toggleForm('fee')" *ngIf="activeTab?.canInsert"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Fee </button>
       </div>
@@ -142,11 +161,11 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center space-x-3">
-                    <button (click)="editFee(fee)"
+                    <button (click)="editFee(fee)" *ngIf="activeTab?.canUpdate"
                       class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                       <i class="ri-edit-line text-lg"></i>
                     </button>
-                    <button (click)="deleteFee(fee.feeCode)"
+                    <button (click)="deleteFee(fee.feeCode)" *ngIf="activeTab?.canDelete"
                       class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                       <i class="ri-delete-bin-line text-lg"></i>
                     </button>
@@ -207,14 +226,10 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i class="ri-search-line text-gray-400"></i>
           </div>
-          <input 
-    type="text" 
-    placeholder="Search..."
-    [(ngModel)]="searchFeeSchemaTerm"
-    (input)="searchFeeSchemas()"
-    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
-</div>
-        <button id="btn-add-status" (click)="toggleForm('fee-schema')"
+          <input type="text" placeholder="Search..." [(ngModel)]="searchFeeSchemaTerm" (input)="searchFeeSchemas()"
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+        </div>
+        <button id="btn-add-status" (click)="toggleForm('fee-schema')" *ngIf="activeTab?.canInsert"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Fee Schema
         </button>
@@ -244,7 +259,7 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <ng-container *ngIf="feeSchemasList!.length > 0; else noData">
-               <tr *ngFor="let schema of filteredFeeSchemasList" class="hover:bg-gray-50 transition duration-150">
+              <tr *ngFor="let schema of filteredFeeSchemasList" class="hover:bg-gray-50 transition duration-150">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ schema.fscCode }}</div>
                 </td>
@@ -256,11 +271,11 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center space-x-3">
-                    <button (click)="editFeeSchema(schema)"
+                    <button (click)="editFeeSchema(schema)" *ngIf="activeTab?.canUpdate"
                       class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                       <i class="ri-edit-line text-lg"></i>
                     </button>
-                    <button (click)="deleteFeeSchema(schema.fscCode)"
+                    <button (click)="deleteFeeSchema(schema.fscCode)" *ngIf="activeTab?.canDelete"
                       class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                       <i class="ri-delete-bin-line text-lg"></i>
                     </button>
@@ -323,12 +338,10 @@
             <i class="ri-search-line text-gray-400"></i>
           </div>
           <!-- Change your search input to this -->
-<input type="text" placeholder="Search..." 
-  [(ngModel)]="searchFeeRuleTypeTerm" 
-  (input)="searchFeeRuleTypes()"
-  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+          <input type="text" placeholder="Search..." [(ngModel)]="searchFeeRuleTypeTerm" (input)="searchFeeRuleTypes()"
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
-        <button id="btn-add-type" (click)="toggleForm('fee-rule-type')"
+        <button id="btn-add-type" (click)="toggleForm('fee-rule-type')" *ngIf="activeTab?.canInsert"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Fee Rule Type
         </button>
@@ -357,7 +370,7 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <ng-container *ngIf="filteredFeeRuleTypesList.length > 0; else noData">
-  <tr *ngFor="let type of filteredFeeRuleTypesList" class="hover:bg-gray-50 transition duration-150">
+              <tr *ngFor="let type of filteredFeeRuleTypesList" class="hover:bg-gray-50 transition duration-150">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ type.frtCode }}</div>
                 </td>
@@ -369,11 +382,11 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center space-x-3">
-                    <button (click)="editFeeRuleType(type)"
+                    <button (click)="editFeeRuleType(type)" *ngIf="activeTab?.canUpdate"
                       class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                       <i class="ri-edit-line text-lg"></i>
                     </button>
-                    <button (click)="deleteFeeRuleType(type.frtCode)"
+                    <button (click)="deleteFeeRuleType(type.frtCode)" *ngIf="activeTab?.canDelete"
                       class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                       <i class="ri-delete-bin-line text-lg"></i>
                     </button>
@@ -438,7 +451,7 @@
           <input type="text" placeholder="Search..."
             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
-        <button (click)="toggleForm('fee-rule')"
+        <button (click)="toggleForm('fee-rule')" *ngIf="activeTab?.canInsert"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Fee Rule
         </button>
@@ -499,11 +512,11 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center space-x-3">
-                    <button (click)="editFeeRule(rule)"
+                    <button (click)="editFeeRule(rule)" *ngIf="activeTab?.canUpdate"
                       class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                       <i class="ri-edit-line text-lg"></i>
                     </button>
-                    <button (click)="deleteFeeRule(rule.fruCode)"
+                    <button (click)="deleteFeeRule(rule.fruCode)" *ngIf="activeTab?.canDelete"
                       class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                       <i class="ri-delete-bin-line text-lg"></i>
                     </button>
@@ -555,7 +568,13 @@
 <div id="tab-operations" class="tab-content hidden">
   <!-- Operations Tabs -->
   <div class="mb-6 flex flex-wrap gap-2">
-    <button id="operations-type" (click)="showTab('type', 'operations')"
+    <ng-container *ngFor="let tab of childTabs">
+      <button
+        class="settings-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors"
+        (click)="showOptionContent(tab)"
+        [id]="tab.menuOption!.parentOption!.formName!+'-'+tab.menuOption!.formName!">{{tab.menuOption?.label}}</button>
+    </ng-container>
+    <!-- <button id="operations-type" (click)="showTab('type', 'operations')"
       class="operations-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white font-medium text-primary border-b-2 border-primary transition-colors">
       Operation Types</button>
     <button id="operations-wotm" (click)="showTab('wotm', 'operations')"
@@ -566,11 +585,11 @@
       Wallet Category - Operation Type Mapping</button>
     <button id="operations-periodicity" (click)="showTab('periodicity', 'operations')"
       class="operations-tab-button shadow-lg px-4 py-3 text-sm rounded-lg bg-white text-gray-500 transition-colors">
-      Periodicity</button>
+      Periodicity</button> -->
   </div>
 
   <!-- Operation type Content -->
-  <div id="operations-tab-type" class="operations-tab-content">
+  <div id="operations-tab-type" class="operations-tab-content hidden">
     <!-- Header Section -->
     <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
       <div class="flex flex-col md:flex-row gap-4">
@@ -587,7 +606,7 @@
           <input type="text" placeholder="Search..."
             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
-        <button id="btn-add-status" (click)="toggleForm('operation-type')"
+        <button id="btn-add-status" (click)="toggleForm('operation-type')" *ngIf="activeTab?.canInsert"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Operation Type
         </button>
@@ -629,11 +648,11 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center space-x-3">
-                    <button (click)="editOperationType(operationType)"
+                    <button (click)="editOperationType(operationType)" *ngIf="activeTab?.canUpdate"
                       class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                       <i class="ri-edit-line text-lg"></i>
                     </button>
-                    <button (click)="deleteOperationType(operationType.optCode)"
+                    <button (click)="deleteOperationType(operationType.optCode)" *ngIf="activeTab?.canDelete"
                       class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                       <i class="ri-delete-bin-line text-lg"></i>
                     </button>
@@ -698,7 +717,7 @@
           <input type="text" placeholder="Search..."
             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
-        <button id="btn-add-status" (click)="toggleForm('operation-wotm')"
+        <button id="btn-add-status" (click)="toggleForm('operation-wotm')" *ngIf="activeTab?.canInsert"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Mapping
         </button>
@@ -764,11 +783,11 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center space-x-3">
-                    <button (click)="editWotm(wotm)"
+                    <button (click)="editWotm(wotm)" *ngIf="activeTab?.canUpdate"
                       class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                       <i class="ri-edit-line text-lg"></i>
                     </button>
-                    <button (click)="deleteWotm(wotm.wotmCode)"
+                    <button (click)="deleteWotm(wotm.wotmCode)" *ngIf="activeTab?.canDelete"
                       class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                       <i class="ri-delete-bin-line text-lg"></i>
                     </button>
@@ -830,12 +849,10 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i class="ri-search-line text-gray-400"></i>
           </div>
-          <input type="text" placeholder="Search..." 
-  [(ngModel)]="searchWcotmTerm"
-  (input)="searchWcotm()"
-  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
+          <input type="text" placeholder="Search..." [(ngModel)]="searchWcotmTerm" (input)="searchWcotm()"
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
-        <button id="btn-add-status" (click)="toggleForm('operation-wcotm')"
+        <button id="btn-add-status" (click)="toggleForm('operation-wcotm')" *ngIf="activeTab?.canInsert"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Mapping
         </button>
@@ -895,11 +912,11 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center space-x-3">
-                    <button (click)="editWcotm(wcotm)"
+                    <button (click)="editWcotm(wcotm)" *ngIf="activeTab?.canUpdate"
                       class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                       <i class="ri-edit-line text-lg"></i>
                     </button>
-                    <button (click)="deleteWcotm(wcotm.id)"
+                    <button (click)="deleteWcotm(wcotm.id)" *ngIf="activeTab?.canDelete"
                       class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                       <i class="ri-delete-bin-line text-lg"></i>
                     </button>
@@ -964,7 +981,7 @@
           <input type="text" placeholder="Search..."
             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
-        <button id="btn-add-status" (click)="toggleForm('operation-periodicity')"
+        <button id="btn-add-status" (click)="toggleForm('operation-periodicity')" *ngIf="activeTab?.canInsert"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Periodicity
         </button>
@@ -1005,11 +1022,11 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center space-x-3">
-                    <button (click)="editPeriodicity(periodicity)"
+                    <button (click)="editPeriodicity(periodicity)" *ngIf="activeTab?.canUpdate"
                       class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                       <i class="ri-edit-line text-lg"></i>
                     </button>
-                    <button (click)="deletePeriodicity(periodicity.perCode)"
+                    <button (click)="deletePeriodicity(periodicity.perCode)" *ngIf="activeTab?.canDelete"
                       class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                       <i class="ri-delete-bin-line text-lg"></i>
                     </button>
@@ -1069,7 +1086,8 @@
         </div>
       </button>
     </div>
-    <form ngNativeValidate id="add-type-form" class="p-6" (ngSubmit)="selectedFee ? updateFee() : addFee()" #feeForm="ngForm">
+    <form ngNativeValidate id="add-type-form" class="p-6" (ngSubmit)="selectedFee ? updateFee() : addFee()"
+      #feeForm="ngForm">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- <div>
           <label for="feeIden" class="block text-sm font-medium text-gray-700 mb-1">Identifier</label>
@@ -1085,19 +1103,21 @@
         </div>
         <div>
           <label for="feeMinLimit" class="block text-sm font-medium text-gray-700 mb-1">Min</label>
-          <input type="text" pattern="[0-9]+(\.[0-9]+)?" id="feeMinLimit" name="feeMinLimit" [(ngModel)]="newFee.feeMinLimit"
+          <input type="text" pattern="[0-9]+(\.[0-9]+)?" id="feeMinLimit" name="feeMinLimit"
+            [(ngModel)]="newFee.feeMinLimit"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
             placeholder="Minimum amount" required min="0">
         </div>
         <div>
           <label for="feeMaxLimit" class="block text-sm font-medium text-gray-700 mb-1">Max</label>
-          <input type="text" pattern="[0-9]+(\.[0-9]+)?"  id="feeMaxLimit" name="feeMaxLimit" [(ngModel)]="newFee.feeMaxLimit"
+          <input type="text" pattern="[0-9]+(\.[0-9]+)?" id="feeMaxLimit" name="feeMaxLimit"
+            [(ngModel)]="newFee.feeMaxLimit"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
             placeholder="Maximum Amount" required min="0">
         </div>
         <div>
           <label for="feeAmount" class="block text-sm font-medium text-gray-700 mb-1">Fee Amount</label>
-          <input type="text" pattern="[0-9]+(\.[0-9]+)?"  id="feeAmount" name="feeAmount" [(ngModel)]="newFee.feeAmount"
+          <input type="text" pattern="[0-9]+(\.[0-9]+)?" id="feeAmount" name="feeAmount" [(ngModel)]="newFee.feeAmount"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
             placeholder="Amount" required min="0">
         </div>
@@ -1109,14 +1129,15 @@
         </div>
         <div>
           <label for="feeMaxAmount" class="block text-sm font-medium text-gray-700 mb-1">Max Fee Amount</label>
-          <input type="text" pattern="[0-9]+(\.[0-9]+)?"  id="feeMaxAmount" name="feeMaxAmount" [(ngModel)]="newFee.feeMaxAmount"
+          <input type="text" pattern="[0-9]+(\.[0-9]+)?" id="feeMaxAmount" name="feeMaxAmount"
+            [(ngModel)]="newFee.feeMaxAmount"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
             placeholder="Maximum fee amount" required min="0">
         </div>
         <div>
           <label for="financialInstitutionId" class="block text-sm font-medium text-gray-700 mb-1">Financial Institution
             ID</label>
-          <input type="text" pattern="[0-9]+(\.[0-9]+)?"  id="financialInstitutionId" name="financialInstitutionId"
+          <input type="text" pattern="[0-9]+(\.[0-9]+)?" id="financialInstitutionId" name="financialInstitutionId"
             [(ngModel)]="newFee.financialInstitutionId"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
             placeholder="Financial Institution ID" required min="1">
@@ -1181,7 +1202,8 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
       <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h3 class="text-lg font-medium text-gray-900">{{ selectedFeeRuleType ? 'Edit Fee Rule Type' : 'Add Fee Rule Type' }}</h3>
+        <h3 class="text-lg font-medium text-gray-900">{{ selectedFeeRuleType ? 'Edit Fee Rule Type' : 'Add Fee Rule
+          Type' }}</h3>
         <button id="close-type-modal" (click)="closeForm('fee-rule-type')" class="text-gray-400 hover:text-gray-500">
           <div class="w-6 h-6 flex items-center justify-center">
             <i class="ri-close-line"></i>
@@ -1189,7 +1211,8 @@
         </button>
       </div>
       <div class="p-6">
-        <form ngNativeValidate id="fee-rule-type-form" (ngSubmit)="selectedFeeRuleType ? updateFeeRuleType() : addFeeRuleType()">
+        <form ngNativeValidate id="fee-rule-type-form"
+          (ngSubmit)="selectedFeeRuleType ? updateFeeRuleType() : addFeeRuleType()">
           <div class="space-y-4">
             <!-- <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Identifier</label>
@@ -1258,13 +1281,15 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Primary Amount</label>
-              <input type="text" pattern="[0-9]+(\.[0-9]+)?"  [(ngModel)]="newFeeRule.fruPrimaryAmount" name="fruPrimaryAmount"
+              <input type="text" pattern="[0-9]+(\.[0-9]+)?" [(ngModel)]="newFeeRule.fruPrimaryAmount"
+                name="fruPrimaryAmount"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
                 placeholder="Primary Amount" required step="0.01">
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Primary Fees ID</label>
-              <input type="text" pattern="[0-9]+(\.[0-9]+)?"  [(ngModel)]="newFeeRule.fruPrimaryFeesId" name="fruPrimaryFeesId"
+              <input type="text" pattern="[0-9]+(\.[0-9]+)?" [(ngModel)]="newFeeRule.fruPrimaryFeesId"
+                name="fruPrimaryFeesId"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
                 placeholder="Primary Fees ID" required>
             </div>
@@ -1274,12 +1299,13 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
                 required>
                 <option value="" disabled>Select Wallet</option>
-                <option *ngFor="let wallet of walletsList" [ngValue]="wallet">{{ wallet.walLabe || wallet.walIden }}</option>
+                <option *ngFor="let wallet of walletsList" [ngValue]="wallet">{{ wallet.walLabe || wallet.walIden }}
+                </option>
               </select>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Fees Amount</label>
-              <input type="text" pattern="[0-9]+(\.[0-9]+)?"  [(ngModel)]="newFeeRule.fruFeesAmount" name="fruFeesAmount"
+              <input type="text" pattern="[0-9]+(\.[0-9]+)?" [(ngModel)]="newFeeRule.fruFeesAmount" name="fruFeesAmount"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
                 placeholder="Fees Amount" required step="0.01">
             </div>
@@ -1295,7 +1321,7 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">TVA Amount</label>
-              <input type="text" pattern="[0-9]+(\.[0-9]+)?"  [(ngModel)]="newFeeRule.fruTvaAmount" name="fruTvaAmount"
+              <input type="text" pattern="[0-9]+(\.[0-9]+)?" [(ngModel)]="newFeeRule.fruTvaAmount" name="fruTvaAmount"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
                 placeholder="TVA Amount" required step="0.01">
             </div>
@@ -1358,7 +1384,8 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
       <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h3 class="text-lg font-medium text-gray-900">{{ selectedOperationType ? 'Edit Operation Type' : 'Add Operation Type' }}</h3>
+        <h3 class="text-lg font-medium text-gray-900">{{ selectedOperationType ? 'Edit Operation Type' : 'Add Operation
+          Type' }}</h3>
         <button id="close-type-modal" (click)="closeForm('operation-type')" class="text-gray-400 hover:text-gray-500">
           <div class="w-6 h-6 flex items-center justify-center">
             <i class="ri-close-line"></i>
@@ -1366,7 +1393,8 @@
         </button>
       </div>
       <div class="p-6">
-        <form ngNativeValidate id="operation-type-form" (ngSubmit)="selectedOperationType ? updateOperationType() : addOperationType()">
+        <form ngNativeValidate id="operation-type-form"
+          (ngSubmit)="selectedOperationType ? updateOperationType() : addOperationType()">
           <div class="space-y-4">
             <!-- <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Identifier</label>
@@ -1382,7 +1410,8 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Fee Schema Identifier</label>
-              <input type="text" pattern="[0-9]+(\.[0-9]+)?"  id="optFscIden" name="optFscIden" [(ngModel)]="newOperationType.optFscIden"
+              <input type="text" pattern="[0-9]+(\.[0-9]+)?" id="optFscIden" name="optFscIden"
+                [(ngModel)]="newOperationType.optFscIden"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
                 placeholder="Fee Schema Identifier" required>
             </div>
@@ -1421,14 +1450,16 @@
   <!-- add wotm-->
   <div *ngIf="isWotmVisible" id="add-wotm-modal" class="bg-white rounded-lg shadow-lg w-full max-w-md">
     <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-      <h3 class="text-lg font-medium text-gray-900">{{ selectedWotm ? 'Edit Wallet Operation Type Map' : 'Add Wallet Operation Type Map' }}</h3>
+      <h3 class="text-lg font-medium text-gray-900">{{ selectedWotm ? 'Edit Wallet Operation Type Map' : 'Add Wallet
+        Operation Type Map' }}</h3>
       <button id="close-type-modal" (click)="closeForm('operation-wotm')" class="text-gray-400 hover:text-gray-500">
         <div class="w-6 h-6 flex items-center justify-center">
           <i class="ri-close-line"></i>
         </div>
       </button>
     </div>
-    <form ngNativeValidate id="add-wotm-form" class="p-6" (ngSubmit)="selectedWotm ? updateWotm() : addWotm()" #feeForm="ngForm">
+    <form ngNativeValidate id="add-wotm-form" class="p-6" (ngSubmit)="selectedWotm ? updateWotm() : addWotm()"
+      #feeForm="ngForm">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label for="wallet" class="block text-sm font-medium text-gray-700 mb-1">Wallet</label>
@@ -1450,13 +1481,15 @@
         </div>
         <div>
           <label for="wotmLimitMax" class="block text-sm font-medium text-gray-700 mb-1">Max Limit</label>
-          <input type="text" pattern="[0-9]+(\.[0-9]+)?"  id="wotmLimitMax" name="wotmLimitMax" [(ngModel)]="newWotm.wotmLimitMax"
+          <input type="text" pattern="[0-9]+(\.[0-9]+)?" id="wotmLimitMax" name="wotmLimitMax"
+            [(ngModel)]="newWotm.wotmLimitMax"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
             placeholder="Minimum limit" required min="0">
         </div>
         <div>
           <label for="wotmDispAmount" class="block text-sm font-medium text-gray-700 mb-1">Disp Amount</label>
-          <input type="text" pattern="[0-9]+(\.[0-9]+)?"  id="wotmDispAmount" name="wotmDispAmount" [(ngModel)]="newWotm.wotmDispAmount"
+          <input type="text" pattern="[0-9]+(\.[0-9]+)?" id="wotmDispAmount" name="wotmDispAmount"
+            [(ngModel)]="newWotm.wotmDispAmount"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
             placeholder="Disp Amount" required min="0">
         </div>
@@ -1465,7 +1498,8 @@
           <select [(ngModel)]="newWotm.periodicity" name="periodicity"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" required>
             <option value="" disabled>Select periodicity</option>
-            <option *ngFor="let periodicity of periodicitiesList" [ngValue]="periodicity">{{ periodicity.perLabe }}</option>
+            <option *ngFor="let periodicity of periodicitiesList" [ngValue]="periodicity">{{ periodicity.perLabe }}
+            </option>
           </select>
         </div>
         <div>
@@ -1490,21 +1524,24 @@
   <!-- add wcotm  -->
   <div *ngIf="isWcotmVisible" id="add-wcotm-modal" class="bg-white rounded-lg shadow-lg w-full max-w-md">
     <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-      <h3 class="text-lg font-medium text-gray-900">{{ selectedWcotm ? 'Edit Wallet Category Operation Type Map' : 'Add Wallet Category Operation Type Map' }}</h3>
+      <h3 class="text-lg font-medium text-gray-900">{{ selectedWcotm ? 'Edit Wallet Category Operation Type Map' : 'Add
+        Wallet Category Operation Type Map' }}</h3>
       <button id="close-type-modal" (click)="closeForm('operation-wcotm')" class="text-gray-400 hover:text-gray-500">
         <div class="w-6 h-6 flex items-center justify-center">
           <i class="ri-close-line"></i>
         </div>
       </button>
     </div>
-    <form ngNativeValidate id="add-wcotm-form" class="p-6" (ngSubmit)="selectedWcotm ? updateWcotm() : addWcotm()" #feeForm="ngForm">
+    <form ngNativeValidate id="add-wcotm-form" class="p-6" (ngSubmit)="selectedWcotm ? updateWcotm() : addWcotm()"
+      #feeForm="ngForm">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label for="wallet" class="block text-sm font-medium text-gray-700 mb-1">Wallet Category</label>
           <select [(ngModel)]="newWcotm.walletCategory" name="walletCategory"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" required>
             <option value="" disabled>Select Wallet Category</option>
-            <option *ngFor="let category of walletCategories" [ngValue]="category">{{ category.wcaLabe || category.wcaIden }}
+            <option *ngFor="let category of walletCategories" [ngValue]="category">{{ category.wcaLabe ||
+              category.wcaIden }}
             </option>
           </select>
         </div>
@@ -1518,7 +1555,7 @@
         </div>
         <div>
           <label for="limitMax" class="block text-sm font-medium text-gray-700 mb-1">Max Limit</label>
-          <input type="text" pattern="[0-9]+(\.[0-9]+)?"  id="limitMax" name="limitMax" [(ngModel)]="newWcotm.limitMax"
+          <input type="text" pattern="[0-9]+(\.[0-9]+)?" id="limitMax" name="limitMax" [(ngModel)]="newWcotm.limitMax"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
             placeholder="Minimum limit" required min="0">
         </div>
@@ -1527,7 +1564,8 @@
           <select [(ngModel)]="newWcotm.periodicity" name="periodicity"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" required>
             <option value="" disabled>Select periodicity</option>
-            <option *ngFor="let periodicity of periodicitiesList" [ngValue]="periodicity">{{ periodicity.perLabe }}</option>
+            <option *ngFor="let periodicity of periodicitiesList" [ngValue]="periodicity">{{ periodicity.perLabe }}
+            </option>
           </select>
         </div>
         <div>
@@ -1565,7 +1603,8 @@
         </button>
       </div>
       <div class="p-6">
-        <form ngNativeValidate id="periodicity-form" (ngSubmit)="selectedPeriodicity ? updatePeriodicity() : addPeriodicity()">
+        <form ngNativeValidate id="periodicity-form"
+          (ngSubmit)="selectedPeriodicity ? updatePeriodicity() : addPeriodicity()">
           <div class="space-y-4">
             <!-- <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Identifier</label>
