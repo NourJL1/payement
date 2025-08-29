@@ -19,7 +19,7 @@
             <div class="flex justify-between items-start">
                 <div>
                     <p class="text-gray-500 text-sm font-medium">Available Balance</p>
-                    <h2 class="text-2xl font-bold mt-1">{{wallet?.walEffBal }}</h2>
+                    <h2 class="text-2xl font-bold mt-1">{{wallet?.walLogicBalance }}</h2>
                 </div>
                 <div class="bg-primary bg-opacity-10 p-2 shadow-lg rounded-lg">
                     <i class="ri-wallet-3-line text-primary text-xl"></i>
@@ -36,7 +36,7 @@
             <div class="flex justify-between items-start">
                 <div>
                     <p class="text-gray-500 text-sm font-medium">Pending Transactions</p>
-                    <h2 class="text-2xl font-bold mt-1">{{wallet?.walLogicBalance }}</h2>
+                    <h2 class="text-2xl font-bold mt-1">0</h2>
                 </div>
                 <div class="bg-blue-100 p-2 shadow-lg rounded-lg">
                     <i class="ri-exchange-line text-blue-500 text-xl"></i>
@@ -55,7 +55,7 @@
                 <div>
                     <p class="text-gray-500 text-sm font-medium">{{wallet?.walletCategory?.wcaLabe || 'Category'}}
                         Balance</p>
-                    <h2 class="text-2xl font-bold mt-1">{{wallet?.walSpecificBalance }}</h2>
+                    <h2 class="text-2xl font-bold mt-1">0</h2>
                 </div>
                 <div class="bg-green-100 p-2 shadow-lg rounded-lg">
                     <i class="ri-secure-payment-line text-green-500 text-xl"></i>
