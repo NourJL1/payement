@@ -31,6 +31,13 @@ export class Customer {
     return this.cusMidName ? this.cusFirstName + ' ' + this.cusMidName + ' ' + this.cusLastName : this.cusFirstName + ' ' + this.cusLastName;
   }
 
+  set fullName(name: string) {
+  const parts = name.split(' ');
+  this.cusFirstName = parts[0];
+  this.cusLastName = parts.length > 1 ? parts[parts.length - 1] : '';
+  this.cusMidName = parts.length > 2 ? parts.slice(1, -1).join(' ') : '';
+  }
+
   constructor(init?: Partial<Customer>) {
     this.identity = new CustomerIdentity();
     this.wallet = new Wallet();

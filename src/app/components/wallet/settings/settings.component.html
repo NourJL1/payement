@@ -9,43 +9,43 @@
     <div class="w-full md:w-64 flex-shrink-0">
       <div class="bg-white rounded-lg shadow-sm overflow-hidden">
         <nav class="flex flex-col">
-          <a href="#account" class="settings-nav-item active flex items-center gap-3 px-4 py-3" data-section="account">
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'account'" (click)="switchSection('account')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-user-3-line"></i>
             </div>
             <span class="font-medium">Account Information</span>
           </a>
-          <a href="#notifications" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="notifications">
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'notifications'" (click)="switchSection('notifications')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-notification-3-line"></i>
             </div>
             <span class="font-medium">Notification Preferences</span>
           </a>
-          <a href="#security" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="security">
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'security'" (click)="switchSection('security')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-shield-keyhole-line"></i>
             </div>
             <span class="font-medium">Privacy & Security</span>
           </a>
-          <a href="#display" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="display">
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'display'" (click)="switchSection('display')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-palette-line"></i>
             </div>
             <span class="font-medium">Display Preferences</span>
           </a>
-          <a href="#payment" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="payment">
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'payment'" (click)="switchSection('payment')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-bank-card-line"></i>
             </div>
             <span class="font-medium">Payment Preferences</span>
           </a>
-          <a href="#documents" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="documents">
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'documents'" (click)="switchSection('documents')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-file-list-3-line"></i>
             </div>
             <span class="font-medium">Identity Documents</span>
           </a>
-          <a href="#connected" class="settings-nav-item flex items-center gap-3 px-4 py-3" data-section="connected">
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'connected'" (click)="switchSection('connected')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-link"></i>
             </div>
@@ -58,151 +58,147 @@
     <!-- Settings Content -->
     <div class="flex-1">
       <!-- Account Information Section -->
-    
-
-<div *ngIf="!loading && !error" id="account" class="settings-section active">
-  <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-    <div class="p-6 border-b border-gray-100">
-      <h2 class="text-lg font-semibold text-gray-900">Profile Information</h2>
-      <p class="text-sm text-gray-500 mt-1">Update your personal information</p>
-    </div>
-    <div class="p-6">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
-        <div class="relative">
-          <div class="w-24 h-24 bg-gray-100 rounded-full overflow-hidden flex items-center justify-center">
-            <i class="ri-user-3-line text-gray-400 ri-2x"></i>
+      <div *ngIf="!loading && !error && activeSection === 'account'" id="account" class="settings-section">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Profile Information</h2>
+            <p class="text-sm text-gray-500 mt-1">Update your personal information</p>
           </div>
-          <button class="absolute bottom-0 right-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-sm">
-            <i class="ri-pencil-line"></i>
-          </button>
-        </div>
-        <div>
-          <h3 class="text-lg font-medium text-gray-900">{{ customer.fullName }}</h3>
-          <p class="text-sm text-gray-500">
-            {{ customer.status?.ctsLabe || 'Premium Account' }} Member since
-            {{ customer.createdAt  }}
-          </p>
-          <div class="mt-2 flex items-center">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              <span class="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
-              Verified
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-          <input
-            type="text"
-  [(ngModel)]="customer.cusFirstName"
-  name="firstName"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Middle Name</label>
-          <input
-            type="text"
-            [(ngModel)]="customer.cusMidName"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-          <input
-            type="text"
-            [(ngModel)]="customer.cusLastName "
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-          <input
-            type="text"
-            [(ngModel)]="customer.username"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-    <div class="p-6 border-b border-gray-100">
-      <h2 class="text-lg font-semibold text-gray-900">Contact Information</h2>
-      <p class="text-sm text-gray-500 mt-1">Update your contact details</p>
-    </div>
-    <div class="p-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-          <input
-            type="email"
-            [(ngModel)]="customer.cusMailAddress "
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-          <input
-            type="tel"
-            [(ngModel)]="customer.cusPhoneNbr "
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            
-          />
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
-          <input
-            type="text"
-            [(ngModel)]="customer.cusAddress "
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4"
-            
-          />
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
-              <input
-                type="text"
-                [(ngModel)]="customer.city!.ctyLabe"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                
-              />
+          <div class="p-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
+              <div class="relative">
+                <div class="w-24 h-24 bg-gray-100 rounded-full overflow-hidden flex items-center justify-center">
+                  <i class="ri-user-3-line text-gray-400 ri-2x"></i>
+                </div>
+                <button class="absolute bottom-0 right-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                  <i class="ri-pencil-line"></i>
+                </button>
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">{{ customer.fullName }}</h3>
+                <p class="text-sm text-gray-500">
+                  {{ customer.status?.ctsLabe || 'Premium Account' }} Member since
+                  {{ customer.createdAt }}
+                </p>
+                <div class="mt-2 flex items-center">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span class="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
+                    Verified
+                  </span>
+                </div>
+              </div>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
-              <input
-                type="text"
-                [(ngModel)]="customer.country!.ctrLabe "
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                
-              />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                <input
+                  type="text"
+                  [(ngModel)]="customer.cusFirstName"
+                  name="firstName"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Middle Name</label>
+                <input
+                  type="text"
+                  [(ngModel)]="customer.cusMidName"
+                  name="middleName"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                <input
+                  type="text"
+                  [(ngModel)]="customer.cusLastName"
+                  name="lastName"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                <input
+                  type="text"
+                  [(ngModel)]="customer.username"
+                  name="username"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
             </div>
-            
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Contact Information</h2>
+            <p class="text-sm text-gray-500 mt-1">Update your contact details</p>
+          </div>
+          <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <input
+                  type="email"
+                  [(ngModel)]="customer.cusMailAddress"
+                  name="email"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                <input
+                  type="tel"
+                  [(ngModel)]="customer.cusPhoneNbr"
+                  name="phone"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                <input
+                  type="text"
+                  [(ngModel)]="customer.cusAddress"
+                  name="address"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4"
+                />
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div *ngIf="customer.city">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                    <input
+                      type="text"
+                      [(ngModel)]="customer.city.ctyLabe"
+                      name="city"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div *ngIf="customer.country">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                    <input
+                      type="text"
+                      [(ngModel)]="customer.country.ctrLabe"
+                      name="country"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="px-6 py-4 bg-gray-50 flex justify-end">
+            <button
+              (click)="updateCustomer()"
+              class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium"
+            >
+              Save Changes
+            </button>
           </div>
         </div>
       </div>
-    </div>
-    <div class="px-6 py-4 bg-gray-50 flex justify-end">
-      <button 
-  (click)="updateCustomer()" 
-  class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium">
-  Save Changes
-</button>
-
-    </div>
-  </div>
-</div>
 
       <!-- Notification Preferences Section -->
-      <div id="notifications" class="settings-section hidden">
+      <div *ngIf="activeSection === 'notifications'" id="notifications" class="settings-section">
         <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
           <div class="p-6 border-b border-gray-100">
             <h2 class="text-lg font-semibold text-gray-900">Notification Preferences</h2>
@@ -218,7 +214,7 @@
                     <div class="text-sm text-gray-500">Receive updates via email</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.email" (change)="updateNotificationPreference('email')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -228,7 +224,7 @@
                     <div class="text-sm text-gray-500">Receive notifications on your devices</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.push" (change)="updateNotificationPreference('push')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -238,7 +234,7 @@
                     <div class="text-sm text-gray-500">Receive text messages for important updates</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox">
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.sms" (change)="updateNotificationPreference('sms')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -254,7 +250,7 @@
                     <div class="text-sm text-gray-500">Get notified for every transaction</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox">
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.allTransactions" (change)="updateNotificationPreference('allTransactions')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -264,7 +260,7 @@
                     <div class="text-sm text-gray-500">Only for transactions over $1,000</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.largeTransactions" (change)="updateNotificationPreference('largeTransactions')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -274,7 +270,7 @@
                     <div class="text-sm text-gray-500">When money is added to your account</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.deposits" (change)="updateNotificationPreference('deposits')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -284,7 +280,7 @@
                     <div class="text-sm text-gray-500">When money leaves your account</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.withdrawals" (change)="updateNotificationPreference('withdrawals')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -300,7 +296,7 @@
                     <div class="text-sm text-gray-500">Login attempts and security updates</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.securityAlerts" (change)="updateNotificationPreference('securityAlerts')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -310,7 +306,7 @@
                     <div class="text-sm text-gray-500">Changes to your account settings</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.accountUpdates" (change)="updateNotificationPreference('accountUpdates')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -320,7 +316,7 @@
                     <div class="text-sm text-gray-500">Special offers and new features</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox">
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.marketing" (change)="updateNotificationPreference('marketing')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -328,13 +324,13 @@
             </div>
           </div>
           <div class="px-6 py-4 bg-gray-50 flex justify-end">
-            <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Preferences</button>
+            <button (click)="saveSettings()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Preferences</button>
           </div>
         </div>
       </div>
 
       <!-- Privacy & Security Section -->
-      <div id="security" class="settings-section hidden">
+      <div *ngIf="activeSection === 'security'" id="security" class="settings-section">
         <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
           <div class="p-6 border-b border-gray-100">
             <h2 class="text-lg font-semibold text-gray-900">Password & Authentication</h2>
@@ -369,7 +365,7 @@
                     <div class="text-sm text-gray-500">Add an extra layer of security to your account</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [(ngModel)]="privacySettings.twoFactorAuth" (change)="updatePrivacySetting('twoFactorAuth')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -447,7 +443,7 @@
                   <div class="text-sm text-gray-500">Allow us to collect usage data to improve your experience</div>
                 </div>
                 <label class="custom-switch">
-                  <input type="checkbox" checked>
+                  <input type="checkbox" [(ngModel)]="privacySettings.activityTracking" (change)="updatePrivacySetting('activityTracking')">
                   <span class="slider"></span>
                 </label>
               </div>
@@ -457,7 +453,7 @@
                   <div class="text-sm text-gray-500">Allow access to your location for regional features</div>
                 </div>
                 <label class="custom-switch">
-                  <input type="checkbox">
+                  <input type="checkbox" [(ngModel)]="privacySettings.locationServices" (change)="updatePrivacySetting('locationServices')">
                   <span class="slider"></span>
                 </label>
               </div>
@@ -467,7 +463,7 @@
                   <div class="text-sm text-gray-500">Share anonymized data with our partners</div>
                 </div>
                 <label class="custom-switch">
-                  <input type="checkbox">
+                  <input type="checkbox" [(ngModel)]="privacySettings.dataSharing" (change)="updatePrivacySetting('dataSharing')">
                   <span class="slider"></span>
                 </label>
               </div>
@@ -477,20 +473,20 @@
                   <div class="text-sm text-gray-500">Show ads based on your interests and activity</div>
                 </div>
                 <label class="custom-switch">
-                  <input type="checkbox" checked>
+                  <input type="checkbox" [(ngModel)]="privacySettings.personalizedAds" (change)="updatePrivacySetting('personalizedAds')">
                   <span class="slider"></span>
                 </label>
               </div>
             </div>
           </div>
           <div class="px-6 py-4 bg-gray-50 flex justify-end">
-            <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Privacy Settings</button>
+            <button (click)="saveSettings()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Privacy Settings</button>
           </div>
         </div>
       </div>
 
       <!-- Display Preferences Section -->
-      <div id="display" class="settings-section hidden">
+      <div *ngIf="activeSection === 'display'" id="display" class="settings-section">
         <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
           <div class="p-6 border-b border-gray-100">
             <h2 class="text-lg font-semibold text-gray-900">Display Preferences</h2>
@@ -501,41 +497,41 @@
               <h3 class="text-md font-medium text-gray-900 mb-4">Theme Settings</h3>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <label class="relative cursor-pointer">
-                  <input type="radio" name="theme" class="sr-only" checked>
-                  <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-primary transition-all duration-200 peer-checked:border-primary">
+                  <input type="radio" name="theme" class="sr-only" value="light" [(ngModel)]="displaySettings.theme" (change)="updateDisplaySetting('theme', 'light')">
+                  <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-primary transition-all duration-200" [class.peer-checked:border-primary]="displaySettings.theme === 'light'">
                     <div class="bg-white rounded h-24 mb-2 flex items-center justify-center text-gray-400">
                       <i class="ri-sun-line ri-xl"></i>
                     </div>
                     <div class="font-medium text-gray-800">Light Mode</div>
                     <div class="text-xs text-gray-500">Default light appearance</div>
                   </div>
-                  <div class="absolute top-3 right-3 w-5 h-5 bg-primary rounded-full text-white flex items-center justify-center opacity-0 peer-checked:opacity-100">
+                  <div class="absolute top-3 right-3 w-5 h-5 bg-primary rounded-full text-white flex items-center justify-center" [class.opacity-0]="displaySettings.theme !== 'light'" [class.opacity-100]="displaySettings.theme === 'light'">
                     <i class="ri-check-line"></i>
                   </div>
                 </label>
                 <label class="relative cursor-pointer">
-                  <input type="radio" name="theme" class="sr-only">
-                  <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-primary transition-all duration-200">
+                  <input type="radio" name="theme" class="sr-only" value="dark" [(ngModel)]="displaySettings.theme" (change)="updateDisplaySetting('theme', 'dark')">
+                  <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-primary transition-all duration-200" [class.peer-checked:border-primary]="displaySettings.theme === 'dark'">
                     <div class="bg-gray-800 rounded h-24 mb-2 flex items-center justify-center text-gray-400">
                       <i class="ri-moon-line ri-xl"></i>
                     </div>
                     <div class="font-medium text-gray-800">Dark Mode</div>
                     <div class="text-xs text-gray-500">Easier on the eyes at night</div>
                   </div>
-                  <div class="absolute top-3 right-3 w-5 h-5 bg-primary rounded-full text-white flex items-center justify-center opacity-0 peer-checked:opacity-100">
+                  <div class="absolute top-3 right-3 w-5 h-5 bg-primary rounded-full text-white flex items-center justify-center" [class.opacity-0]="displaySettings.theme !== 'dark'" [class.opacity-100]="displaySettings.theme === 'dark'">
                     <i class="ri-check-line"></i>
                   </div>
                 </label>
                 <label class="relative cursor-pointer">
-                  <input type="radio" name="theme" class="sr-only">
-                  <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-primary transition-all duration-200">
+                  <input type="radio" name="theme" class="sr-only" value="system" [(ngModel)]="displaySettings.theme" (change)="updateDisplaySetting('theme', 'system')">
+                  <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-primary transition-all duration-200" [class.peer-checked:border-primary]="displaySettings.theme === 'system'">
                     <div class="bg-gradient-to-r from-white to-gray-800 rounded h-24 mb-2 flex items-center justify-center text-gray-400">
                       <i class="ri-contrast-2-line ri-xl"></i>
                     </div>
                     <div class="font-medium text-gray-800">System Default</div>
                     <div class="text-xs text-gray-500">Follows your system settings</div>
                   </div>
-                  <div class="absolute top-3 right-3 w-5 h-5 bg-primary rounded-full text-white flex items-center justify-center opacity-0 peer-checked:opacity-100">
+                  <div class="absolute top-3 right-3 w-5 h-5 bg-primary rounded-full text-white flex items-center justify-center" [class.opacity-0]="displaySettings.theme !== 'system'" [class.opacity-100]="displaySettings.theme === 'system'">
                     <i class="ri-check-line"></i>
                   </div>
                 </label>
@@ -544,7 +540,7 @@
             <div class="mb-8">
               <h3 class="text-md font-medium text-gray-900 mb-4">Language</h3>
               <div class="relative">
-                <select class="w-full appearance-none px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white">
+                <select class="w-full appearance-none px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white" [(ngModel)]="displaySettings.language" (change)="onLanguageChange($event)">
                   <option value="en">English (US)</option>
                   <option value="fr">Français</option>
                   <option value="es">Español</option>
@@ -565,17 +561,17 @@
                   <label class="block text-sm font-medium text-gray-700 mb-2">Date Format</label>
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg">
-                      <input type="radio" name="date-format" checked>
+                      <input type="radio" name="date-format" value="MM/DD/YYYY" [(ngModel)]="displaySettings.dateFormat" (change)="updateDisplaySetting('dateFormat', 'MM/DD/YYYY')">
                       <span class="radio-checkmark mr-3"></span>
                       <span>MM/DD/YYYY</span>
                     </label>
                     <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg">
-                      <input type="radio" name="date-format">
+                      <input type="radio" name="date-format" value="DD/MM/YYYY" [(ngModel)]="displaySettings.dateFormat" (change)="updateDisplaySetting('dateFormat', 'DD/MM/YYYY')">
                       <span class="radio-checkmark mr-3"></span>
                       <span>DD/MM/YYYY</span>
                     </label>
                     <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg">
-                      <input type="radio" name="date-format">
+                      <input type="radio" name="date-format" value="YYYY-MM-DD" [(ngModel)]="displaySettings.dateFormat" (change)="updateDisplaySetting('dateFormat', 'YYYY-MM-DD')">
                       <span class="radio-checkmark mr-3"></span>
                       <span>YYYY-MM-DD</span>
                     </label>
@@ -585,12 +581,12 @@
                   <label class="block text-sm font-medium text-gray-700 mb-2">Time Format</label>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg">
-                      <input type="radio" name="time-format" checked>
+                      <input type="radio" name="time-format" value="12-hour" [(ngModel)]="displaySettings.timeFormat" (change)="updateDisplaySetting('timeFormat', '12-hour')">
                       <span class="radio-checkmark mr-3"></span>
                       <span>12-hour (AM/PM)</span>
                     </label>
                     <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg">
-                      <input type="radio" name="time-format">
+                      <input type="radio" name="time-format" value="24-hour" [(ngModel)]="displaySettings.timeFormat" (change)="updateDisplaySetting('timeFormat', '24-hour')">
                       <span class="radio-checkmark mr-3"></span>
                       <span>24-hour</span>
                     </label>
@@ -608,7 +604,7 @@
                     <div class="text-sm text-gray-500">Increase text size for better readability</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox">
+                    <input type="checkbox" [(ngModel)]="displaySettings.largerText" (change)="updateDisplaySetting('largerText')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -618,7 +614,7 @@
                     <div class="text-sm text-gray-500">Enhance visual distinction between elements</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox">
+                    <input type="checkbox" [(ngModel)]="displaySettings.highContrast" (change)="updateDisplaySetting('highContrast')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -628,7 +624,7 @@
                     <div class="text-sm text-gray-500">Minimize animations and transitions</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox">
+                    <input type="checkbox" [(ngModel)]="displaySettings.reduceMotion" (change)="updateDisplaySetting('reduceMotion')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -636,13 +632,13 @@
             </div>
           </div>
           <div class="px-6 py-4 bg-gray-50 flex justify-end">
-            <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Display Settings</button>
+            <button (click)="saveSettings()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Display Settings</button>
           </div>
         </div>
       </div>
 
       <!-- Payment Preferences Section -->
-      <div id="payment" class="settings-section hidden">
+      <div *ngIf="activeSection === 'payment'" id="payment" class="settings-section">
         <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
           <div class="p-6 border-b border-gray-100">
             <h2 class="text-lg font-semibold text-gray-900">Payment Methods</h2>
@@ -722,7 +718,7 @@
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Default Payment Method</label>
                   <div class="relative">
-                    <select class="w-full appearance-none px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white">
+                    <select class="w-full appearance-none px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white" [(ngModel)]="paymentSettings.defaultPaymentMethod" (change)="onDefaultPaymentMethodChange($event)">
                       <option value="visa">Visa ending in 4582</option>
                       <option value="mastercard">Mastercard ending in 7890</option>
                       <option value="paypal">PayPal</option>
@@ -738,7 +734,7 @@
                     <div class="text-sm text-gray-500">Automatically pay recurring bills</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [(ngModel)]="paymentSettings.autoPayBills" (change)="updatePaymentSetting('autoPayBills')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -748,7 +744,7 @@
                     <div class="text-sm text-gray-500">Automatically save payment methods used</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [(ngModel)]="paymentSettings.saveNewMethods" (change)="updatePaymentSetting('saveNewMethods')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -758,7 +754,7 @@
                     <div class="text-sm text-gray-500">Require confirmation for payments over $1,000</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [(ngModel)]="paymentSettings.paymentConfirmation" (change)="updatePaymentSetting('paymentConfirmation')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -766,13 +762,13 @@
             </div>
           </div>
           <div class="px-6 py-4 bg-gray-50 flex justify-end">
-            <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Payment Settings</button>
+            <button (click)="saveSettings()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Payment Settings</button>
           </div>
         </div>
       </div>
 
       <!-- Identity Documents Section -->
-      <div id="documents" class="settings-section hidden">
+      <div *ngIf="activeSection === 'documents'" id="documents" class="settings-section">
         <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
           <div class="p-6 border-b border-gray-100">
             <h2 class="text-lg font-semibold text-gray-900">Identity Documents</h2>
@@ -877,7 +873,7 @@
       </div>
 
       <!-- Connected Accounts Section -->
-      <div id="connected" class="settings-section hidden">
+      <div *ngIf="activeSection === 'connected'" id="connected" class="settings-section">
         <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
           <div class="p-6 border-b border-gray-100">
             <h2 class="text-lg font-semibold text-gray-900">Connected Accounts</h2>
@@ -980,66 +976,3 @@
     </div>
   </div>
 </main>
-
-<script id="settingsNavigation">
-document.addEventListener('DOMContentLoaded', function() {
-  const navItems = document.querySelectorAll('.settings-nav-item');
-  const sections = document.querySelectorAll('.settings-section');
-  
-  navItems.forEach(item => {
-    item.addEventListener('click', function(e) {
-      e.preventDefault();
-      
-      // Remove active class from all nav items
-      navItems.forEach(navItem => {
-        navItem.classList.remove('active');
-      });
-      
-      // Add active class to clicked nav item
-      this.classList.add('active');
-      
-      // Hide all sections
-      sections.forEach(section => {
-        section.classList.add('hidden');
-      });
-      
-      // Show the corresponding section
-      const sectionId = this.getAttribute('data-section');
-      document.getElementById(sectionId).classList.remove('hidden');
-    });
-  });
-});
-</script>
-
-<script id="customFormControls">
-document.addEventListener('DOMContentLoaded', function() {
-  // Custom radio buttons
-  const radioInputs = document.querySelectorAll('input[type="radio"]');
-  radioInputs.forEach(input => {
-    input.addEventListener('change', function() {
-      const name = this.getAttribute('name');
-      const radioButtons = document.querySelectorAll(`input[name="${name}"]`);
-      
-      radioButtons.forEach(radio => {
-        const parent = radio.closest('.relative');
-        if (parent) {
-          if (radio.checked) {
-            parent.classList.add('peer-checked:border-primary');
-          } else {
-            parent.classList.remove('peer-checked:border-primary');
-          }
-        }
-      });
-    });
-  });
-  
-  // Custom switches
-  const switches = document.querySelectorAll('.custom-switch input[type="checkbox"]');
-  switches.forEach(switchEl => {
-    switchEl.addEventListener('change', function() {
-      // Here you would typically make an API call to update the setting
-      console.log('Switch toggled:', this.checked);
-    });
-  });
-});
-</script>
