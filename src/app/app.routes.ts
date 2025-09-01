@@ -19,6 +19,7 @@ import { SuspendedComponent } from './components/wallet/suspended/suspended.comp
 import { TransactionsComponent } from './components/wallet/transactions/transactions.component';
 import { SettingsComponent } from './components/wallet/settings/settings.component';
 import { OperationsComponent } from './components/admin/operations/operations.component';
+import { TransferComponent } from './components/wallet/transfer/transfer.component';
 
 export const routes: Routes = [
 
@@ -51,7 +52,8 @@ export const routes: Routes = [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
       { path: 'overview', component: OverviewComponent},
       { path: 'transactions', component: TransactionsComponent },
-      { path: 'settings', component: SettingsComponent}
+      { path: 'settings', component: SettingsComponent},
+      { path: 'transfer', component: TransferComponent }
     ]
   },
   {
