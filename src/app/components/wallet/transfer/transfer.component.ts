@@ -49,8 +49,6 @@ export class TransferComponent implements OnInit {
       
       if (currentUser) {
         this.senderWalletIden = currentUser.walIden || 
-                               currentUser.walletId || 
-                               currentUser.walletIden ||
                                'WAL-reciever';
         
         if (currentUser.balance) {
