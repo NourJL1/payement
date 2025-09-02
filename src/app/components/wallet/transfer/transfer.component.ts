@@ -43,27 +43,35 @@ export class TransferComponent implements OnInit {
   }
 
   // Load the logged-in user's wallet information
-  loadLoggedInUserWallet() {
-    try {
-      const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-      
-      if (currentUser) {
-        this.senderWalletIden = currentUser.walIden || 
-                               'WAL-reciever';
-        
-        if (currentUser.balance) {
-          this.senderWalletBalance = currentUser.balance;
-        } else if (currentUser.walLogicBalance) {
-          this.senderWalletBalance = currentUser.walLogicBalance;
-        }
+  // Load the logged-in user's wallet information
+loadLoggedInUserWallet() {
+  try {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    
+    if (currentUser) {
+      // Check if wallet data is available in the new structure
+      if (currentUser.wallet) {
+        this.senderWalletIden = currentUser.wallet.walIden || 'WAL-unknown';
+        this.senderWalletBalance = currentUser.wallet.walLogicBalance || currentUser.wallet.walEffBal || 0;
       } else {
-        this.senderWalletIden = 'WAL-reciever';
+        // Fallback for old structure or missing wallet
+        this.senderWalletIden = currentUser.walIden || 'WAL-unknown';
+        this.senderWalletBalance = currentUser.walLogicBalance || currentUser.walEffBal || 0;
       }
-    } catch (e) {
-      console.error('Error loading user wallet:', e);
-      this.senderWalletIden = 'WAL-reciever';
+      
+      console.log('Wallet loaded:', {
+        walletIden: this.senderWalletIden,
+        balance: this.senderWalletBalance
+      });
+    } else {
+      this.senderWalletIden = 'WAL-not-logged-in';
+      console.warn('No user found in localStorage');
     }
+  } catch (e) {
+    console.error('Error loading user wallet:', e);
+    this.senderWalletIden = 'WAL-error';
   }
+}
 
   // Load available operation types from backend
   loadOperationTypes() {

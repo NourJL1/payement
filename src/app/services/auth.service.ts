@@ -32,14 +32,14 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, { username, password })
-      .pipe(map(user => {
-        // Store user details in local storage
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        this.currentUserSubject.next(user);
-        return user;
-      }));
-  }
+  return this.http.post<any>(`${this.apiUrl}/login`, { username, password })
+    .pipe(map(user => {
+      // Store the complete user data with wallet information
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      this.currentUserSubject.next(user);
+      return user;
+    }));
+}
 
   logout(): void {
     // Remove user from local storage
