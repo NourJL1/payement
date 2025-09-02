@@ -1,86 +1,60 @@
 <div class="overview-page">
-    <!-- Welcome Banner -->
-    <div class="bg-gradient-to-r from-primary to-primary-dark shadow-lg shadow-lg rounded-xl p-6 mb-8 text-white">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold mb-2">Welcome back, {{wallet?.customer?.fullName}}!</h1>
+    <!-- Credit Card Style Banner -->
+    <div class="relative mb-8">
+        <div class="bg-gradient-to-r from-blue-900 to-purple-900 shadow-lg rounded-2xl p-6 text-white overflow-hidden">
+            <!-- Card design elements -->
+            <div class="absolute top-0 right-0 w-40 h-40 bg-white bg-opacity-10 rounded-full -m-20"></div>
+            <div class="absolute bottom-0 left-0 w-32 h-32 bg-white bg-opacity-10 rounded-full -m-16"></div>
+            
+            <!-- Card content -->
+            <div class="relative z-10">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <div class="text-sm opacity-80">Balance</div>
+                        <h2 class="text-2xl font-bold mt-1" [class.filter-blur]="isBalanceHidden">
+                            {{isBalanceHidden ? '••••••' : (wallet?.walLogicBalance | currency:'TND ')}}
+                        </h2>
+                    </div>
+                    <button (click)="toggleBalanceVisibility()" class="p-2 bg-white bg-opacity-10 rounded-lg hover:bg-opacity-20 transition-all">
+                        <i class="text-xl" [class]="isBalanceHidden ? 'ri-eye-line' : 'ri-eye-off-line'"></i>
+                    </button>
+                </div>
+                
+                <div class="flex justify-between items-end">
+                    <div>
+                        <div class="text-sm opacity-80">Wallet Holder</div>
+                        <div class="text-lg font-medium">{{wallet?.customer?.fullName || 'Customer Name'}}</div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="mr-3 text-right">
+                            <div class="text-sm opacity-80">Wallet ID</div>
+                            <div class="font-mono">{{wallet?.walIden || '••••••••'}}</div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 p-3 rounded-xl">
+                            <i class="ri-wallet-3-line text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button
-                class="mt-4 md:mt-0 bg-white text-primary px-6 py-2 shadow-lg shadow-lg rounded-lg font-medium hover:bg-opacity-90 transition-all">
-                Quick Transfer
-            </button>
         </div>
     </div>
 
-    <!-- Balance Overview -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <!-- Available Balance -->
-        <div class="bg-white shadow-lg shadow-lg rounded-xl shadow-sm p-6">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm font-medium">Available Balance</p>
-                    <h2 class="text-2xl font-bold mt-1">{{wallet?.walLogicBalance }}</h2>
-                </div>
-                <div class="bg-primary bg-opacity-10 p-2 shadow-lg rounded-lg">
-                    <i class="ri-wallet-3-line text-primary text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 flex justify-between items-center">
-                <span class="text-sm text-gray-500">Last updated: {{wallet?.lastUpdatedDate | date:'medium' }}</span>
-                <button class="text-primary text-sm font-medium hover:underline">View details</button>
-            </div>
-        </div>
-
-        <!-- Logical Balance -->
-        <div class="bg-white shadow-lg rounded-xl shadow-sm p-6">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm font-medium">Pending Transactions</p>
-                    <h2 class="text-2xl font-bold mt-1">0</h2>
-                </div>
-                <div class="bg-blue-100 p-2 shadow-lg rounded-lg">
-                    <i class="ri-exchange-line text-blue-500 text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4">
-                <button class="w-full bg-blue-50 text-blue-600 py-2 shadow-lg rounded-lg text-sm font-medium hover:bg-blue-100">
-                    Review Transactions
-                </button>
-            </div>
-        </div>
-
-        <!-- Specific Balance -->
-        <div class="bg-white shadow-lg rounded-xl shadow-sm p-6">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm font-medium">{{wallet?.walletCategory?.wcaLabe || 'Category'}}
-                        Balance</p>
-                    <h2 class="text-2xl font-bold mt-1">0</h2>
-                </div>
-                <div class="bg-green-100 p-2 shadow-lg rounded-lg">
-                    <i class="ri-secure-payment-line text-green-500 text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4">
-                <button
-                    class="w-full bg-green-50 text-green-600 py-2 shadow-lg rounded-lg text-sm font-medium hover:bg-green-100">
-                    Manage Category
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Quick Actions -->
     <div class="mb-8">
         <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <button
-                class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
-                <div class="bg-primary bg-opacity-10 p-3 shadow-lg rounded-full mb-2">
-                    <i class="ri-send-plane-line text-primary text-xl"></i>
-                </div>
-                <span class="text-sm font-medium">Send Money</span>
-            </button>
+  routerLink="/transfer"
+  class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow"
+>
+  <div class="bg-primary bg-opacity-10 p-3 shadow-lg rounded-full mb-2">
+    <i class="ri-send-plane-line text-primary text-xl"></i>
+  </div>
+  <span class="text-sm font-medium">Send Money</span>
+</button>
+
             <button
                 class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
                 <div class="bg-purple-100 p-3 shadow-lg rounded-full mb-2">
@@ -96,6 +70,7 @@
                 <span class="text-sm font-medium">Pay with QR</span>
             </button>
             <button
+                (click)="loadBalanceHistory()"
                 class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
                 <div class="bg-green-100 p-3 shadow-lg rounded-full mb-2">
                     <i class="ri-history-line text-green-500 text-xl"></i>
@@ -104,6 +79,66 @@
             </button>
         </div>
     </div>
+
+  <!-- Balance History Panel - Bold Red Version -->
+<div *ngIf="showHistoryPanel" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[80vh] overflow-hidden border border-red-200">
+        <!-- Header with strong red accent -->
+        <div class="flex justify-between items-center p-6 bg-white border-b border-gray-200">
+    <h3 class="text-xl font-semibold text-gray-900">Wallet Balance History</h3>
+    <button (click)="closeHistoryPanel()" class="text-gray-900 hover:text-red-600 transition-colors">
+        <i class="ri-close-line text-2xl"></i>
+    </button>
+</div>
+        
+        <div class="p-6 overflow-auto max-h-[60vh]">
+            <div *ngIf="isLoadingHistory" class="flex justify-center items-center py-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+            </div>
+            
+            <div *ngIf="!isLoadingHistory && balanceHistory.length === 0" class="text-center py-8 text-gray-500">
+                <i class="ri-history-line text-4xl mb-4 text-red-300"></i>
+                <p>No balance history found</p>
+            </div>
+            
+            <div *ngIf="!isLoadingHistory && balanceHistory.length > 0" class="space-y-3">
+                <!-- Reverse the order using slice().reverse() -->
+                <div *ngFor="let history of balanceHistory.slice().reverse()" 
+                     class="border-l-4 border-red-500 bg-white rounded-r-lg p-4 shadow-sm hover:bg-red-50 transition-colors">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="bg-red-100 p-2 rounded-full mr-4">
+                                <i class="ri-wallet-3-line text-red-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Balance Update</p>
+                                <p class="text-sm text-gray-600">{{history.wbhLastUpdated | date:'medium'}}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold text-gray-900">
+                                Logical: <span class="text-red-700">{{history.wbhLogicBalance | currency:'TND '}}</span>
+                            </p>
+                            <p class="text-sm text-gray-700">
+                                Effective: <span class="text-gray-900">{{history.wbhEffBal | currency:'TND '}}</span>
+                            </p>
+                            <p class="text-sm text-gray-700">
+                                Specific: <span class="text-gray-900">{{history.wbhSpecificBalance | currency:'TND '}}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer with red accent -->
+        <div class="p-4 border-t bg-red-50 flex justify-end">
+            <button (click)="closeHistoryPanel()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
 
     <!-- Recent Transactions -->
     <div class="mb-8">
