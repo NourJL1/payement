@@ -6,6 +6,7 @@ import { WalletBalanceHistory } from '../../../entities/wallet-balance-history';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
+
 @Component({
   selector: 'app-overview',
   imports: [CommonModule],
@@ -87,5 +88,9 @@ toggleBalanceVisibility(): void {
 
   closeHistoryPanel(): void {
     this.showHistoryPanel = false;
+  }
+
+   goToTransfer() {
+    this.router.navigate(['/wallet/transfer']);
   }
 }
