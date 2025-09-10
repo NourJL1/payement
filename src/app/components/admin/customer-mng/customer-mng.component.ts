@@ -389,6 +389,8 @@ export class CustomerMngComponent {
 
     const confirmRef = document.getElementById("confirm") as HTMLDivElement
 
+    console.log(this.customerForm)
+
     this.customerService.register(this.customerForm).subscribe({
       next: (customer: Customer) => {
         console.log('add Customer: cus added:', customer);
