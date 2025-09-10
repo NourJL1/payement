@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { WalletService } from '../../../services/wallet.service';
+import { WalletBalanceHistoryService } from '../../../services/wallet-balance-history.service';
 import { Wallet } from '../../../entities/wallet';
+import { WalletBalanceHistory } from '../../../entities/wallet-balance-history';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-overview',
@@ -15,9 +18,13 @@ export class OverviewComponent implements OnInit {
   constructor(
     private router: Router,
     private walletService: WalletService,
+    private walletBalanceHistoryService: WalletBalanceHistoryService
   ) { }
 
-  wallet?: Wallet
+  wallet?: Wallet;
+  balanceHistory: WalletBalanceHistory[] = [];
+  showHistoryPanel: boolean = false;
+  isLoadingHistory: boolean = false;
 
   ngOnInit() {
     const cusCode = localStorage.getItem('cusCode');
@@ -55,4 +62,35 @@ export class OverviewComponent implements OnInit {
     });
   }
 
+  loadBalanceHistory(): void {
+    if (!this.wallet?.walCode) return;
+    
+    this.isLoadingHistory = true;
+    this.walletBalanceHistoryService.getByWalletCode(this.wallet.walCode).subscribe({
+      next: (data: WalletBalanceHistory[]) => {
+        this.balanceHistory = data;
+        this.showHistoryPanel = true;
+        this.isLoadingHistory = false;
+      },
+      error: (err) => {
+        console.error('Failed to load balance history', err);
+        this.isLoadingHistory = false;
+      }
+    });
+  }
+  // Add this property to your component class
+isBalanceHidden: boolean = false;
+
+// Add this method to your component class
+toggleBalanceVisibility(): void {
+  this.isBalanceHidden = !this.isBalanceHidden;
+}
+
+  closeHistoryPanel(): void {
+    this.showHistoryPanel = false;
+  }
+
+   goToTransfer() {
+    this.router.navigate(['/wallet/transfer']);
+  }
 }

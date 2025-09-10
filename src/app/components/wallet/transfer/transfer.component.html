@@ -1,0 +1,175 @@
+<div class="max-w-6xl mx-auto py-8 px-4">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 red-underline inline-block mb-4">Wallet Transfer</h1>
+    <p class="text-gray-600 max-w-2xl mx-auto">
+      Send money instantly to any wallet with our secure transfer system. Low fees, fast processing, and real-time confirmation.
+    </p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+    {{ successMessage }}
+  </div>
+
+  <!-- Demo Mode Notice -->
+  <div *ngIf="errorMessage && errorMessage.includes('unavailable')" class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-6">
+    <p class="font-bold">Demo Mode</p>
+    <p>The transfer API appears to be unavailable. You can test the form using demo mode.</p>
+    <button (click)="demoTransfer()" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+      Try Demo Transfer
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="grid lg:grid-cols-3 gap-6">
+    <!-- Left: Transfer Form -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg shadow p-6">
+        <form (ngSubmit)="transferNow()">
+          <!-- From Wallet -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">From Wallet</label>
+            <div class="relative">
+              <input type="text" [value]="senderWalletIden" disabled class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"/>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">
+              Available Balance: ${{ senderWalletBalance | number:'1.2-2' }}
+            </p>
+          </div>
+
+          <!-- To Wallet -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">To Wallet</label>
+            <div class="flex gap-2">
+              <div class="flex-1 relative">
+                <input 
+                  type="text" 
+                  [(ngModel)]="receiverWalletIden" 
+                  name="receiverWalletIden"
+                  placeholder="Enter recipient's wallet ID" 
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md"/>
+              </div>
+              <button 
+                type="button" 
+                (click)="findUser()"
+                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+                Validate
+              </button>
+            </div>
+            <p *ngIf="receiverInfo" class="text-sm text-green-600 mt-2">{{ receiverInfo }}</p>
+          </div>
+
+          <!-- Transfer Amount -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Transfer Amount</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-gray-500">$</span>
+              <input 
+                type="number" 
+                [(ngModel)]="amount" 
+                name="amount"
+                placeholder="0.00" 
+                class="w-full px-8 py-2 border border-gray-300 rounded-md text-right text-lg"
+                step="0.01" 
+                min="0"/>
+            </div>
+            <div class="flex justify-between items-center mt-1">
+              <p class="text-xs text-gray-500">
+                Available Balance: ${{ senderWalletBalance | number:'1.2-2' }}
+              </p>
+              <button 
+                type="button" 
+                (click)="useMaxBalance()"
+                class="text-xs text-red-600 hover:text-red-700">
+                Use Max
+              </button>
+            </div>
+          </div>
+
+          <!-- Operation Type -->
+          <div class="mb-8">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Operation Type</label>
+            <select 
+              [(ngModel)]="operationTypeIden" 
+              name="operationTypeIden"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md">
+              <option value="">Select operation type</option>
+              <option *ngFor="let type of operationTypes" [value]="type.optIden">
+                {{ type.optLabe }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex gap-4">
+            <button 
+              type="submit" 
+              [disabled]="isLoading"
+              class="flex-1 px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-gray-400">
+              {{ isLoading ? 'Processing...' : 'Transfer Now' }}
+            </button>
+            <button 
+              type="button" 
+              (click)="receiverWalletIden = ''; amount = 0; operationTypeIden = ''; receiverInfo = ''; errorMessage = '';"
+              class="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+              style="flex: 0 0 120px;">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right: Summary + Other Methods -->
+    <div class="space-y-6">
+      <!-- Summary -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="font-semibold text-gray-900 mb-4">Transfer Summary</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Transfer Amount</span>
+            <span>${{ amount | number:'1.2-2' }}</span>
+          </div>
+          <div class="text-sm text-gray-500 italic">
+            Fees will be calculated by the server during processing
+          </div>
+          <hr class="my-3">
+          <div class="flex justify-between font-semibold">
+            <span>Total Amount</span>
+            <span class="text-red-600">${{ amount | number:'1.2-2' }}</span>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center gap-2 text-sm text-gray-600">
+          <span class="text-green-600">🛡️</span>
+          <div>
+            <div class="font-medium">Secure Transfer</div>
+            <div class="text-xs">256-bit encryption</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other Payment Methods -->
+      <div>
+        <h3 class="font-semibold text-gray-900 mb-4">Other Payment Methods</h3>
+        <div class="space-y-3">
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <span class="text-2xl text-gray-400">💳</span>
+            <div class="font-medium text-gray-700 mt-2">Credit/Debit Cards</div>
+            <div class="text-xs text-gray-500">Coming Soon</div>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <span class="text-2xl text-blue-600">P</span>
+            <div class="font-medium text-gray-700 mt-2">PayPal</div>
+            <div class="text-xs text-gray-500">Coming Soon</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.filter-blur {
+  filter: blur(5px);
+}
+
+/* Credit card styling enhancements */
+.bg-gradient-to-r.from-blue-900.to-purple-900 {
+  background: linear-gradient(135deg, #d64545 0%, #3f72d9 100%);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Hover effects for the quick action buttons below the card */
+.bg-white.rounded-full button {
+  transition: all 0.2s ease;
+}
+
+.bg-white.rounded-full button:hover {
+  transform: translateY(-2px);
+}

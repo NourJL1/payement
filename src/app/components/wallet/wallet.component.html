@@ -11,21 +11,65 @@
       <!-- Navigation and User Menu -->
       <div class="flex items-center gap-4 md:gap-6">
         <!-- Main Navigation Links -->
-        <nav class="hidden md:flex items-center space-x-4">
-          
-          <a routerLink="/wallet/overview" routerLinkActive="text-primary border-b-2 border-primary"
-            class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
-            Overview
-          </a>
-          <a routerLink="/wallet/transactions" routerLinkActive="text-primary border-b-2 border-primary"
-            class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
-            Transactions
-          </a>
-          <a routerLink="/wallet/settings" routerLinkActive="text-primary border-b-2 border-primary"
-            class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
-            Settings
-          </a>
-        </nav>
+        <nav class="hidden md:flex items-center space-x-4 relative">
+  <!-- Links -->
+  <a routerLink="/wallet/overview" 
+     routerLinkActive="text-primary border-b-2 border-primary"
+     class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+     Overview
+  </a>
+
+  <a routerLink="/wallet/transactions" 
+     routerLinkActive="text-primary border-b-2 border-primary"
+     class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+     Transactions
+  </a>
+
+  <a routerLink="/wallet/transfer" 
+     routerLinkActive="text-primary border-b-2 border-primary"
+     class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+     Transfer
+  </a>
+
+  <a routerLink="/wallet/settings" 
+     routerLinkActive="text-primary border-b-2 border-primary"
+     class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+     Settings
+  </a>
+
+  <!-- Notification Bell -->
+  <div class="relative">
+    <button (click)="toggleNotifications()" class="relative p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+      <!-- Heroicon Bell -->
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+           stroke-width="1.5" stroke="currentColor" 
+           class="w-6 h-6 text-gray-600 hover:text-primary">
+        <path stroke-linecap="round" stroke-linejoin="round" 
+              d="M14.857 17.243A4.5 4.5 0 0018 12.75V9a6 6 0 10-12 0v3.75a4.5 4.5 0 003.143 4.493m5.714 0A4.49 4.49 0 0112 18a4.49 4.49 0 01-2.857-.757m5.714 0L12 21m0 0l-2.143-2.757"/>
+      </svg>
+      <!-- Red Dot -->
+      <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
+    </button>
+
+    <!-- Notifications Tab -->
+    <div *ngIf="showNotifications"
+         class="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg border border-gray-200 z-50">
+      <div class="p-3 border-b border-gray-200 font-semibold text-gray-700">
+        Notifications
+      </div>
+      <ul class="max-h-60 overflow-y-auto">
+        <li *ngFor="let notif of notifications" 
+            class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">
+          {{ notif }}
+        </li>
+      </ul>
+      <div class="p-2 text-center text-sm text-primary hover:underline cursor-pointer">
+        View all
+      </div>
+    </div>
+  </div>
+</nav>
+
 
         <!-- User Profile -->
         <div class="flex items-center gap-2 cursor-pointer">

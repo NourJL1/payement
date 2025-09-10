@@ -42,6 +42,18 @@ export class WalletComponent implements OnInit {
     }); */
   }
 
+  showNotifications = false;
+
+  notifications: string[] = [
+    "You received $200",
+    "New login from Chrome",
+    "Your transfer was successful",
+  ];
+
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+  }
+
   loadWallet() {
     this.loading = true;
     this.error = null;
