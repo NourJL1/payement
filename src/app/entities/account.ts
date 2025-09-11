@@ -13,6 +13,7 @@ export class Account {
   accountList?: AccountList;
   accountType?: AccountType;
   bank?: Bank;
+  accBalance?: number;
 
   constructor(init?: Partial<Account>) {
     Object.assign(this, init);

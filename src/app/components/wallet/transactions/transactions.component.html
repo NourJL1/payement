@@ -142,203 +142,67 @@
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
             <h2 class="text-lg font-semibold text-gray-900">Transaction History</h2>
-            <div class="text-sm text-gray-500">Showing 28 transactions</div>
+            <div class="text-sm text-gray-500" *ngIf="!isLoading">
+                Showing {{ filteredTransactions.length }} transactions
+            </div>
         </div>
         
-        <div class="divide-y divide-gray-100">
-            <!-- Transaction Item -->
-            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="p-8 text-center">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <p class="mt-2 text-gray-500">Loading transactions...</p>
+        </div>
+        
+        <!-- Error State -->
+        <div *ngIf="errorMessage && !isLoading" class="p-8 text-center">
+            <i class="ri-error-warning-line text-red-500 text-2xl"></i>
+            <p class="mt-2 text-red-500">{{ errorMessage }}</p>
+            <button (click)="loadTransactions()" class="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90">
+                Retry
+            </button>
+        </div>
+        
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && !errorMessage && filteredTransactions.length === 0" class="p-8 text-center">
+            <i class="ri-bank-card-line text-gray-400 text-2xl"></i>
+            <p class="mt-2 text-gray-500">No transactions found</p>
+        </div>
+        
+        <!-- Transactions List -->
+        <div *ngIf="!isLoading && !errorMessage && filteredTransactions.length > 0" class="divide-y divide-gray-100">
+            <!-- Transaction Items -->
+            <div *ngFor="let transaction of paginatedTransactions" class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
                 <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
-                    <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full mr-4">
-                        <i class="ri-arrow-down-line text-blue-600"></i>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full mr-4" 
+                         [ngClass]="{
+                             'bg-blue-100': transaction.odeType === 'income',
+                             'bg-red-100': transaction.odeType === 'expense',
+                             'bg-purple-100': transaction.odeType === 'transfer'
+                         }">
+                        <i class="text-lg" 
+                           [ngClass]="{
+                               'ri-arrow-down-line text-blue-600': transaction.odeType === 'income',
+                               'ri-shopping-bag-line text-red-600': transaction.odeType === 'expense' && transaction.odeValue.includes('Amazon'),
+                               'ri-restaurant-line text-red-600': transaction.odeType === 'expense' && transaction.odeValue.includes('Coffee'),
+                               'ri-exchange-line text-purple-600': transaction.odeType === 'transfer'
+                           }"></i>
                     </div>
                     <div>
-                        <div class="font-medium text-gray-900">Salary Deposit</div>
-                        <div class="text-sm text-gray-500">July 3, 2025 • 09:15 AM</div>
+                        <div class="font-medium text-gray-900">{{ transaction.odeValue }}</div>
+                        <div class="text-sm text-gray-500">
+                            {{ transaction.odeCreatedAt | date:'mediumDate' }} • 
+                            {{ transaction.odeCreatedAt | date:'shortTime' }}
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
-                    <div class="text-green-600 font-medium">+$5,280.00</div>
-                    <div class="flex items-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Completed
-                        </span>
+                    <div class="font-medium" 
+                         [ngClass]="{
+                             'text-green-600': transaction.odeType === 'income',
+                             'text-red-600': transaction.odeType !== 'income'
+                         }">
+                        {{ transaction.odeType === 'income' ? '+' : '-' }}${{ transaction.odeValue }}
                     </div>
-                </div>
-            </div>
-            <!-- Transaction Item -->
-            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
-                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
-                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
-                        <i class="ri-shopping-bag-line text-red-600"></i>
-                    </div>
-                    <div>
-                        <div class="font-medium text-gray-900">Amazon.com</div>
-                        <div class="text-sm text-gray-500">July 2, 2025 • 04:32 PM</div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
-                    <div class="text-red-600 font-medium">-$129.99</div>
-                    <div class="flex items-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Completed
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <!-- Transaction Item -->
-            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
-                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
-                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
-                        <i class="ri-restaurant-line text-red-600"></i>
-                    </div>
-                    <div>
-                        <div class="font-medium text-gray-900">Starbucks Coffee</div>
-                        <div class="text-sm text-gray-500">July 2, 2025 • 10:15 AM</div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
-                    <div class="text-red-600 font-medium">-$8.45</div>
-                    <div class="flex items-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Completed
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <!-- Transaction Item -->
-            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
-                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
-                    <div class="w-10 h-10 flex items-center justify-center bg-purple-100 rounded-full mr-4">
-                        <i class="ri-exchange-line text-purple-600"></i>
-                    </div>
-                    <div>
-                        <div class="font-medium text-gray-900">Transfer to Savings</div>
-                        <div class="text-sm text-gray-500">July 1, 2025 • 08:45 PM</div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
-                    <div class="text-red-600 font-medium">-$1,000.00</div>
-                    <div class="flex items-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Completed
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <!-- Transaction Item -->
-            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
-                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
-                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
-                        <i class="ri-home-line text-red-600"></i>
-                    </div>
-                    <div>
-                        <div class="font-medium text-gray-900">Apartment Rent</div>
-                        <div class="text-sm text-gray-500">July 1, 2025 • 12:00 PM</div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
-                    <div class="text-red-600 font-medium">-$2,200.00</div>
-                    <div class="flex items-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Completed
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <!-- Transaction Item -->
-            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
-                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
-                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
-                        <i class="ri-netflix-line text-red-600"></i>
-                    </div>
-                    <div>
-                        <div class="font-medium text-gray-900">Netflix Subscription</div>
-                        <div class="text-sm text-gray-500">June 30, 2025 • 03:15 AM</div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
-                    <div class="text-red-600 font-medium">-$15.99</div>
-                    <div class="flex items-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Completed
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <!-- Transaction Item -->
-            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
-                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
-                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
-                        <i class="ri-car-line text-red-600"></i>
-                    </div>
-                    <div>
-                        <div class="font-medium text-gray-900">Uber Ride</div>
-                        <div class="text-sm text-gray-500">June 29, 2025 • 10:45 PM</div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
-                    <div class="text-red-600 font-medium">-$24.50</div>
-                    <div class="flex items-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Completed
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <!-- Transaction Item -->
-            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
-                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
-                    <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full mr-4">
-                        <i class="ri-user-received-line text-blue-600"></i>
-                    </div>
-                    <div>
-                        <div class="font-medium text-gray-900">Payment from Jennifer Wilson</div>
-                        <div class="text-sm text-gray-500">June 28, 2025 • 02:30 PM</div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
-                    <div class="text-green-600 font-medium">+$75.00</div>
-                    <div class="flex items-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Completed
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <!-- Transaction Item -->
-            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
-                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
-                    <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full mr-4">
-                        <i class="ri-shopping-cart-line text-red-600"></i>
-                    </div>
-                    <div>
-                        <div class="font-medium text-gray-900">Whole Foods Market</div>
-                        <div class="text-sm text-gray-500">June 27, 2025 • 05:45 PM</div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
-                    <div class="text-red-600 font-medium">-$87.32</div>
-                    <div class="flex items-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Completed
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <!-- Transaction Item -->
-            <div class="transaction-card p-4 md:p-6 flex flex-col md:flex-row md:items-center">
-                <div class="flex items-center mb-3 md:mb-0 md:w-1/2">
-                    <div class="w-10 h-10 flex items-center justify-center bg-yellow-100 rounded-full mr-4">
-                        <i class="ri-bank-card-line text-yellow-600"></i>
-                    </div>
-                    <div>
-                        <div class="font-medium text-gray-900">ATM Withdrawal</div>
-                        <div class="text-sm text-gray-500">June 26, 2025 • 11:20 AM</div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end md:w-1/2 md:gap-8">
-                    <div class="text-red-600 font-medium">-$200.00</div>
                     <div class="flex items-center">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             Completed
@@ -349,18 +213,34 @@
         </div>
 
         <!-- Pagination -->
-        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+        <div *ngIf="!isLoading && !errorMessage && filteredTransactions.length > 0" class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
             <div class="flex items-center text-sm text-gray-500">
-                <span>Showing 1-10 of 28 transactions</span>
+                <span>
+                    Showing {{ (currentPage - 1) * itemsPerPage + 1 }}-
+                    {{ Math.min(currentPage * itemsPerPage, totalTransactions) }} 
+                    of {{ totalTransactions }} transactions
+                </span>
             </div>
             <div class="flex items-center gap-1">
-                <button class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                <button (click)="changePage(currentPage - 1)" 
+                        [disabled]="currentPage === 1"
+                        class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                     <i class="ri-arrow-left-s-line"></i>
                 </button>
-                <button class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-primary text-white hover:bg-primary/90">1</button>
-                <button class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</button>
-                <button class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</button>
-                <button class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                
+                <button *ngFor="let page of [].constructor(totalPages); let i = index" 
+                        (click)="changePage(i + 1)"
+                        class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 text-sm"
+                        [ngClass]="{
+                            'bg-primary text-white hover:bg-primary/90': currentPage === i + 1,
+                            'bg-white text-gray-700 hover:bg-gray-50': currentPage !== i + 1
+                        }">
+                    {{ i + 1 }}
+                </button>
+                
+                <button (click)="changePage(currentPage + 1)" 
+                        [disabled]="currentPage === totalPages"
+                        class="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                     <i class="ri-arrow-right-s-line"></i>
                 </button>
             </div>

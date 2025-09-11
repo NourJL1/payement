@@ -86,3 +86,26 @@ input:checked + .slider:before {
 .amount-dropdown.active {
     display: block;
 }
+
+/* transactions.component.css */
+.relative > div {
+    display: none;
+}
+
+.relative:hover > div,
+.relative:focus-within > div {
+    display: block;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

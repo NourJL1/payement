@@ -28,8 +28,9 @@ export class AuthService {
 
   // Add this method to get the current user's wallet ID
   getCurrentUserWalletId(): string {
-    return this.currentUserValue?.walletId || '';
-  }
+  return this.currentUserValue?.wallet?.walIden || '';
+}
+
 
   login(username: string, password: string): Observable<any> {
   return this.http.post<any>(`${this.apiUrl}/login`, { username, password })

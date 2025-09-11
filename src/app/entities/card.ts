@@ -12,6 +12,9 @@ export class Card {
   carLabe?: string;
   cardType?: CardType;
   cardList?: CardList;
+  carAmount?: number;
+  carPlafond?: number;
+  carPlafondPeriod?: string;
 
   constructor(init?: Partial<Card>) {
     Object.assign(this, init);
