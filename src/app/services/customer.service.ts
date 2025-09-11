@@ -110,6 +110,10 @@ export class CustomerService {
     return this.http.get<Customer[]>(`${this.apiUrl}/with-wallets`);
   }
 
+  getEmail(cusCode: number){
+    return this.http.get(`${this.apiUrl}/getEmail/${cusCode}`);
+  }
+
   sendEmail(email: string, subject: string) {
     return this.http.post<string>(`${this.apiUrl}/sendEmail`, {
       cusMailAdress: email,

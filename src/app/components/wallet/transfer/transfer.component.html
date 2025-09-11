@@ -3,7 +3,8 @@
   <div class="text-center mb-8">
     <h1 class="text-3xl font-bold text-gray-900 red-underline inline-block mb-4">Wallet Transfer</h1>
     <p class="text-gray-600 max-w-2xl mx-auto">
-      Send money instantly to any wallet with our secure transfer system. Low fees, fast processing, and real-time confirmation.
+      Send money instantly to any wallet with our secure transfer system. Low fees, fast processing, and real-time
+      confirmation.
     </p>
   </div>
 
@@ -18,7 +19,8 @@
   </div>
 
   <!-- Demo Mode Notice -->
-  <div *ngIf="errorMessage && errorMessage.includes('unavailable')" class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-6">
+  <div *ngIf="errorMessage && errorMessage.includes('unavailable')"
+    class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-6">
     <p class="font-bold">Demo Mode</p>
     <p>The transfer API appears to be unavailable. You can test the form using demo mode.</p>
     <button (click)="demoTransfer()" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -31,12 +33,13 @@
     <!-- Left: Transfer Form -->
     <div class="lg:col-span-2">
       <div class="bg-white rounded-lg shadow p-6">
-        <form (ngSubmit)="transferNow()">
+        <form (ngSubmit)="checkForm()">
           <!-- From Wallet -->
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">From Wallet</label>
             <div class="relative">
-              <input type="text" [value]="senderWalletIden" disabled class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"/>
+              <input type="text" [value]="senderWalletIden" disabled
+                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600" />
             </div>
             <p class="text-xs text-gray-500 mt-1">
               Available Balance: ${{ senderWalletBalance | number:'1.2-2' }}
@@ -48,16 +51,11 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">To Wallet</label>
             <div class="flex gap-2">
               <div class="flex-1 relative">
-                <input 
-                  type="text" 
-                  [(ngModel)]="receiverWalletIden" 
-                  name="receiverWalletIden"
-                  placeholder="Enter recipient's wallet ID" 
-                  class="w-full px-4 py-2 border border-gray-300 rounded-md"/>
+                <input type="text" [(ngModel)]="receiverWalletIden" name="receiverWalletIden"
+                  placeholder="Enter recipient's wallet ID"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md" />
               </div>
-              <button 
-                type="button" 
-                (click)="findUser()"
+              <button type="button" (click)="findUser()"
                 class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
                 Validate
               </button>
@@ -70,23 +68,14 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Transfer Amount</label>
             <div class="relative">
               <span class="absolute left-3 top-2.5 text-gray-500">$</span>
-              <input 
-                type="number" 
-                [(ngModel)]="amount" 
-                name="amount"
-                placeholder="0.00" 
-                class="w-full px-8 py-2 border border-gray-300 rounded-md text-right text-lg"
-                step="0.01" 
-                min="0"/>
+              <input type="number" [(ngModel)]="amount" name="amount" placeholder="0.00"
+                class="w-full px-8 py-2 border border-gray-300 rounded-md text-right text-lg" step="0.01" min="0" />
             </div>
             <div class="flex justify-between items-center mt-1">
               <p class="text-xs text-gray-500">
                 Available Balance: ${{ senderWalletBalance | number:'1.2-2' }}
               </p>
-              <button 
-                type="button" 
-                (click)="useMaxBalance()"
-                class="text-xs text-red-600 hover:text-red-700">
+              <button type="button" (click)="useMaxBalance()" class="text-xs text-red-600 hover:text-red-700">
                 Use Max
               </button>
             </div>
@@ -95,9 +84,7 @@
           <!-- Operation Type -->
           <div class="mb-8">
             <label class="block text-sm font-medium text-gray-700 mb-2">Operation Type</label>
-            <select 
-              [(ngModel)]="operationTypeIden" 
-              name="operationTypeIden"
+            <select [(ngModel)]="operationTypeIden" name="operationTypeIden"
               class="w-full px-4 py-2 border border-gray-300 rounded-md">
               <option value="">Select operation type</option>
               <option *ngFor="let type of operationTypes" [value]="type.optIden">
@@ -106,16 +93,26 @@
             </select>
           </div>
 
+          <!-- OTP Step -->
+          <div *ngIf="isOtpSent" class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Enter OTP</label>
+            <input type="text" [(ngModel)]="otpCode" name="otpCode" maxlength="6" placeholder="6-digit code"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md text-center text-lg tracking-widest" />
+            <p class="text-xs text-gray-500 mt-1">Check your email/SMS for the OTP code.</p>
+            <p *ngIf="errorMessage" class="text-sm text-red-600 mt-2">{{ errorMessage }}</p>
+          </div>
+
           <!-- Buttons -->
           <div class="flex gap-4">
-            <button 
-              type="submit" 
-              [disabled]="isLoading"
+            <button *ngIf="!isOtpSent" type="submit" [disabled]="isLoading"
               class="flex-1 px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-gray-400">
               {{ isLoading ? 'Processing...' : 'Transfer Now' }}
             </button>
-            <button 
-              type="button" 
+            <button *ngIf="isOtpSent" type="button" [disabled]="isLoading" (click)="verifyOtp()"
+              class="flex-1 px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-gray-400">
+              {{ isLoading ? 'Processing...' : 'Verify' }}
+            </button>
+            <button type="button"
               (click)="receiverWalletIden = ''; amount = 0; operationTypeIden = ''; receiverInfo = ''; errorMessage = '';"
               class="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
               style="flex: 0 0 120px;">
