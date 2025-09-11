@@ -42,7 +42,7 @@ input[type="number"]::-webkit-outer-spin-button {
   border-radius: 50%;
 }
 input:checked + .slider {
-  background-color: #4f46e5;
+  background-color: #dc2626;
 }
 input:checked + .slider:before {
   transform: translateX(20px);
@@ -55,8 +55,8 @@ input:checked + .slider:before {
 }
 .settings-nav-item.active {
   background-color: #eff6ff;
-  color: #4f46e5;
-  border-right: 3px solid #4f46e5;
+  color: #dc2626;
+  border-right: 3px solid #dc2626;
 }
 .custom-radio {
   display: flex;
@@ -80,7 +80,7 @@ input:checked + .slider:before {
   border-color: #9ca3af;
 }
 .custom-radio input:checked ~ .radio-checkmark {
-  border-color: #4f46e5;
+  border-color: #dc2626;
 }
 .radio-checkmark:after {
   content: "";
@@ -91,7 +91,7 @@ input:checked + .slider:before {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #4f46e5;
+  background: #dc2626;
 }
 .custom-radio input:checked ~ .radio-checkmark:after {
   display: block;
@@ -118,8 +118,8 @@ input:checked + .slider:before {
   border-color: #9ca3af;
 }
 .custom-checkbox input:checked ~ .checkbox-checkmark {
-  background-color: #4f46e5;
-  border-color: #4f46e5;
+  background-color: #dc2626;
+  border-color: #dc2626;
 }
 .checkbox-checkmark:after {
   content: "";
