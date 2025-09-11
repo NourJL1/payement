@@ -79,7 +79,7 @@ export class AuthService {
     });
   }
 
-  resetPassword(cusCode: number, password: string) {
-    return this.http.put<string>(`${this.apiUrl}/resetPassword/${cusCode}`, password);
+  resetPassword(email: string, password: string) {
+    return this.http.put<string>(`${this.apiUrl}/resetPassword/${email}`, password);
   }
 }
