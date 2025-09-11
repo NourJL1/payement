@@ -5,7 +5,6 @@ import { RegisterComponent } from './components/register/register.component';
 import { AuthGuard } from './guards/auth.guard';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { WalletComponent } from './components/wallet/wallet.component';
-//import { walletStatusGuard } from './guards/wallet-status.guard';
 import { AdminComponent } from './components/admin/admin.component'; 
 import { DashboardComponent } from './components/admin/dashboard/dashboard.component';
 import { AccountingComponent } from './components/admin/accounting/accounting.component';
@@ -64,13 +63,13 @@ export const routes: Routes = [
     children:
     [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      {path: 'dashboard', component: DashboardComponent},
-      {path: 'accounting', component: AccountingComponent},
-      {path: 'wallets', component: WalletMngComponent},
-      {path: 'products', component: ProductsComponent},
-      {path: 'profiling', component: ProfilingComponent},
-      {path: 'customers', component: CustomerMngComponent},
-      {path: 'operations', component: OperationsComponent},
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'accounting', component: AccountingComponent },
+      { path: 'wallets', component: WalletMngComponent },
+      { path: 'products', component: ProductsComponent },
+      { path: 'profiling', component: ProfilingComponent },
+      { path: 'customers', component: CustomerMngComponent },
+      { path: 'operations', component: OperationsComponent },
     ]
   }
 ];
