@@ -35,51 +35,53 @@
         </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="mb-8">
-        <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <button
-                (click)="goToTransfer()"
-                class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
-                <div class="bg-primary bg-opacity-10 p-3 shadow-lg rounded-full mb-2">
-                    <i class="ri-send-plane-line text-primary text-xl"></i>
-                </div>
-                <span class="text-sm font-medium">Send Money</span>
-            </button>
-            <button
-                (click)="openAddCardModal()"
-                class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
-                <div class="bg-purple-100 p-3 shadow-lg rounded-full mb-2">
-                    <i class="ri-bank-card-line text-purple-500 text-xl"></i>
-                </div>
-                <span class="text-sm font-medium">Add Card</span>
-            </button>
-            <button
-                (click)="openAddAccountModal()"
-                class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
-                <div class="bg-blue-100 p-3 shadow-lg rounded-full mb-2">
-                    <i class="ri-bank-line text-blue-500 text-xl"></i>
-                </div>
-                <span class="text-sm font-medium">Add Account</span>
-            </button>
-            <button
-                class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
-                <div class="bg-blue-100 p-3 shadow-lg rounded-full mb-2">
-                    <i class="ri-qr-code-line text-blue-500 text-xl"></i>
-                </div>
-                <span class="text-sm font-medium">Pay with QR</span>
-            </button>
-            <button
-                (click)="loadBalanceHistory()"
-                class="bg-white shadow-lg rounded-lg shadow-sm p-4 flex flex-col items-center hover:shadow-md transition-shadow">
-                <div class="bg-green-100 p-3 shadow-lg rounded-full mb-2">
-                    <i class="ri-history-line text-green-500 text-xl"></i>
-                </div>
-                <span class="text-sm font-medium">History</span>
-            </button>
-        </div>
-    </div>
+  <!-- Quick Actions -->
+  <section class="grid grid-cols-5 gap-4 mb-8">
+    <button
+      class="flex flex-col items-center p-4 bg-white rounded-2xl shadow hover:shadow-md transition"
+      (click)="goToTransfer()">
+      <div class="bg-red-100 p-3 rounded-full mb-2">
+        <i class="ri-send-plane-fill text-red-600 text-xl"></i>
+      </div>
+      <span class="text-sm font-medium">Send Money</span>
+    </button>
+
+    <button
+      class="flex flex-col items-center p-4 bg-white rounded-2xl shadow hover:shadow-md transition"
+      (click)="openAddCardModal()">
+      <div class="bg-black/10 p-3 rounded-full mb-2">
+        <i class="ri-bank-card-2-fill text-black text-xl"></i>
+      </div>
+      <span class="text-sm font-medium">Add Card</span>
+    </button>
+
+    <button
+      class="flex flex-col items-center p-4 bg-white rounded-2xl shadow hover:shadow-md transition"
+      (click)="openAddAccountModal()">
+      <div class="bg-black/10 p-3 rounded-full mb-2">
+        <i class="ri-bank-fill text-black text-xl"></i>
+      </div>
+      <span class="text-sm font-medium">Add Account</span>
+    </button>
+
+    <button
+      class="flex flex-col items-center p-4 bg-white rounded-2xl shadow hover:shadow-md transition">
+      <div class="bg-green-100 p-3 rounded-full mb-2">
+        <i class="ri-qr-code-line text-green-600 text-xl"></i>
+      </div>
+      <span class="text-sm font-medium">Pay with QR</span>
+    </button>
+
+    <button
+      class="flex flex-col items-center p-4 bg-white rounded-2xl shadow hover:shadow-md transition"
+      (click)="loadBalanceHistory()">
+      <div class="bg-blue-100 p-3 rounded-full mb-2">
+        <i class="ri-time-line text-blue-600 text-xl"></i>
+      </div>
+      <span class="text-sm font-medium">History</span>
+    </button>
+  </section>
+
 
     <!-- Add Card Modal -->
     <div *ngIf="showAddCardModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
@@ -341,48 +343,7 @@
         </div>
     </div>
 
-    <!-- Recent Transactions -->
-    <div class="mb-8">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">Recent Transactions</h3>
-            <a href="/wallet/transactions" class="text-primary text-sm font-medium hover:underline">View All</a>
-        </div>
-        <div class="bg-white shadow-lg rounded-xl shadow-sm overflow-hidden">
-            <div *ngIf="wallet?.walletOperations?.length; else noTransactions">
-                <div *ngFor="let operation of wallet?.walletOperations?.slice(0, 5)"
-                     class="border-b border-gray-100 last:border-0">
-                    <div class="p-4 flex items-center">
-                        <div class="mr-4">
-                            <div [ngClass]="{
-                                'bg-green-100 text-green-500': operation.wopAmount > 0,
-                                'bg-red-100 text-red-500': operation.wopAmount <= 0
-                            }" class="p-3 shadow-lg rounded-full">
-                                <i [ngClass]="{
-                                    'ri-arrow-down-line': operation.wopAmount > 0,
-                                    'ri-arrow-up-line': operation.wopAmount <= 0
-                                }" class="text-xl"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow">
-                            <div class="font-medium">{{operation.wopLabel || 'Unknown'}}</div>
-                            <div class="text-sm text-gray-500">{{operation.wopTimestamps | date:'medium'}}</div>
-                        </div>
-                        <div [ngClass]="{
-                            'text-green-500': operation.wopAmount > 0,
-                            'text-red-500': operation.wopAmount <= 0
-                        }" class="font-semibold">
-                            {{operation.wopAmount > 0 ? '+' : ''}}{{operation.wopAmount | currency:'TND ':'symbol':'1.2-2'}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <ng-template #noTransactions>
-                <div class="p-8 text-center text-gray-500">
-                    No recent transactions found
-                </div>
-            </ng-template>
-        </div>
-    </div>
+    
 
     <!-- Cards & Accounts -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

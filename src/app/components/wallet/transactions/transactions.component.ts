@@ -176,16 +176,24 @@ Math: any;
 
   console.log('Loading transactions for:', { cusCode, walIden });
 
+  
+
   const filterTransactions = (data: OperationDetails[]) => {
   return data
-    .filter(transaction =>
-      Number(transaction.odeCusCode) === cusCode &&
+    .filter(transaction => 
+      // 1️⃣ Keep only transactions related to your wallet (sender OR recipient)
+      (
+        Number(transaction.odeCusCode) === cusCode || // you are sender
+        transaction.odeRecipientWallet === walIden   // you are recipient
+      ) &&
+      // 2️⃣ Exclude fees & TVA
       transaction.odeType !== 'FEE' &&
       transaction.odeType !== 'TVA' &&
+      // 3️⃣ (Optional) Ensure it is a wallet-related transaction
       (
-        transaction.odeRecipientWallet === walIden || 
-        transaction.odeIden?.includes(walIden) ||  // optional: if your wallet ID is in odeIden
-        transaction.odePayMeth === 'WALLET_TO_WALLET' // keep transfers
+        transaction.odeRecipientWallet === walIden ||
+        transaction.odeIden?.includes(walIden) ||
+        transaction.odePayMeth === 'WALLET_TO_WALLET'
       )
     )
     .map(transaction => {
@@ -194,11 +202,11 @@ Math: any;
       else if (transaction.odeType === 'DEBIT') transaction.odeType = 'expense';
       else if (transaction.odeType === 'TRANSFER') transaction.odeType = 'transfer';
 
-      // Normalize value
       transaction.odeValue = Number(transaction.odeValue).toString();
       return transaction;
     });
 };
+
 
 
 
