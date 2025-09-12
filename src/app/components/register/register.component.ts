@@ -310,7 +310,7 @@ export class RegisterComponent {
 
     this.isOtpLoading = true
 
-    this.authService.sendEmail(this.customer.cusMailAddress, "TOTP").subscribe({
+    this.authService.sendEmail(this.customer.cusMailAddress, "register").subscribe({
       next: (result: any) => {
         console.log('OTP sent result:', result.message);
         if (result.message != 'success')

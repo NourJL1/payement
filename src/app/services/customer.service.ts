@@ -44,6 +44,10 @@ export class CustomerService {
     return this.http.get<Customer>(`${this.apiUrl}/${username}`);
   }
 
+  checkPassword(cusCode: number, password: string) {
+    return this.http.post<boolean>(`${this.apiUrl}/check-password/${cusCode}`, { password });
+  }
+
   getNewCustomersTodayCount(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/count/new-today`);
   }
@@ -108,6 +112,10 @@ export class CustomerService {
 
   getAllCustomersWithWallets() {
     return this.http.get<Customer[]>(`${this.apiUrl}/with-wallets`);
+  }
+
+  getEmail(cusCode: number) {
+    return this.http.get(`${this.apiUrl}/getEmail/${cusCode}`);
   }
 
   sendEmail(email: string, subject: string) {

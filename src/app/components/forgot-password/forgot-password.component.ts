@@ -34,7 +34,7 @@ export class ForgotPasswordComponent {
     this.isEmailSent = false;  // Reset the flag when submitting the form
     this.isLoading = true;  // Show loading indicator
 
-    this.authService.sendEmail(this.email, "Reset Password").subscribe({
+    this.authService.sendEmail(this.email, "confirm").subscribe({
       next: (result: any) => {
         if (result.message != 'success')
           this.errorMessage = result.message;

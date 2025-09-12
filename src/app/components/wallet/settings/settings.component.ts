@@ -3,6 +3,7 @@ import { Customer } from '../../../entities/customer';
 import { CustomerService } from '../../../services/customer.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-settings',
@@ -16,6 +17,10 @@ export class SettingsComponent implements OnInit {
   loading: boolean = true;
   error: string | null = null;
   activeSection: string = 'account'; // Default active section
+
+  currentPassword?: string
+  newPassword?: string
+  confirmNewPassword?: string
 
   // Define notification settings
   notificationPreferences = {
@@ -59,7 +64,9 @@ export class SettingsComponent implements OnInit {
     paymentConfirmation: true
   };
 
-  constructor(private customerService: CustomerService) {
+  constructor(
+    private customerService: CustomerService,
+    private authService: AuthService) {
     // Initialize city and country to prevent null errors
     this.customer.city = { ctyLabe: '' };
     this.customer.country = { ctrLabe: '' };
@@ -181,5 +188,43 @@ export class SettingsComponent implements OnInit {
     if (target) {
       this.updatePaymentSetting('defaultPaymentMethod', target.value);
     }
+  }
+
+  resetPassword() {
+    if (!this.currentPassword || !this.newPassword || !this.confirmNewPassword) {
+      alert('please fill all required fields!')
+      return
+    }
+    if (this.newPassword != this.confirmNewPassword) {
+      alert('new password mismatch')
+      return
+    }
+    this.customerService.checkPassword(this.customer.cusCode!, this.currentPassword).subscribe({
+      next: (result: boolean) => {
+        if (!result) {
+          alert('incorrect password!');
+          return
+        }
+
+        this.authService.resetPassword(this.customer.cusMailAddress!, this.newPassword!).subscribe(
+          {
+            next: (result: any) => {
+              if (result.message == "success") {
+                //this.successMessage = 'Password reset submitted'
+                alert('Password updated successfully!');
+              }
+            },
+            error: (err) => {
+              console.log(err);
+              alert('failed to update password!!');
+            }
+          }
+        );
+      },
+      error: (err) => {
+        console.log(err);
+        alert('failed to check password!!');
+      },
+    })
   }
 }
