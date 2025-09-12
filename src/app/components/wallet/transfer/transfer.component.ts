@@ -16,13 +16,20 @@ import { AuthService } from '../../../services/auth.service';
 })
 export class TransferComponent implements OnInit {
 
-  email?: string
+  email?: string;
 
   // Form data
   senderWalletIden: string = '';
   receiverWalletIden: string = '';
   amount: number = 0;
   operationTypeIden: string = '';
+
+  // QR Code specific fields
+  currency: string = 'USD';
+  transactionLabel: string = '';
+  expiresAt: string = '';
+
+  // OTP state
   isOtpSent: boolean = false;
   isOtpVerified: boolean = false;
   otpCode?: string;
@@ -35,7 +42,7 @@ export class TransferComponent implements OnInit {
 
   // Data from backend
   operationTypes: OperationType[] = [];
-  senderWalletBalance: number = 2847.50;
+  senderWalletBalance: number = 0;
 
   // API base URL
   private apiBaseUrl = environment.apiUrl || '';
@@ -45,47 +52,37 @@ export class TransferComponent implements OnInit {
     private operationTypeService: OperationTypeService,
     private customerService: CustomerService,
     private authService: AuthService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.loadLoggedInUserWallet();
     this.loadOperationTypes();
-    this.loadEmail()
+    this.loadEmail();
   }
 
-  loadEmail(){
+  loadEmail() {
     this.customerService.getEmail(parseInt(localStorage.getItem("cusCode")!)).subscribe({
       next: (res: any) => {
-        this.email = res.email
+        this.email = res.email;
       },
-      error: (err) => {console.error(err)}
-    })
+      error: (err) => console.error('Failed to load email:', err)
+    });
   }
 
-  // Load the logged-in user's wallet information
   // Load the logged-in user's wallet information
   loadLoggedInUserWallet() {
     try {
       const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-
       if (currentUser) {
-        // Check if wallet data is available in the new structure
         if (currentUser.wallet) {
           this.senderWalletIden = currentUser.wallet.walIden || 'WAL-unknown';
           this.senderWalletBalance = currentUser.wallet.walLogicBalance || currentUser.wallet.walEffBal || 0;
         } else {
-          // Fallback for old structure or missing wallet
           this.senderWalletIden = currentUser.walIden || 'WAL-unknown';
           this.senderWalletBalance = currentUser.walLogicBalance || currentUser.walEffBal || 0;
         }
-
-        console.log('Wallet loaded:', {
-          walletIden: this.senderWalletIden,
-          balance: this.senderWalletBalance
-        });
       } else {
         this.senderWalletIden = 'WAL-not-logged-in';
-        console.warn('No user found in localStorage');
       }
     } catch (e) {
       console.error('Error loading user wallet:', e);
@@ -102,10 +99,10 @@ export class TransferComponent implements OnInit {
       error: (error) => {
         console.error('Failed to load operation types:', error);
         this.errorMessage = 'Failed to load operation options';
-
+        // Fallback options
         this.operationTypes = [
-          { optIden: 'OPT-W2W', optLabe: 'Wallet to Wallet Transfer', optCode: 1 } as OperationType,
-          { optIden: 'OPT-QR', optLabe: 'QR Code Payment', optCode: 2 } as OperationType,
+          { optIden: '2020', optLabe: 'WALLET TO WALLET', optCode: 3 } as OperationType,
+          { optIden: 'OPT-003', optLabe: 'QR CODE', optCode: 4 } as OperationType,
           { optIden: 'OPT-BILL', optLabe: 'Bill Payment', optCode: 3 } as OperationType
         ];
       }
@@ -118,12 +115,10 @@ export class TransferComponent implements OnInit {
       this.errorMessage = 'Please enter a wallet ID';
       return;
     }
-
     if (this.receiverWalletIden === this.senderWalletIden) {
       this.errorMessage = 'Cannot transfer to your own wallet';
       return;
     }
-
     if (this.receiverWalletIden.startsWith('WAL-') || this.receiverWalletIden.startsWith('WLT-')) {
       this.receiverInfo = `Wallet ID validated: ${this.receiverWalletIden}`;
       this.errorMessage = '';
@@ -138,29 +133,42 @@ export class TransferComponent implements OnInit {
     this.amount = this.senderWalletBalance;
   }
 
-  checkForm(){
-    
+  clearForm(clearMessages: boolean = true) {
+    this.receiverWalletIden = '';
+    this.amount = 0;
+    this.operationTypeIden = '';
+    this.receiverInfo = '';
+    this.currency = 'USD';
+    this.transactionLabel = '';
+    this.expiresAt = '';
+    this.otpCode = '';
+    this.isOtpSent = false;
+    this.isOtpVerified = false;
+
+    if (clearMessages) {
+      this.errorMessage = '';
+      this.successMessage = '';
+    }
+  }
+
+  checkForm() {
     // Validation
     if (!this.receiverWalletIden) {
       this.errorMessage = 'Please enter a receiver wallet ID';
       return;
     }
-
     if (!this.amount || this.amount <= 0) {
       this.errorMessage = 'Please enter a valid amount';
       return;
     }
-
     if (!this.operationTypeIden) {
       this.errorMessage = 'Please select an operation type';
       return;
     }
-
     if (this.amount > this.senderWalletBalance) {
       this.errorMessage = 'Insufficient balance';
       return;
     }
-
     if (this.receiverWalletIden === this.senderWalletIden) {
       this.errorMessage = 'Cannot transfer to your own wallet';
       return;
@@ -169,76 +177,80 @@ export class TransferComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
-
-    this.sendOtp()
+    this.sendOtp();
   }
 
-  // Submit the transfer
-  transferNow() {
-
-    const transferRequest = {
-      senderWalletIden: this.senderWalletIden,
-      receiverWalletIden: this.receiverWalletIden,
-      amount: this.amount,
-      operationTypeIden: this.operationTypeIden
-    };
-
-    console.log('Sending transfer request:', transferRequest);
-
-    // Try different API endpoints
-    this.tryTransferEndpoints(transferRequest);
-  }
-
-  sendOtp(){
+  sendOtp() {
     this.authService.sendEmail(this.email!, "confirm").subscribe({
       next: (result: any) => {
-        if (result.message != 'success')
+        if (result.message !== 'success') {
           this.errorMessage = result.message;
-        else {
+        } else {
           this.successMessage = 'An email has been sent to your address to verify.';
-          this.isOtpSent = true;  // Set flag to true when email is sent successfully
+          this.isOtpSent = true;
         }
-        //localStorage.setItem('cusCode', value.cusCode)
-        this.isLoading = false
+        this.isLoading = false;
       },
       error: (err) => {
         this.errorMessage = 'Failed to send email. Please try again.';
         console.error('mailing Failed: ', err);
-        this.isLoading = false;  // Hide loading indicator
-      }
-    })
-  }
-
-  verifyOtp(){
-    this.authService.verifyOTP(this.email!, this.otpCode!).subscribe({
-      next: (verif: boolean) => {
-        this.isOtpVerified = verif; // Direct assignment (no .valueOf needed)
-        console.log('OTP Verification Result:', verif);
-
-        if (!verif)
-          this.errorMessage = 'OTP verification failed. Please try again.';
-        else {
-          this.errorMessage = '';
-          this.successMessage = 'OTP verified successfully!';
-          this.transferNow()
-        }
-      },
-      error: (err) => {
-        console.error('OTP Verification Failed:', err);
-        this.errorMessage = 'OTP verification failed. Please try again.\n' + err.message;
-        // Handle errors (e.g., show error message)
+        this.isLoading = false;
       }
     });
   }
 
-  // Try different possible API endpoints
+  verifyOtp() {
+    this.authService.verifyOTP(this.email!, this.otpCode!).subscribe({
+      next: (verif: boolean) => {
+        this.isOtpVerified = verif;
+        if (!verif) {
+          this.errorMessage = 'OTP verification failed. Please try again.';
+        } else {
+          this.errorMessage = '';
+          this.successMessage = 'OTP verified successfully!';
+          this.transferNow();
+        }
+      },
+      error: (err) => {
+        this.errorMessage = 'OTP verification failed. Please try again.\n' + err.message;
+      }
+    });
+  }
+
+  // Submit the transfer
+  transferNow() {
+  if (!this.isOtpVerified) {
+    this.errorMessage = 'Please verify the OTP before transferring.';
+    return;
+  }
+
+  this.isLoading = true;
+
+  let transferRequest: any = {
+    senderWalletIden: this.senderWalletIden,
+    receiverWalletIden: this.receiverWalletIden,
+    amount: this.amount,
+    operationTypeIden: this.operationTypeIden
+  };
+
+  if (this.operationTypeIden === 'OPT-003') {
+    transferRequest.currency = this.currency;
+    transferRequest.transactionLabel = this.transactionLabel;
+    transferRequest.expiresAt = this.expiresAt;
+  }
+
+  console.log('Sending transfer request:', transferRequest);
+  this.tryTransferEndpoints(transferRequest);
+}
+
+
   private tryTransferEndpoints(transferRequest: any) {
     const endpoints = [
       `${this.apiBaseUrl}/api/transfer/wallet-to-wallet`,
       `${this.apiBaseUrl}/transfer/wallet-to-wallet`,
       `${this.apiBaseUrl}/api/wallet/transfer`,
       `${this.apiBaseUrl}/wallet/transfer`,
-      '/api/transfer/wallet-to-wallet', // Fallback without base URL
+      '/api/transfer/wallet-to-wallet',
       '/transfer/wallet-to-wallet'
     ];
 
@@ -255,12 +267,9 @@ export class TransferComponent implements OnInit {
       console.log(`Trying endpoint: ${endpoint}`);
 
       this.http.post<any>(endpoint, transferRequest).subscribe({
-        next: (response) => {
-          this.handleTransferSuccess(response);
-        },
+        next: (response) => this.handleTransferSuccess(response),
         error: (error: HttpErrorResponse) => {
           if (error.status === 404 && currentAttempt < endpoints.length - 1) {
-            // Try next endpoint
             currentAttempt++;
             tryNextEndpoint();
           } else {
@@ -270,7 +279,6 @@ export class TransferComponent implements OnInit {
       });
     };
 
-    // Start with the first endpoint
     tryNextEndpoint();
   }
 
@@ -284,42 +292,24 @@ export class TransferComponent implements OnInit {
       this.senderWalletBalance -= this.amount;
     }
 
-    this.receiverWalletIden = '';
-    this.amount = 0;
-    this.operationTypeIden = '';
-    this.receiverInfo = '';
+    this.clearForm(false); // Keep success message
   }
 
   private handleTransferError(error: HttpErrorResponse) {
     this.isLoading = false;
-
-    if (error.status === 404) {
-      this.errorMessage = 'Transfer service is currently unavailable. Please try again later.';
-    } else if (error.error && error.error.message) {
-      this.errorMessage = error.error.message;
-    } else {
-      this.errorMessage = 'Transfer failed. Please try again.';
-    }
-
+    this.errorMessage = error.error?.message || 'Transfer failed. Please try again.';
     console.error('Transfer error:', error);
   }
 
-  // Demo mode for testing without backend
   demoTransfer() {
     this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
-
-    // Simulate API delay
     setTimeout(() => {
       this.isLoading = false;
       this.successMessage = 'Transfer successful! Transaction ID: TXN-12345';
       this.senderWalletBalance -= this.amount;
-
-      this.receiverWalletIden = '';
-      this.amount = 0;
-      this.operationTypeIden = '';
-      this.receiverInfo = '';
+      this.clearForm(false);
     }, 2000);
   }
 }
