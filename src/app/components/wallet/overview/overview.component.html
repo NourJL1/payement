@@ -112,8 +112,9 @@
                         <select id="cardType" [(ngModel)]="newCard.cardType" name="cardType" required
                                 class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
                             <option [ngValue]="null" disabled selected>Select Card Type</option>
-                            <option [ngValue]="{ ctypLabe: 'visa' }">Visa</option>
-                            <option [ngValue]="{ ctypLabe: 'mastercard' }">Mastercard</option>
+                            <option *ngFor="let cardType of availableCardTypes" [ngValue]="cardType">
+                                {{ cardType.ctypLabe | titlecase }}
+                            </option>
                         </select>
                     </div>
                     <div class="flex space-x-4 mt-8">
@@ -174,121 +175,109 @@
     </div>
 
 
+
     <!-- Add Account Modal -->
-    <div *ngIf="showAddAccountModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl p-6 grid grid-cols-12 gap-6">
-            <!-- Left Form Section -->
-            <div class="col-span-7">
-                <h3 class="text-2xl font-semibold mb-6">Add Bank Account</h3>
-                <p class="text-gray-600 mb-8">Connect your bank account to your wallet</p>
-                <form (ngSubmit)="addAccount()" class="space-y-6">
+<div *ngIf="showAddAccountModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl p-6 grid grid-cols-12 gap-6">
+        <!-- Left Form Section -->
+        <div class="col-span-7">
+            <h3 class="text-2xl font-semibold mb-6">Add Bank Account</h3>
+            <p class="text-gray-600 mb-8">Connect your bank account to your wallet</p>
+            <form (ngSubmit)="addAccount()" class="space-y-6">
+                <div>
+                    <label for="accRib" class="block text-sm font-medium text-gray-700 mb-1">RIB Number</label>
+                    <input id="accRib" type="text" [(ngModel)]="newAccount.accRib" name="accRib" placeholder="Enter RIB number" 
+                           class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                           required pattern="[A-Z0-9]{20,34}">
+                </div>
+                <div>
+                    <label for="accKey" class="block text-sm font-medium text-gray-700 mb-1">Account Key</label>
+                    <input id="accKey" type="text" [(ngModel)]="newAccount.accKey" name="accKey" placeholder="Enter security key" 
+                           class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="accRib" class="block text-sm font-medium text-gray-700 mb-1">RIB Number</label>
-                        <input id="accRib" type="text" [(ngModel)]="newAccount.accRib" name="accRib" placeholder="Enter RIB number" 
-                               class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                               required pattern="[A-Z0-9]{20,34}">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="accIden" class="block text-sm font-medium text-gray-700 mb-1">Account Identifier</label>
-                            <input id="accIden" type="text" [(ngModel)]="newAccount.accIden" name="accIden" placeholder="Enter account ID" 
-                                   class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label for="accKey" class="block text-sm font-medium text-gray-700 mb-1">Account Key</label>
-                            <input id="accKey" type="text" [(ngModel)]="newAccount.accKey" name="accKey" placeholder="Enter security key" 
-                                   class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="accountType" class="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
-                            <select id="accountType" [(ngModel)]="newAccount.accountType" name="accountType" required
-                                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option [ngValue]="null" disabled selected>Select account type</option>
-                                <option [ngValue]="{ atyLabe: 'checking' }">Checking</option>
-                                <option [ngValue]="{ atyLabe: 'savings' }">Savings</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="accountList" class="block text-sm font-medium text-gray-700 mb-1">Account List</label>
-                            <select id="accountList" [(ngModel)]="newAccount.accountList" name="accountList" required
-                                    class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option [ngValue]="null" disabled selected>Select list</option>
-                                <option [ngValue]="{ aliLabe: 'My Accounts' }">My Accounts</option>
-                            </select>
-                        </div>
+                        <label for="accountType" class="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
+                        <select id="accountType" [(ngModel)]="newAccount.accountType" name="accountType" required
+                                class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option [ngValue]="null" disabled selected>Select account type</option>
+                            <option *ngFor="let accountType of availableAccountTypes" [ngValue]="accountType">
+                                {{ accountType.atyLabe | titlecase }} Account
+                            </option>
+                        </select>
                     </div>
                     <div>
                         <label for="bank" class="block text-sm font-medium text-gray-700 mb-1">Bank</label>
                         <select id="bank" [(ngModel)]="newAccount.bank" name="bank" required
                                 class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option [ngValue]="null" disabled selected>Select your bank</option>
-                            <option [ngValue]="{ banCorpName: 'Bank A' }">Bank A</option>
-                            <option [ngValue]="{ banCorpName: 'Bank B' }">Bank B</option>
+                            <option *ngFor="let bank of availableBanks" [ngValue]="bank">
+                                {{ bank.banCorpName }}
+                            </option>
                         </select>
                     </div>
-                    <div>
-                        <label for="accBalance" class="block text-sm font-medium text-gray-700 mb-1">Current Balance</label>
-                        <input id="accBalance" type="number" [(ngModel)]="newAccount.accBalance" name="accBalance" placeholder="$ 0.00" 
-                               class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" min="0" step="0.01">
-                    </div>
-                    <div class="flex space-x-4 mt-8">
-                        <button type="submit" class="bg-red-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-red-700 flex items-center space-x-2">
-                            <i class="ri-add-line"></i><span>Add Account</span>
-                        </button>
-                        <button type="button" (click)="closeAddAccountModal()" class="px-6 py-3 rounded-md border border-gray-300 hover:bg-gray-100">
-                            Clear
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <!-- Right Summary Section -->
-            <div class="col-span-5 bg-gray-50 rounded-xl p-6 flex flex-col justify-between">
+                </div>
                 <div>
-                    <h4 class="text-lg font-semibold mb-6">Account Summary</h4>
-                    <div class="bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl p-6 relative shadow-lg mb-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <div>
-                                <p class="text-xs uppercase opacity-70">Account Type</p>
-                                <p class="text-lg font-bold">{{newAccount.accountType?.atyLabe ? (newAccount.accountType!.atyLabe === 'checking' ? 'Checking Account' : 'Savings Account') : 'Select Account'}}</p>
-                            </div>
-                            <i class="ri-bank-line text-2xl opacity-60"></i>
+                    <label for="accBalance" class="block text-sm font-medium text-gray-700 mb-1">Current Balance</label>
+                    <input id="accBalance" type="number" [(ngModel)]="newAccount.accBalance" name="accBalance" placeholder="$ 0.00" 
+                           class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" min="0" step="0.01">
+                </div>
+                <div class="flex space-x-4 mt-8">
+                    <button type="submit" class="bg-red-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-red-700 flex items-center space-x-2">
+                        <i class="ri-add-line"></i><span>Add Account</span>
+                    </button>
+                    <button type="button" (click)="closeAddAccountModal()" class="px-6 py-3 rounded-md border border-gray-300 hover:bg-gray-100">
+                        Clear
+                    </button>
+                </div>
+            </form>
+        </div>
+        <!-- Right Summary Section -->
+        <div class="col-span-5 bg-gray-50 rounded-xl p-6 flex flex-col justify-between">
+            <div>
+                <h4 class="text-lg font-semibold mb-6">Account Summary</h4>
+                <div class="bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl p-6 relative shadow-lg mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <p class="text-xs uppercase opacity-70">Account Type</p>
+                            <p class="text-lg font-bold">{{newAccount.accountType?.atyLabe ? (newAccount.accountType!.atyLabe | titlecase) + ' Account' : 'Select Account'}}</p>
                         </div>
-                        <div class="mb-3">
-                            <p class="text-xs opacity-60">RIB Number</p>
-                            <p class="text-lg tracking-widest">{{maskRib(newAccount.accRib)}}</p>
-                        </div>
-                        <div class="flex justify-between text-sm opacity-70">
-                            <span>Bank: {{newAccount.bank?.banCorpName || 'Select Bank'}}</span>
-                            <span class="font-semibold">{{newAccount.accBalance ? (newAccount.accBalance | currency:'USD':'symbol':'1.2-2') : '$0.00'}}</span>
-                        </div>
+                        <i class="ri-bank-line text-2xl opacity-60"></i>
                     </div>
-                    <div class="bg-white rounded-md shadow p-4 space-y-3">
-                        <h5 class="font-semibold mb-2">Account Benefits</h5>
-                        <ul class="text-sm space-y-2 text-gray-700">
-                            <li class="flex items-center space-x-2">
-                                <i class="ri-check-line text-green-500"></i>
-                                <span>Real-time balance updates</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <i class="ri-notification-line text-green-500"></i>
-                                <span>Transaction notifications</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <i class="ri-shield-check-line text-green-500"></i>
-                                <span>Bank-level security</span>
-                            </li>
-                            <li class="flex items-center space-x-2">
-                                <i class="ri-history-line text-green-500"></i>
-                                <span>Complete transaction history</span>
-                            </li>
-                        </ul>
+                    <div class="mb-3">
+                        <p class="text-xs opacity-60">RIB Number</p>
+                        <p class="text-lg tracking-widest">{{maskRib(newAccount.accRib)}}</p>
                     </div>
+                    <div class="flex justify-between text-sm opacity-70">
+                        <span>Bank: {{newAccount.bank?.banCorpName || 'Select Bank'}}</span>
+                        <span class="font-semibold">{{newAccount.accBalance ? (newAccount.accBalance | currency:'USD':'symbol':'1.2-2') : '$0.00'}}</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-md shadow p-4 space-y-3">
+                    <h5 class="font-semibold mb-2">Account Benefits</h5>
+                    <ul class="text-sm space-y-2 text-gray-700">
+                        <li class="flex items-center space-x-2">
+                            <i class="ri-check-line text-green-500"></i>
+                            <span>Real-time balance updates</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="ri-notification-line text-green-500"></i>
+                            <span>Transaction notifications</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="ri-shield-check-line text-green-500"></i>
+                            <span>Bank-level security</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="ri-history-line text-green-500"></i>
+                            <span>Complete transaction history</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Balance History Panel -->
     <div *ngIf="showHistoryPanel" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
@@ -379,7 +368,7 @@
             </div>
         </div>
 
-        <!-- Bank Accounts -->
+        <!-- Linked Bank Accounts -->
         <div>
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold">Bank Accounts</h3>

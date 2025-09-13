@@ -42,15 +42,28 @@ export class CardService {
     );
   }
 
-  create(card: Card): Observable<Card> {
-    return this.http.post<Card>(this.apiUrl, card, { headers: this.getHeaders(true) }).pipe(
-      map(createdCard => new Card(createdCard)),
-      catchError(error => {
-        console.error('create: Error:', error);
-        return throwError(() => new Error('Failed to create card'));
-      })
-    );
-  }
+  create(card: any): Observable<Card> {
+  // Prepare the data for backend - exclude carCode and ensure proper structure
+  const cardData = {
+    carNumb: card.carNumb,
+    carLabe: card.carLabe,
+    carExpiryDate: card.carExpiryDate,
+    cardType: card.cardType,
+    cardList: card.cardList,
+    carAmount: card.carAmount,
+    carPlafond: card.carPlafond,
+    carPlafondPeriod: card.carPlafondPeriod
+    // Explicitly exclude carCode to let database auto-generate it
+  };
+  
+  return this.http.post<Card>(this.apiUrl, cardData, { headers: this.getHeaders(true) }).pipe(
+    map(createdCard => new Card(createdCard)),
+    catchError(error => {
+      console.error('create: Error:', error);
+      return throwError(() => new Error(error.error?.message || 'Failed to create card'));
+    })
+  );
+}
 
   update(carCode: number, card: Card): Observable<Card> {
     return this.http.put<Card>(`${this.apiUrl}/${carCode}`, card, { headers: this.getHeaders(true) }).pipe(
