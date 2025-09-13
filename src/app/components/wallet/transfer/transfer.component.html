@@ -28,6 +28,49 @@
     </button>
   </div>
 
+   <!-- QR Code Modal (initially hidden) -->
+  <div *ngIf="showQrModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+      <div class="flex justify-between items-center p-6 border-b">
+        <h2 class="text-xl font-semibold text-gray-900">QR Code Payment</h2>
+        <button (click)="closeQrModal()" class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <div class="p-6">
+        <div class="flex flex-col items-center">
+          <div class="mb-4 p-2 bg-white rounded border relative">
+            <img *ngIf="qrCodeImage" [src]="qrCodeImage" alt="QR Code" class="w-64 h-64" (contextmenu)="preventRightClick($event)" #qrCodeImg>
+            <div *ngIf="!qrCodeImage && isLoadingQr" class="w-64 h-64 flex items-center justify-center">
+              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+            </div>
+            <div *ngIf="!qrCodeImage && !isLoadingQr" class="w-64 h-64 flex items-center justify-center text-gray-500">
+              QR Code will appear here
+            </div>
+          </div>
+          
+          <div class="flex space-x-4">
+            <button (click)="exportAsPdf()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+              Export Receipt
+            </button>
+            <button (click)="exportQrAsImage()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              Export QR Code
+            </button>
+          </div>
+          
+          <div class="mt-4 text-sm text-gray-600 text-center">
+            <p>Scan this QR code with a wallet app to complete the payment.</p>
+            <p *ngIf="qrExpiresAt">Expires: {{ qrExpiresAt | date:'medium' }}</p>
+            <p class="mt-2 text-xs text-gray-500">Right-click and image saving are disabled for security</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Content -->
   <div class="grid lg:grid-cols-3 gap-6">
     <!-- Left: Transfer Form -->
@@ -135,7 +178,7 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">Currency</label>
               <select [(ngModel)]="currency" name="currency" class="w-full px-4 py-2 border border-gray-300 rounded-md">
                 <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
+                <option value="TND">TND</option>
                 <option value="GBP">GBP</option>
                 <option value="CAD">CAD</option>
               </select>
@@ -187,7 +230,7 @@
         <div class="space-y-3">
           <div class="flex justify-between">
             <span class="text-gray-600">Transfer Amount</span>
-            <span>${{ amount | number:'1.2-2' }}</span>
+            <span>TND{{ amount | number:'1.2-2' }}</span>
           </div>
           <div class="text-sm text-gray-500 italic">
             Fees will be calculated by the server during processing
@@ -195,7 +238,7 @@
           <hr class="my-3">
           <div class="flex justify-between font-semibold">
             <span>Total Amount</span>
-            <span class="text-red-600">${{ amount | number:'1.2-2' }}</span>
+            <span class="text-red-600">TND{{ amount | number:'1.2-2' }}</span>
           </div>
         </div>
         <div class="mt-4 flex items-center gap-2 text-sm text-gray-600">

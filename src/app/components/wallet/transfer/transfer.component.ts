@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -7,6 +7,10 @@ import { OperationType } from '../../../entities/operation-type';
 import { environment } from '../../../../environments/environment';
 import { CustomerService } from '../../../services/customer.service';
 import { AuthService } from '../../../services/auth.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+
+// Import jsPDF for PDF generation
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-transfer',
@@ -15,6 +19,8 @@ import { AuthService } from '../../../services/auth.service';
   styleUrl: './transfer.component.css'
 })
 export class TransferComponent implements OnInit {
+
+  @ViewChild('qrCodeImg') qrCodeImg!: ElementRef;
 
   email?: string;
 
@@ -40,6 +46,12 @@ export class TransferComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
 
+  // QR Code state - CHANGED TO MODAL
+  showQrModal: boolean = false;
+  qrCodeImage: SafeUrl | null = null;
+  isLoadingQr: boolean = false;
+  qrExpiresAt: Date | null = null;
+
   // Data from backend
   operationTypes: OperationType[] = [];
   senderWalletBalance: number = 0;
@@ -51,7 +63,8 @@ export class TransferComponent implements OnInit {
     private http: HttpClient,
     private operationTypeService: OperationTypeService,
     private customerService: CustomerService,
-    private authService: AuthService
+    private authService: AuthService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -144,6 +157,9 @@ export class TransferComponent implements OnInit {
     this.otpCode = '';
     this.isOtpSent = false;
     this.isOtpVerified = false;
+    this.showQrModal = false;
+    this.qrCodeImage = null;
+    this.qrExpiresAt = null;
 
     if (clearMessages) {
       this.errorMessage = '';
@@ -177,7 +193,13 @@ export class TransferComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
-    this.sendOtp();
+    
+    // For QR code operations, generate QR code directly
+    if (this.operationTypeIden === 'OPT-003') {
+      this.generateQrCode();
+    } else {
+      this.sendOtp();
+    }
   }
 
   sendOtp() {
@@ -217,32 +239,241 @@ export class TransferComponent implements OnInit {
     });
   }
 
+  // Generate QR Code
+  generateQrCode() {
+    this.isLoadingQr = true;
+    
+    // Prepare QR request data
+    const qrRequest = {
+      receiverWalletIden: this.receiverWalletIden,
+      amount: this.amount,
+      currency: this.currency,
+      label: this.transactionLabel,
+      expiresAt: this.expiresAt ? new Date(this.expiresAt).getTime() : null
+    };
+
+    // Call the backend API to generate QR code
+    this.http.post(`${this.apiBaseUrl}/api/qr/generate`, qrRequest, { 
+      responseType: 'blob' 
+    }).subscribe({
+      next: (blob: Blob) => {
+        const objectUrl = URL.createObjectURL(blob);
+        this.qrCodeImage = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+        this.isLoadingQr = false;
+        this.isLoading = false;
+        this.showQrModal = true; // Changed to show modal instead of tab
+        
+        // Set expiration time for display
+        if (qrRequest.expiresAt) {
+          this.qrExpiresAt = new Date(qrRequest.expiresAt);
+        }
+        
+        this.successMessage = 'QR code generated successfully!';
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Failed to generate QR code:', error);
+        this.errorMessage = 'Failed to generate QR code. Please try again.';
+        this.isLoadingQr = false;
+        this.isLoading = false;
+        
+        // Fallback for demo mode
+        if (error.status === 0 || error.status === 404) {
+          this.demoGenerateQrCode();
+        }
+      }
+    });
+  }
+
+  // Demo mode QR code generation
+  demoGenerateQrCode() {
+    // Create a demo QR code using a simple canvas approach
+    const canvas = document.createElement('canvas');
+    canvas.width = 250;
+    canvas.height = 250;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      // Draw background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 250, 250);
+      
+      // Draw QR code pattern (simplified)
+      ctx.fillStyle = '#000000';
+      
+      // Outer squares
+      ctx.fillRect(50, 50, 30, 30);
+      ctx.fillRect(170, 50, 30, 30);
+      ctx.fillRect(50, 170, 30, 30);
+      
+      // Inner pattern
+      for (let i = 0; i < 7; i++) {
+        for (let j = 0; j < 7; j++) {
+          if (Math.random() > 0.5) {
+            ctx.fillRect(80 + i * 15, 80 + j * 15, 10, 10);
+          }
+        }
+      }
+      
+      // Convert to image
+      const dataUrl = canvas.toDataURL('image/png');
+      this.qrCodeImage = this.sanitizer.bypassSecurityTrustUrl(dataUrl);
+      this.showQrModal = true; // Changed to show modal instead of tab
+      this.isLoadingQr = false;
+      this.isLoading = false;
+      
+      // Set expiration time for display if provided
+      if (this.expiresAt) {
+        this.qrExpiresAt = new Date(this.expiresAt);
+      }
+      
+      this.successMessage = 'Demo QR code generated successfully!';
+    }
+  }
+
+  // Close QR modal
+  closeQrModal() {
+    this.showQrModal = false;
+    this.qrCodeImage = null;
+    this.qrExpiresAt = null;
+  }
+
+  // Prevent right-click to disable image saving
+  preventRightClick(event: MouseEvent) {
+    event.preventDefault();
+    return false;
+  }
+
+  // Export as PDF (without QR code image)
+  exportAsPdf() {
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(20);
+    doc.text('Payment Receipt', 105, 20, { align: 'center' });
+    
+    // Add transaction details
+    doc.setFontSize(12);
+    doc.text('Transaction Details:', 20, 40);
+    
+    doc.setFontSize(10);
+    doc.text(`Receiver Wallet ID: ${this.receiverWalletIden}`, 20, 50);
+    doc.text(`Amount: ${this.amount} ${this.currency}`, 20, 60);
+    
+    if (this.transactionLabel) {
+      doc.text(`Label: ${this.transactionLabel}`, 20, 70);
+    }
+    
+    if (this.qrExpiresAt) {
+      doc.text(`Expires: ${this.qrExpiresAt.toLocaleString()}`, 20, 80);
+    }
+    
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 90);
+    
+    // Add security notice
+    doc.setFontSize(8);
+    doc.text('This is a secure transaction receipt. Keep it for your records.', 20, 110);
+    
+    // Save the PDF
+    doc.save(`payment-receipt-${this.receiverWalletIden}.pdf`);
+  }
+
+  // Export QR code as PNG image
+  exportQrAsImage() {
+    if (!this.qrCodeImage) {
+      this.errorMessage = 'No QR code available to export';
+      return;
+    }
+
+    try {
+      // Create a canvas to draw the QR code
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        throw new Error('Could not get canvas context');
+      }
+
+      // Set canvas dimensions
+      canvas.width = 300;
+      canvas.height = 350;
+      
+      // Draw white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw title
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold 16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Payment QR Code', canvas.width / 2, 25);
+      
+      // Draw QR code
+      const img = new Image();
+      img.onload = () => {
+        // Draw QR code in the center
+        const qrSize = 200;
+        const qrX = (canvas.width - qrSize) / 2;
+        const qrY = 40;
+        ctx.drawImage(img, qrX, qrY, qrSize, qrSize);
+        
+        // Draw transaction details below QR code
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Amount: ${this.amount} ${this.currency}`, canvas.width / 2, qrY + qrSize + 20);
+        ctx.fillText(`To: ${this.receiverWalletIden}`, canvas.width / 2, qrY + qrSize + 40);
+        
+        if (this.transactionLabel) {
+          ctx.fillText(`Label: ${this.transactionLabel}`, canvas.width / 2, qrY + qrSize + 60);
+        }
+        
+        // Convert canvas to data URL and trigger download
+        const dataUrl = canvas.toDataURL('image/png');
+        this.downloadImage(dataUrl, `qr-code-${this.receiverWalletIden}.png`);
+      };
+      
+      // Set image source (bypass security to get the actual URL)
+      img.src = this.sanitizer.sanitize(4, this.qrCodeImage) || '';
+    } catch (error) {
+      console.error('Error exporting QR code:', error);
+      this.errorMessage = 'Failed to export QR code. Please try again.';
+    }
+  }
+
+  // Helper method to download image
+  private downloadImage(dataUrl: string, filename: string) {
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   // Submit the transfer
   transferNow() {
-  if (!this.isOtpVerified) {
-    this.errorMessage = 'Please verify the OTP before transferring.';
-    return;
+    if (!this.isOtpVerified) {
+      this.errorMessage = 'Please verify the OTP before transferring.';
+      return;
+    }
+
+    this.isLoading = true;
+
+    let transferRequest: any = {
+      senderWalletIden: this.senderWalletIden,
+      receiverWalletIden: this.receiverWalletIden,
+      amount: this.amount,
+      operationTypeIden: this.operationTypeIden
+    };
+
+    if (this.operationTypeIden === 'OPT-003') {
+      transferRequest.currency = this.currency;
+      transferRequest.transactionLabel = this.transactionLabel;
+      transferRequest.expiresAt = this.expiresAt;
+    }
+
+    console.log('Sending transfer request:', transferRequest);
+    this.tryTransferEndpoints(transferRequest);
   }
-
-  this.isLoading = true;
-
-  let transferRequest: any = {
-    senderWalletIden: this.senderWalletIden,
-    receiverWalletIden: this.receiverWalletIden,
-    amount: this.amount,
-    operationTypeIden: this.operationTypeIden
-  };
-
-  if (this.operationTypeIden === 'OPT-003') {
-    transferRequest.currency = this.currency;
-    transferRequest.transactionLabel = this.transactionLabel;
-    transferRequest.expiresAt = this.expiresAt;
-  }
-
-  console.log('Sending transfer request:', transferRequest);
-  this.tryTransferEndpoints(transferRequest);
-}
-
 
   private tryTransferEndpoints(transferRequest: any) {
     const endpoints = [

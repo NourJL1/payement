@@ -84,3 +84,26 @@
       font-weight: 600;
       color: #6b7280;
     }
+    /* Modal styling */
+.fixed {
+  transition: opacity 0.3s ease;
+}
+
+/* Prevent text selection and image saving */
+img {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Disable right-click context menu on QR code */
+.qr-container {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
