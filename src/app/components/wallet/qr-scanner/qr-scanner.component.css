@@ -1,0 +1,131 @@
+/* qr-scanner.component.css */
+
+/* Page background */
+.qr-wrapper {
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 30px;
+}
+
+/* Card */
+.qr-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  width: 100%;
+  max-width: 550px;
+  border-top: 6px solid #e60000;
+}
+
+/* Title */
+h2 {
+  text-align: center;
+  color: #111;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+/* Form controls */
+.form-group {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #111;
+}
+
+.form-control,
+.form-control-file {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.form-control:focus,
+.form-control-file:focus {
+  border-color: #e60000;
+  outline: none;
+  box-shadow: 0 0 4px rgba(230, 0, 0, 0.3);
+}
+
+/* Button */
+.btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #e60000;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.1s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: #cc0000;
+  transform: scale(1.02);
+}
+
+.btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* QR data & result card */
+.qr-data,
+.payment-result {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  background: #fafafa;
+}
+
+/* Payment result status colors */
+.payment-result.success {
+  border-left: 6px solid #28a745;
+}
+.payment-result.failure {
+  border-left: 6px solid #e60000;
+}
+
+/* Loading animation */
+.loading {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #ddd;
+  border-top: 3px solid #e60000;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Alert */
+.alert-danger {
+  background-color: #ffe5e5;
+  color: #e60000;
+  border: 1px solid #e60000;
+  border-radius: 6px;
+  padding: 12px;
+}

@@ -35,7 +35,7 @@
         </div>
     </div>
 
-  <!-- Quick Actions -->
+<!-- Quick Actions -->
   <section class="grid grid-cols-5 gap-4 mb-8">
     <button
       class="flex flex-col items-center p-4 bg-white rounded-2xl shadow hover:shadow-md transition"
@@ -65,7 +65,8 @@
     </button>
 
     <button
-      class="flex flex-col items-center p-4 bg-white rounded-2xl shadow hover:shadow-md transition">
+      class="flex flex-col items-center p-4 bg-white rounded-2xl shadow hover:shadow-md transition"
+      (click)="goToQrCode()">
       <div class="bg-green-100 p-3 rounded-full mb-2">
         <i class="ri-qr-code-line text-green-600 text-xl"></i>
       </div>
@@ -81,8 +82,6 @@
       <span class="text-sm font-medium">History</span>
     </button>
   </section>
-
-
     <!-- Add Card Modal -->
     <div *ngIf="showAddCardModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl p-6 grid grid-cols-12 gap-6">
@@ -100,6 +99,16 @@
                     <div>
                         <label for="carLabe" class="block text-sm font-medium text-gray-700 mb-1">Card Label</label>
                         <input id="carLabe" type="text" [(ngModel)]="newCard.carLabe" name="carLabe" placeholder="Card Label"
+                               class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                    </div>
+                    <div>
+                        <label for="carPlafond" class="block text-sm font-medium text-gray-700 mb-1">Card Limit</label>
+                        <input id="carPlafond" type="text" [(ngModel)]="newCard.carPlafond" name="carPlafond" placeholder="Card Limit"
+                               class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                    </div>
+                    <div>
+                        <label for="carPlafondPeriod" class="block text-sm font-medium text-gray-700 mb-1">Card Limit Periodicity</label>
+                        <input id="carPlafondPeriod" type="text" [(ngModel)]="newCard.carPlafondPeriod" name="carPlafondPeriod" placeholder="Card Limit Periodicity"
                                class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500" required>
                     </div>
                     <div>
@@ -337,42 +346,61 @@
     <!-- Cards & Accounts -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Linked Cards -->
-        <div>
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">Linked Cards</h3>
-                <button class="text-primary text-sm font-medium hover:underline">Manage</button>
+<div>
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-lg font-semibold">Linked Cards</h3>
+  </div>
+  <div class="bg-white shadow-lg rounded-xl shadow-sm p-6">
+    <div *ngIf="wallet?.cardList?.cards?.length; else noCards">
+      <div *ngFor="let card of wallet?.cardList?.cards" class="mb-4 last:mb-0">
+        <div class="flex items-center justify-between gap-8">
+          
+          <!-- Left section: card number + expiry -->
+          <div class="flex items-center gap-3">
+            <div class="bg-blue-100 p-2 shadow-lg rounded-lg">
+              <i class="ri-bank-card-line text-blue-500"></i>
             </div>
-            <div class="bg-white shadow-lg rounded-xl shadow-sm p-6">
-                <div *ngIf="wallet?.cardList?.cards?.length; else noCards">
-                    <div *ngFor="let card of wallet?.cardList?.cards" class="mb-4 last:mb-0">
-                        <div class="flex items-center">
-                            <div class="bg-blue-100 p-2 shadow-lg rounded-lg mr-3">
-                                <i class="ri-bank-card-line text-blue-500"></i>
-                            </div>
-                            <div>
-                                <div class="font-medium">{{card.carNumb ? '**** **** **** ' + card.carNumb.substring(card.carNumb.length - 4) : '**** **** **** ****'}}</div>
-                                <div class="text-sm text-gray-500">Expires {{card.carExpiryDate ? (card.carExpiryDate | date:'MM/yy') : 'N/A'}}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <ng-template #noCards>
-                    <div class="text-center py-4">
-                        <i class="ri-bank-card-line text-3xl text-gray-300 mb-2"></i>
-                        <p class="text-gray-500">No cards linked to your wallet</p>
-                        <button (click)="openAddCardModal()" class="mt-3 text-primary font-medium text-sm hover:underline">
-                            Add a payment card
-                        </button>
-                    </div>
-                </ng-template>
+            <div>
+              <div class="font-medium">
+                {{card.carNumb ? '**** **** **** ' + card.carNumb.substring(card.carNumb.length - 4) : '**** **** **** ****'}}
+              </div>
+              <div class="text-sm text-gray-500">
+                Expires {{card.carExpiryDate ? (card.carExpiryDate | date:'MM/yy') : 'N/A'}}
+              </div>
             </div>
+          </div>
+
+          <!-- Right section: limit + periodicity -->
+          <div class="text-right">
+            <div class="font-medium">
+              Limit {{card.carPlafond}}
+            </div>
+            <div class="text-sm text-gray-500">
+              Periodicity {{card.carPlafondPeriod}}
+            </div>
+          </div>
+
         </div>
+      </div>
+    </div>
+
+    <ng-template #noCards>
+      <div class="text-center py-4">
+        <i class="ri-bank-card-line text-3xl text-gray-300 mb-2"></i>
+        <p class="text-gray-500">No cards linked to your wallet</p>
+        <button (click)="openAddCardModal()" class="mt-3 text-primary font-medium text-sm hover:underline">
+          Add a payment card
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
 
         <!-- Linked Bank Accounts -->
         <div>
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold">Bank Accounts</h3>
-                <button class="text-primary text-sm font-medium hover:underline">Manage</button>
             </div>
             <div class="bg-white shadow-lg rounded-xl shadow-sm p-6">
                 <div *ngIf="wallet?.accountList?.accounts?.length; else noAccounts">

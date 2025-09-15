@@ -241,6 +241,10 @@ loadWallet(cusCode: number): void {
     this.router.navigate(['/wallet/transfer']);
   }
 
+  goToQrCode() {
+    this.router.navigate(['/wallet/qr-scanner']);
+  }
+
   openAddCardModal(): void {
     this.newCard = new Card({
       carNumb: '',
