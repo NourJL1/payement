@@ -128,10 +128,10 @@ export class TransferComponent implements OnInit {
       this.errorMessage = 'Please enter a wallet ID';
       return;
     }
-    if (this.receiverWalletIden === this.senderWalletIden) {
-      this.errorMessage = 'Cannot transfer to your own wallet';
-      return;
-    }
+    //if (this.receiverWalletIden === this.senderWalletIden) {
+      //this.errorMessage = 'Cannot transfer to your own wallet';
+    //  return;
+    //}
     if (this.receiverWalletIden.startsWith('WAL-') || this.receiverWalletIden.startsWith('WLT-')) {
       this.receiverInfo = `Wallet ID validated: ${this.receiverWalletIden}`;
       this.errorMessage = '';
@@ -185,10 +185,10 @@ export class TransferComponent implements OnInit {
       this.errorMessage = 'Insufficient balance';
       return;
     }
-    if (this.receiverWalletIden === this.senderWalletIden) {
-      this.errorMessage = 'Cannot transfer to your own wallet';
-      return;
-    }
+  //  if (this.receiverWalletIden === this.senderWalletIden) {
+    //  this.errorMessage = 'Cannot transfer to your own wallet';
+    //  return;
+  //  }
 
     this.isLoading = true;
     this.errorMessage = '';
