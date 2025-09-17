@@ -1,0 +1,138 @@
+<div class="transfer-page">
+  <div class="container-grid">
+
+    <!-- LEFT: Wallet summary + quick info -->
+    <aside class="wallet-panel" aria-hidden="false">
+      <div class="wallet-card">
+        <div class="wallet-head">
+          <div class="wallet-id">Wallet</div>
+          <div class="wallet-iden">{{ wallet?.walIden }}</div>
+        </div>
+
+        <div class="wallet-balance">
+          <div class="balance-label">Available (Logic)</div>
+          <div class="balance-amount">{{ formatCurrency(wallet?.walLogicBalance || 0) }}</div>
+        </div>
+
+        <div class="wallet-meta">
+          <div class="meta-item">
+            <div class="meta-title">Status</div>
+            <div class="meta-value">{{ wallet?.walletStatus?.wstLabe || '—' }}</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Main transfer card -->
+    <main class="transfer-panel">
+      <header class="transfer-header">
+        <h2>Transfer Money</h2>
+        <p class="subtitle">Move funds from a linked account to your wallet — secure and instant.</p>
+      </header>
+
+      <!-- Loading overlay -->
+      <div *ngIf="isLoading" class="overlay">
+        <div class="spinner"></div>
+        <div class="overlay-text">Processing your transfer...</div>
+      </div>
+
+      <!-- Success -->
+      <div *ngIf="transferSuccess && transferDetails" class="alert success">
+        <div class="alert-left">✅</div>
+        <div class="alert-body">
+          <div class="alert-title">Transfer Successful</div>
+          <div class="alert-msg">{{ transferDetails.message }}</div>
+          <div class="transfer-details">
+            <div><strong>Transaction:</strong> {{ transferDetails.transactionId }}</div>
+            <div><strong>New Wallet:</strong> {{ formatCurrency(transferDetails.newWalletBalance) }}</div>
+            <div><strong>New Account:</strong> {{ formatCurrency(transferDetails.newAccountBalance) }}</div>
+          </div>
+        </div>
+        <button class="btn btn-ghost" (click)="resetForm()">Make another</button>
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="errorMessage" class="alert error">
+        <div class="alert-left">⚠️</div>
+        <div class="alert-body">
+          <div class="alert-title">Transfer Failed</div>
+          <div class="alert-msg">{{ errorMessage }}</div>
+        </div>
+        <button class="btn btn-ghost" (click)="errorMessage = ''">Try again</button>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="transferForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading && !transferSuccess" class="form-card">
+        <div class="form-row">
+          <label for="account">From account</label>
+          <select id="account" formControlName="account" class="control"
+            [class.invalid]="transferForm.get('account')?.invalid && transferForm.get('account')?.touched">
+            <option value="">— Select account —</option>
+            <option *ngFor="let account of linkedAccounts" [value]="account.accCode">
+              {{ account.accRib }} ({{ formatCurrency(account.accBalance) }})
+            </option>
+          </select>
+          <div class="field-error" *ngIf="transferForm.get('account')?.invalid && transferForm.get('account')?.touched">
+            Please select an account
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="amount">Amount</label>
+          <div class="input-group">
+            <input id="amount" type="number" formControlName="amount"
+              class="control number" placeholder="0.00" step="0.01" min="0.01"
+              [class.invalid]="transferForm.get('amount')?.invalid && transferForm.get('amount')?.touched">
+            <div class="currency">TND</div>
+          </div>
+          <div class="field-error" *ngIf="transferForm.get('amount')?.invalid && transferForm.get('amount')?.touched">
+            <div *ngIf="transferForm.get('amount')?.errors?.['required']">Amount is required</div>
+            <div *ngIf="transferForm.get('amount')?.errors?.['min']">Minimum amount: TND 0.01</div>
+          </div>
+        </div>
+
+        <div class="wallet-preview" *ngIf="wallet">
+          <div class="wp-left">
+            <div class="wp-title">To wallet</div>
+            <div class="wp-iden">{{ wallet!.walIden }}</div>
+          </div>
+          <div class="wp-right">
+            <div class="wp-label">Balance</div>
+            <div class="wp-balance">{{ formatCurrency(wallet.walLogicBalance || 0) }}</div>
+          </div>
+        </div>
+
+        <div class="preview-card" *ngIf="transferForm.get('account')?.value">
+          <h4>Preview</h4>
+          <div *ngIf="getSelectedAccount() as selectedAccount" class="preview-grid">
+            <div><strong>RIB</strong><div class="muted">{{ selectedAccount.accRib }}</div></div>
+            <div><strong>Current</strong><div class="muted">{{ formatCurrency(selectedAccount.accBalance) }}</div></div>
+            <div><strong>After</strong>
+              <div class="muted">{{ formatCurrency((selectedAccount?.accBalance || 0) - (transferForm.get('amount')?.value || 0)) }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="!transferForm.valid || !wallet">Transfer now</button>
+          <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+<footer class="page-footer">
+  <div class="info-card">
+    <h3>Need help?</h3>
+    <p class="info-text">
+      If you encounter any issues during the transfer process, please contact our support team for assistance.
+    </p>
+    <a href="mailto:support@yourcompany.com" class="support-link">
+      ✉️ Contact Support
+    </a>
+  </div>
+</footer>
+
+
+</div>

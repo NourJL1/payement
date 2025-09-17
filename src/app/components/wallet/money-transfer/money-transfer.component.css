@@ -1,0 +1,222 @@
+:root{
+  --red: #C62828;
+  --red-dark: #9b1f1f;
+  --black: #0b0b0c;
+  --white: #ffffff;
+  --muted: #9aa0a6;
+  --card-shadow: 0 10px 30px rgba(11,11,12,0.25);
+  --radius: 12px;
+  --glass: rgba(255,255,255,0.03);
+}
+
+.transfer-page{
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: var(--black);
+  padding: 28px;
+  background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
+}
+
+.container-grid{
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 28px;
+}
+
+/* LEFT - Wallet panel */
+.wallet-panel{
+  background: linear-gradient(180deg, var(--black), #121212);
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+
+
+/* Wallet card */
+.wallet-card{
+  background: linear-gradient(90deg, #c23838, #ef6d6d);
+
+  border-radius: 10px;
+  padding: 14px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.wallet-head{ display:flex; justify-content:space-between; align-items:center; }
+.wallet-id{ font-size:12px; color:var(--muted); }
+.wallet-iden{ font-size:14px; font-weight:700; color:var(--white); }
+
+.wallet-balance{ padding:8px 0; }
+.balance-label{ font-size:12px; color:rgba(255,255,255,0.6); }
+.balance-amount{ font-size:22px; font-weight:800; margin-top:6px; color:var(--white); }
+
+.wallet-meta{ display:flex; gap:12px; margin-top:6px; }
+.meta-item{ flex:1; background: rgba(255,255,255,0.02); padding:8px; border-radius:8px; text-align:center; }
+.meta-title{ font-size:11px; color:rgba(255,255,255,0.6); }
+.meta-value{ font-weight:700; color:var(--white); }
+
+
+
+/* RIGHT - Transfer panel */
+.transfer-panel{
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--card-shadow);
+  position:relative;
+  overflow:hidden;
+}
+
+.transfer-header h2{ margin:0; font-size:22px; color:var(--black); font-weight:800; }
+.subtitle{ margin-top:6px; margin-bottom:14px; color:var(--muted); font-size:13px; }
+
+/* overlay (loading) */
+.overlay{
+  position:absolute;
+  inset:0;
+  background: rgba(11,11,12,0.6);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  z-index:40;
+  color:var(--white);
+}
+.spinner{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  border:5px solid rgba(255,255,255,0.12);
+  border-top-color: var(--red);
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg);} }
+.overlay-text{ font-weight:700; color:rgba(255,255,255,0.95); }
+
+/* Alerts */
+.alert{ display:flex; align-items:flex-start; gap:12px; padding:14px; border-radius:10px; margin-bottom:14px; align-items:center; }
+.alert-left{ font-size:22px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; }
+.alert-body{ flex:1; }
+.alert-title{ font-weight:800; font-size:15px; margin-bottom:6px; }
+.alert-msg{ color:var(--muted); font-size:14px; }
+
+.alert.success{ background: linear-gradient(90deg, rgba(255,255,255,0.98), rgba(255,255,255,0.98)); border:1px solid rgba(0,0,0,0.06); }
+.alert.success .alert-left{ background:#e8f6ef; color:#1b7a4a; }
+.alert.error{ background:rgba(198,40,40,0.06); border:1px solid rgba(198,40,40,0.12); }
+.alert.error .alert-left{ background: rgba(198,40,40,0.12); color:var(--red); }
+
+/* Form card */
+.form-card{ display:flex; flex-direction:column; gap:14px; margin-top:6px; }
+
+.form-row{ display:flex; flex-direction:column; gap:8px; }
+label{ font-weight:700; font-size:13px; color:#111; }
+
+.control{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid #e6e6e6;
+  font-size:15px;
+  background: #fff;
+  transition: box-shadow .18s, border-color .18s;
+}
+.control:focus{ outline:none; box-shadow:0 6px 18px rgba(198,40,40,0.06); border-color:var(--red); }
+.control.invalid{ border-color: var(--red); box-shadow: 0 6px 18px rgba(198,40,40,0.06); }
+
+.input-group{ display:flex; align-items:center; gap:8px; position:relative; }
+.input-group .control.number{ flex:1; padding-right:68px; }
+.input-group .currency{ position:absolute; right:10px; top:50%; transform:translateY(-50%); font-weight:700; color:var(--muted); background:transparent; }
+
+.field-error{ color:var(--red); font-size:13px; margin-top:4px; }
+
+/* wallet preview */
+.wallet-preview{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #f0f0f0;
+  background: linear-gradient(180deg, #fff, #fafafa);
+}
+.wp-left .wp-title{ font-size:12px; color:var(--muted); }
+.wp-left .wp-iden{ font-weight:800; font-size:15px; margin-top:2px; }
+.wp-right .wp-label{ font-size:12px; color:var(--muted); }
+.wp-right .wp-balance{ font-weight:800; font-size:18px; color:var(--black); }
+
+/* preview card */
+.preview-card{ padding:12px; border-radius:10px; border:1px solid #f0f0f0; background:#fff; }
+.preview-card h4{ margin:0 0 8px 0; font-size:14px; }
+.preview-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+.muted{ color:var(--muted); font-size:13px; }
+
+/* buttons */
+.btn{ padding:12px 18px; border-radius:10px; cursor:pointer; font-weight:800; border:0; }
+.btn-primary{ background: var(--red); color:var(--white); box-shadow: 0 8px 20px rgba(198,40,40,0.18); }
+.btn-primary:disabled{ background:#ef5656; cursor:not-allowed; box-shadow:none; }
+.btn-secondary{ background:#d1d1d7; color:var(--white); border:1px solid rgba(255,255,255,0.06); }
+.btn-ghost{ background:transparent; color:var(--black); border:1px solid rgba(0,0,0,0.06); padding:8px 12px; border-radius:8px; height:40px; }
+
+/* form actions */
+.form-actions{ display:flex; gap:12px; justify-content:flex-end; margin-top:6px; }
+
+/* small screens */
+@media (max-width: 900px){
+  .container-grid{ grid-template-columns: 1fr; padding:12px; }
+  .wallet-panel{ order:2; }
+  .transfer-panel{ order:1; }
+  .form-actions{ flex-direction:column-reverse; }
+  .btn{ width:100%; }
+}
+
+.page-footer {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(90deg, rgba(198, 40, 40, 0.08), transparent);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.page-footer .info-card {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.page-footer h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: #c62828; /* Red accent to match fintech theme */
+}
+
+.page-footer .info-text {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.4;
+}
+.page-footer .support-link {
+  display: inline-block;
+  margin-top: 0.6rem;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  background-color: #c62828;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.page-footer .support-link:hover {
+  background-color: #a92222;
+}
+

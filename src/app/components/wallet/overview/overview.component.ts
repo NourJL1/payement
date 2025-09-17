@@ -53,8 +53,8 @@ export class OverviewComponent implements OnInit {
     carExpiryDate: undefined,
     cardType: undefined,
     carAmount: 0,
-    carPlafond: 5000,
-    carPlafondPeriod: 'MONTH'
+    carPlafond: undefined,
+    carPlafondPeriod: undefined
   });
   
   newAccount: Account = new Account({
@@ -63,7 +63,7 @@ export class OverviewComponent implements OnInit {
     accKey: '',
     accountType: undefined,
     bank: undefined,
-    accBalance: 0.0
+    accBalance: undefined
   });
 
   constructor(
@@ -252,8 +252,8 @@ loadWallet(cusCode: number): void {
       carExpiryDate: undefined,
       cardType: undefined,
       carAmount: 0,
-      carPlafond: 5000,
-      carPlafondPeriod: 'MONTH'
+      carPlafond: undefined,
+      carPlafondPeriod: undefined
     });
     this.showAddCardModal = true;
   }
@@ -269,7 +269,7 @@ loadWallet(cusCode: number): void {
       accKey: '',
       accountType: undefined,
       bank: undefined,
-      accBalance: 0.0
+      accBalance: undefined
     });
     this.showAddAccountModal = true;
   }
