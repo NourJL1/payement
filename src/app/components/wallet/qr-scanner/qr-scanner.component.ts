@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -25,7 +25,6 @@ export class QrScannerComponent {
     private fb: FormBuilder,
     private http: HttpClient
   ) {
-    // Only validate the wallet ID, handle file separately
     this.qrForm = this.fb.group({
       senderWalletIden: ['', Validators.required]
     });
@@ -54,6 +53,10 @@ export class QrScannerComponent {
         console.log('QR decode response:', response);
         try {
           this.qrData = JSON.parse(response.data);
+          // Ensure amount is a string for BigDecimal compatibility
+          if (this.qrData.amount) {
+            this.qrData.amount = String(this.qrData.amount);
+          }
           console.log('Parsed QR data:', this.qrData);
           this.isLoading = false;
         } catch (error) {
@@ -71,7 +74,11 @@ export class QrScannerComponent {
   private handleApiError(error: HttpErrorResponse): void {
     this.isLoading = false;
     
-    if (error.status === 404) {
+    if (error.status === 400 && error.error && error.error.message) {
+      this.errorMessage = error.error.message;
+    } else if (error.status === 406) {
+      this.errorMessage = 'Content type not acceptable. Please ensure the request is sent as JSON.';
+    } else if (error.status === 404) {
       this.errorMessage = 'API endpoint not found. Please make sure the backend server is running on port 8081.';
     } else if (error.status === 415) {
       this.errorMessage = 'Unsupported media type. Please try a different image format.';
@@ -102,25 +109,31 @@ export class QrScannerComponent {
     
     const paymentRequest: QRPaymentRequest = {
       receiverWalletIden: this.qrData.receiverWalletIden,
-      amount: this.qrData.amount,
+      amount: this.qrData.amount, // Already converted to string
       currency: this.qrData.currency,
       label: this.qrData.label,
       expiresAt: this.qrData.expiresAt
     };
 
-    console.log('Sending payment request:', paymentRequest);
+    console.log('Sending transfer request:', paymentRequest);
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    });
 
     this.http.post<QRPaymentResponse>(
-      `${this.apiBaseUrl}/api/qr/pay/${senderWalletIden}`, 
-      paymentRequest
+      `${this.apiBaseUrl}/api/qr/transfer/${senderWalletIden}`, 
+      paymentRequest,
+      { headers }
     ).subscribe({
       next: (response) => {
-        console.log('Payment response:', response);
+        console.log('Transfer response:', response);
         this.paymentResult = response;
         this.isLoading = false;
       },
       error: (error: HttpErrorResponse) => {
-        console.error('Payment error:', error);
+        console.error('Transfer error:', error);
         this.handleApiError(error);
       }
     });
@@ -129,7 +142,7 @@ export class QrScannerComponent {
 
 interface QRPaymentRequest {
   receiverWalletIden: string;
-  amount: number;
+  amount: string; // Changed to string for BigDecimal compatibility
   currency: string;
   label?: string;
   expiresAt?: number;

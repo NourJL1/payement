@@ -1,4 +1,49 @@
 <div class="max-w-6xl mx-auto py-8 px-4">
+  <!-- Lock/Unlock Switch -->
+  <div class="flex justify-end mb-4">
+    <label class="inline-flex items-center cursor-pointer">
+      <input type="checkbox" [(ngModel)]="isPageLocked" (change)="toggleLock()" class="sr-only peer">
+      <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:bg-red-600">
+        <div class="absolute top-[2px] left-[2px] bg-white border border-gray-300 rounded-full h-5 w-5 transition-all peer-checked:translate-x-5 peer-checked:border-white"></div>
+      </div>
+      <span class="ml-3 text-sm font-medium text-gray-900">{{ isPageLocked ? 'Page Locked' : 'Page Unlocked' }}</span>
+    </label>
+  </div>
+
+  <!-- OTP Modal for Unlocking -->
+  <div *ngIf="showOtpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+      <div class="flex justify-between items-center p-6 border-b">
+        <h2 class="text-xl font-semibold text-gray-900">Enter OTP to Unlock</h2>
+        <button (click)="closeOtpModal()" class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="p-6">
+        <form (ngSubmit)="verifyUnlockOtp()">
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Enter OTP</label>
+            <input type="text" [(ngModel)]="unlockOtpCode" name="unlockOtpCode" maxlength="6"
+              placeholder="6-digit code"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md text-center text-lg tracking-widest"/>
+            <p class="text-xs text-gray-500 mt-1">Check your email for the OTP code.</p>
+          </div>
+          <div class="flex gap-4">
+            <button type="submit" [disabled]="isLoading" class="flex-1 px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-gray-400">
+              {{ isLoading ? 'Verifying...' : 'Verify OTP' }}
+            </button>
+            <button type="button" (click)="closeOtpModal()" class="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+              Cancel
+            </button>
+          </div>
+        </form>
+        <p *ngIf="otpErrorMessage" class="text-red-600 text-sm mt-2">{{ otpErrorMessage }}</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Header -->
   <div class="text-center mb-8">
     <h1 class="text-3xl font-bold text-gray-900 red-underline inline-block mb-4">
@@ -28,7 +73,7 @@
     </button>
   </div>
 
-   <!-- QR Code Modal (initially hidden) -->
+  <!-- QR Code Modal -->
   <div *ngIf="showQrModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
       <div class="flex justify-between items-center p-6 border-b">
@@ -39,7 +84,6 @@
           </svg>
         </button>
       </div>
-      
       <div class="p-6">
         <div class="flex flex-col items-center">
           <div class="mb-4 p-2 bg-white rounded border relative">
@@ -51,7 +95,6 @@
               QR Code will appear here
             </div>
           </div>
-          
           <div class="flex space-x-4">
             <button (click)="exportAsPdf()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
               Export Receipt
@@ -60,7 +103,6 @@
               Export QR Code
             </button>
           </div>
-          
           <div class="mt-4 text-sm text-gray-600 text-center">
             <p>Scan this QR code with a wallet app to complete the payment.</p>
             <p *ngIf="qrExpiresAt">Expires: {{ qrExpiresAt | date:'medium' }}</p>
@@ -76,9 +118,8 @@
     <!-- Left: Transfer Form -->
     <div class="lg:col-span-2">
       <div class="bg-white rounded-lg shadow p-6">
-
-        <!-- ✅ FIXED FORM: first click calls checkForm() to send OTP -->
-        <form (ngSubmit)="isOtpSent ? verifyOtp() : checkForm()">
+        <!-- Transfer Form -->
+        <form (ngSubmit)="isOtpSent ? verifyOtp() : checkForm()" [ngClass]="{'pointer-events-none opacity-50': isPageLocked}">
           <!-- Operation Type -->
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">Operation Type</label>
@@ -139,8 +180,6 @@
 
           <!-- QR Code Transfer -->
           <div *ngIf="operationTypeIden === 'OPT-003'">
-            
-
             <!-- Receiver Wallet ID -->
             <div class="mb-6">
               <label class="block text-sm font-medium text-gray-700 mb-2">Receiver's Wallet ID</label>
@@ -191,7 +230,7 @@
             </div>
           </div>
 
-          <!-- ✅ OTP Step -->
+          <!-- OTP Step -->
           <div *ngIf="isOtpSent" class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">Enter OTP</label>
             <input type="text" [(ngModel)]="otpCode" name="otpCode" maxlength="6"
