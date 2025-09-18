@@ -66,11 +66,11 @@
             </h2>
         </div>
         <div class="flex items-center space-x-3 w-full sm:w-auto">
-            <button
+            <button *ngIf="activeTab?.canPrint"
                 class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
                 <i class="ri-download-2-line mr-2"></i> Export Data
             </button>
-            <button (click)="toggleForm('user-form')" id="newSchemaBtn"
+            <button (click)="toggleForm('user-form')" id="newSchemaBtn" *ngIf="activeTab?.canInsert"
                 class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
                 <i class="ri-add-line mr-2"></i> New User
             </button>
@@ -156,15 +156,15 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center space-x-3">
-                                    <button (click)="selectedUser = user; toggleForm('user-details')"
+                                    <button (click)="selectedUser = user; toggleForm('user-details')" *ngIf="activeTab?.canAccess"
                                         class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                                         <i class="ri-eye-line text-lg"></i>
                                     </button>
-                                    <button (click)="editUser(user)"
+                                    <button (click)="editUser(user)" *ngIf="activeTab?.canUpdate"
                                         class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                                         <i class="ri-edit-line text-lg"></i>
                                     </button>
-                                    <button (click)="deleteUser(user)"
+                                    <button (click)="deleteUser(user)" *ngIf="activeTab?.canDelete"
                                         class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                                         <i class="ri-delete-bin-line text-lg"></i>
                                     </button>
@@ -222,11 +222,11 @@
             </h2>
         </div>
         <div class="flex items-center space-x-3 w-full sm:w-auto">
-            <button
+            <button *ngIf="activeTab?.canPrint"
                 class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
                 <i class="ri-download-2-line mr-2"></i> Export Data
             </button>
-            <button (click)="toggleForm('profile-form')" id="newSchemaBtn"
+            <button (click)="toggleForm('profile-form')" id="newSchemaBtn" *ngIf="activeTab?.canInsert"
                 class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
                 <i class="ri-add-line mr-2"></i> New Profile
             </button>
@@ -287,15 +287,15 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center space-x-3">
-                                    <button (click)="selectedProfile = profile; toggleForm('profile-details')"
+                                    <button (click)="selectedProfile = profile; toggleForm('profile-details')" *ngIf="activeTab?.canAccess"
                                         class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                                         <i class="ri-eye-line text-lg"></i>
                                     </button>
-                                    <button (click)="editProfile(profile)"
+                                    <button (click)="editProfile(profile)" *ngIf="activeTab?.canUpdate"
                                         class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                                         <i class="ri-edit-line text-lg"></i>
                                     </button>
-                                    <button (click)="deleteProfile(profile)"
+                                    <button (click)="deleteProfile(profile)" *ngIf="activeTab?.canDelete"
                                         class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                                         <i class="ri-delete-bin-line text-lg"></i>
                                     </button>
@@ -353,11 +353,11 @@
             </h2>
         </div>
         <div class="flex items-center space-x-3 w-full sm:w-auto">
-            <button
+            <button *ngIf="activeTab?.canPrint"
                 class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
                 <i class="ri-download-2-line mr-2"></i> Export Data
             </button>
-            <button (click)="toggleForm('module-form')" id="newSchemaBtn"
+            <button (click)="toggleForm('module-form')" id="newSchemaBtn" *ngIf="activeTab?.canInsert"
                 class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
                 <i class="ri-add-line mr-2"></i> New Module
             </button>
@@ -376,21 +376,6 @@
                     (input)="moduleSearch()"
                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
             </div>
-            <!-- <div class="w-full sm:w-auto">
-                <div class="relative">
-                    <select
-                        class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary rounded-lg sm:text-sm">
-                        <option value="">All Profiles</option>
-                        <option value="">ADMIN</option>
-                        <option value="">EMPLOYEE</option>
-                        <option value="">ACCOUNTANT</option>
-                        <option value="">DATA ANALYST</option>
-                        <option *ngFor="let status of statuses" [value]="status">
-                            {{ status.ctsLabe }}
-                        </option>
-                    </select>
-                </div>
-            </div> -->
         </div>
     </div>
 
@@ -454,11 +439,11 @@
                                         class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                                         <i class="ri-eye-line text-lg"></i>
                                     </button> -->
-                                    <button (click)="editModule(module)"
+                                    <button (click)="editModule(module)" *ngIf="activeTab?.canUpdate"
                                         class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                                         <i class="ri-edit-line text-lg"></i>
                                     </button>
-                                    <button (click)="deleteModule(module)"
+                                    <button (click)="deleteModule(module)" *ngIf="activeTab?.canDelete"
                                         class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                                         <i class="ri-delete-bin-line text-lg"></i>
                                     </button>
@@ -516,11 +501,11 @@
             </h2>
         </div>
         <div class="flex items-center space-x-3 w-full sm:w-auto">
-            <button
+            <button *ngIf="activeTab?.canPrint"
                 class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
                 <i class="ri-download-2-line mr-2"></i> Export Data
             </button>
-            <button (click)="toggleForm('option-form')" id="newSchemaBtn"
+            <button (click)="toggleForm('option-form')" id="newSchemaBtn" *ngIf="activeTab?.canInsert"
                 class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
                 <i class="ri-add-line mr-2"></i> New Option
             </button>
@@ -597,15 +582,15 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center space-x-3">
-                                    <button (click)="selectedOption = option; toggleForm('option-details')"
+                                    <button (click)="selectedOption = option; toggleForm('option-details')" *ngIf="activeTab?.canAccess"
                                         class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                                         <i class="ri-eye-line text-lg"></i>
                                     </button>
-                                    <button (click)="editOption(option)"
+                                    <button (click)="editOption(option)" *ngIf="activeTab?.canUpdate"
                                         class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                                         <i class="ri-edit-line text-lg"></i>
                                     </button>
-                                    <button (click)="deleteOption(option)"
+                                    <button (click)="deleteOption(option)" *ngIf="activeTab?.canDelete"
                                         class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                                         <i class="ri-delete-bin-line text-lg"></i>
                                     </button>
@@ -663,11 +648,11 @@
             </h2>
         </div>
         <div class="flex items-center space-x-3 w-full sm:w-auto">
-            <button
+            <button *ngIf="activeTab?.canPrint"
                 class="flex items-center px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap transition duration-200 hover:shadow-lg">
                 <i class="ri-download-2-line mr-2"></i> Export Data
             </button>
-            <button (click)="toggleForm('profile-option-form')" id="newSchemaBtn"
+            <button (click)="toggleForm('profile-option-form')" id="newSchemaBtn" *ngIf="activeTab?.canInsert"
                 class="flex items-center px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 whitespace-nowrap transition duration-200 hover:shadow-lg">
                 <i class="ri-add-line mr-2"></i> New Profile - Option
             </button>
@@ -764,15 +749,15 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center space-x-3">
-                                    <button (click)="selectedProfileOption = upmo; toggleForm('profile-option-details')"
+                                    <button (click)="selectedProfileOption = upmo; toggleForm('profile-option-details')" *ngIf="activeTab?.canAccess"
                                         class="text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-50">
                                         <i class="ri-eye-line text-lg"></i>
                                     </button>
-                                    <button (click)="editProfileOption(upmo)"
+                                    <button (click)="editProfileOption(upmo)" *ngIf="activeTab?.canUpdate"
                                         class="text-green-600 hover:text-green-800 transition duration-150 p-1 rounded hover:bg-green-50">
                                         <i class="ri-edit-line text-lg"></i>
                                     </button>
-                                    <button (click)="deleteProfileOption(upmo)"
+                                    <button (click)="deleteProfileOption(upmo)" *ngIf="activeTab?.canDelete"
                                         class="text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-50">
                                         <i class="ri-delete-bin-line text-lg"></i>
                                     </button>

@@ -301,7 +301,7 @@
             (input)="searchStatus()"
             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm" />
         </div>
-        <button id="btn-add-status" (click)="toggleForm('wallet-status')" *ngIf="activeTab!.canInsert!"
+        <button id="btn-add-status" (click)="toggleForm('wallet-status')" *ngIf="activeTab?.canInsert"
           class="flex items-center px-3 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-opacity-90 whitespace-nowrap">
           <i class="ri-add-line mr-1"></i> Add Status
         </button>
