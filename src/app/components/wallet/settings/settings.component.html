@@ -216,16 +216,6 @@
                     <span class="slider"></span>
                   </label>
                 </div>
-                <div class="flex items-center justify-between py-3 border-b border-gray-100">
-                  <div>
-                    <div class="font-medium text-gray-800">SMS Notifications</div>
-                    <div class="text-sm text-gray-500">Receive text messages for important updates</div>
-                  </div>
-                  <label class="custom-switch">
-                    <input type="checkbox" [(ngModel)]="notificationPreferences.sms" (change)="updateNotificationPreference('sms')">
-                    <span class="slider"></span>
-                  </label>
-                </div>
               </div>
             </div>
 
@@ -239,16 +229,6 @@
                   </div>
                   <label class="custom-switch">
                     <input type="checkbox" [(ngModel)]="notificationPreferences.allTransactions" (change)="updateNotificationPreference('allTransactions')">
-                    <span class="slider"></span>
-                  </label>
-                </div>
-                <div class="flex items-center justify-between py-3 border-b border-gray-100">
-                  <div>
-                    <div class="font-medium text-gray-800">Large Transactions</div>
-                    <div class="text-sm text-gray-500">Only for transactions over $1,000</div>
-                  </div>
-                  <label class="custom-switch">
-                    <input type="checkbox" [(ngModel)]="notificationPreferences.largeTransactions" (change)="updateNotificationPreference('largeTransactions')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -295,16 +275,6 @@
                   </div>
                   <label class="custom-switch">
                     <input type="checkbox" [(ngModel)]="notificationPreferences.accountUpdates" (change)="updateNotificationPreference('accountUpdates')">
-                    <span class="slider"></span>
-                  </label>
-                </div>
-                <div class="flex items-center justify-between py-3 border-b border-gray-100">
-                  <div>
-                    <div class="font-medium text-gray-800">Marketing & Promotions</div>
-                    <div class="text-sm text-gray-500">Special offers and new features</div>
-                  </div>
-                  <label class="custom-switch">
-                    <input type="checkbox" [(ngModel)]="notificationPreferences.marketing" (change)="updateNotificationPreference('marketing')">
                     <span class="slider"></span>
                   </label>
                 </div>
