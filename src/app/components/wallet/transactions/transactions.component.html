@@ -188,7 +188,7 @@
                            }"></i>
                     </div>
                     <div>
-                        <div class="font-medium text-gray-900">{{ transaction.odeValue }}</div>
+                        <div class="font-medium text-gray-900">{{ transaction.walletOperation.wopLabel }}</div>
                         <div class="text-sm text-gray-500">
                             {{ transaction.odeCreatedAt | date:'mediumDate' }} • 
                             {{ transaction.odeCreatedAt | date:'shortTime' }}

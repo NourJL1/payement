@@ -4,82 +4,86 @@
     <div class="mb-8">
       <h3 class="text-lg font-semibold text-gray-900 mb-4">Select Transaction Type</h3>
       <div class="grid grid-cols-6 gap-4">
-        <div class="transaction-type-card border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-primary transition-colors" data-type="deposit">
+        <div *ngFor="let type of operationTypes" 
+             [class]="['transaction-type-card border-2 rounded-lg p-6 cursor-pointer transition-colors', 
+                       isSelectedType(type) ? 'border-primary bg-primary/5' : 'border-gray-200']"
+             (click)="selectTransactionType(type)">
           <div class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-lg mb-4 mx-auto">
-            <i class="ri-arrow-down-line text-primary text-xl"></i>
+            <i [class]="getIconForType(type.optLabe)"></i>
           </div>
-          <h4 class="text-center font-semibold text-gray-900">Deposit</h4>
-          <p class="text-center text-sm text-gray-600 mt-2">Add funds to customer account</p>
-        </div>
-        <div class="transaction-type-card border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-primary transition-colors" data-type="withdrawal">
-          <div class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-lg mb-4 mx-auto">
-            <i class="ri-arrow-up-line text-primary text-xl"></i>
-          </div>
-          <h4 class="text-center font-semibold text-gray-900">Withdrawal</h4>
-          <p class="text-center text-sm text-gray-600 mt-2">Remove funds from account</p>
-        </div>
-        <div class="transaction-type-card border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-primary transition-colors" data-type="transfer">
-          <div class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-lg mb-4 mx-auto">
-            <i class="ri-exchange-line text-primary text-xl"></i>
-          </div>
-          <h4 class="text-center font-semibold text-gray-900">Transfer</h4>
-          <p class="text-center text-sm text-gray-600 mt-2">Transfer to external account</p>
-        </div>
-        <div class="transaction-type-card border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-primary transition-colors" data-type="wallet-transfer">
-          <div class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-lg mb-4 mx-auto">
-            <i class="ri-wallet-3-line text-primary text-xl"></i>
-          </div>
-          <h4 class="text-center font-semibold text-gray-900">Wallet Transfer</h4>
-          <p class="text-center text-sm text-gray-600 mt-2">Transfer between wallets</p>
-        </div>
-        <div class="transaction-type-card border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-primary transition-colors" data-type="card-payment">
-          <div class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-lg mb-4 mx-auto">
-            <i class="ri-bank-card-line text-primary text-xl"></i>
-          </div>
-          <h4 class="text-center font-semibold text-gray-900">Card Payment</h4>
-          <p class="text-center text-sm text-gray-600 mt-2">Pay via credit/debit card</p>
-        </div>
-        <div class="transaction-type-card border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-primary transition-colors" data-type="qr-payment">
-          <div class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-lg mb-4 mx-auto">
-            <i class="ri-qr-code-line text-primary text-xl"></i>
-          </div>
-          <h4 class="text-center font-semibold text-gray-900">QR Payment</h4>
-          <p class="text-center text-sm text-gray-600 mt-2">Pay using QR code</p>
+          <h4 class="text-center font-semibold text-gray-900">{{ type.optLabe }}</h4>
+          <p class="text-center text-sm text-gray-600 mt-2">
+            {{ getDescriptionForType(type.optLabe) }}
+          </p>
         </div>
       </div>
     </div>
-    <form id="transaction-form" class="space-y-6">
+
+    <!-- QR Code Options Section -->
+    <div *ngIf="selectedType === 'OPT-006'" class="mb-6 p-4 bg-gray-50 rounded-lg">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">QR Code Options</h3>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <button 
+          type="button" 
+          (click)="generateQRCode()" 
+          [disabled]="isGeneratingQR || !recipientAccount || !amount"
+          class="px-4 py-2 bg-blue-600 text-white rounded-button font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="!isGeneratingQR">Generate QR Code</span>
+          <span *ngIf="isGeneratingQR">Generating...</span>
+        </button>
+        
+        <div class="relative">
+          <input 
+            type="file" 
+            (change)="onFileSelected($event)" 
+            accept="image/*" 
+            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+          <div class="px-4 py-2 border border-gray-300 rounded-button text-center bg-white cursor-pointer">
+            Scan QR Code
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="qrCodeImage" class="mt-4 p-4 bg-white rounded-lg border border-gray-200">
+        <h4 class="text-md font-medium text-gray-900 mb-2">Generated QR Code</h4>
+        <img [src]="qrCodeImage" alt="QR Code" class="mx-auto w-48 h-48">
+        <p class="text-sm text-gray-600 mt-2 text-center">Scan this code to receive payment</p>
+      </div>
+    </div>
+
+    <form (ngSubmit)="processTransaction()" class="space-y-6">
       <div class="grid grid-cols-2 gap-6">
         <div>
           <label class="block text-sm font-medium text-gray-900 mb-2">Customer Account Number</label>
           <div class="relative">
-            <input type="text" id="account-number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm" placeholder="Enter account number">
+            <input type="text" [(ngModel)]="accountNumber" (input)="onAccountNumberInput()" name="accountNumber" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm" placeholder="Enter account number">
             <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <div class="w-5 h-5 flex items-center justify-center hidden" id="account-valid">
+              <div class="w-5 h-5 flex items-center justify-center" [class.hidden]="!accountValid">
                 <i class="ri-check-line text-green-500"></i>
               </div>
-              <div class="w-5 h-5 flex items-center justify-center hidden" id="account-loading">
+              <div class="w-5 h-5 flex items-center justify-center" [class.hidden]="!accountLoading">
                 <i class="ri-loader-4-line text-gray-400 animate-spin"></i>
               </div>
             </div>
           </div>
-          <div class="text-sm text-red-600 mt-1 hidden" id="account-error">Please enter a valid account number</div>
+          <div class="text-sm text-red-600 mt-1" [class.hidden]="accountNumber.length === 0 || accountValid || accountLoading">Please enter a valid account number</div>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-900 mb-2">Sender's Wallet ID</label>
           <div class="relative">
-            <input type="text" id="sender-wallet" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm" placeholder="Enter sender's wallet ID">
+            <input type="text" [(ngModel)]="senderWallet" (input)="onWalletInput()" name="senderWallet" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm" placeholder="Enter sender's wallet ID">
             <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <div class="w-5 h-5 flex items-center justify-center hidden" id="wallet-valid">
+              <div class="w-5 h-5 flex items-center justify-center" [class.hidden]="!walletValid">
                 <i class="ri-check-line text-green-500"></i>
               </div>
             </div>
           </div>
-          <div class="text-sm text-red-600 mt-1 hidden" id="wallet-error">Please enter a valid wallet ID</div>
+          <div class="text-sm text-red-600 mt-1" [class.hidden]="senderWallet.length === 0 || walletValid">Please enter a valid wallet ID</div>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-900 mb-2">Customer Name</label>
-          <input type="text" id="customer-name" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-sm" placeholder="Auto-populated" readonly>
+          <input type="text" [(ngModel)]="customerName" name="customerName" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-sm" placeholder="Auto-populated" readonly>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-6">
@@ -87,23 +91,29 @@
           <label class="block text-sm font-medium text-gray-900 mb-2">Amount</label>
           <div class="relative">
             <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">$</div>
-            <input type="text" id="amount" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm" placeholder="0.00">
+            <input type="text" [(ngModel)]="amount" (input)="onAmountInput()" name="amount" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm" placeholder="0.00">
           </div>
-          <div class="text-sm text-red-600 mt-1 hidden" id="amount-error">Please enter a valid amount</div>
-          <div class="text-sm text-yellow-600 mt-1 hidden" id="balance-warning">Insufficient balance for this withdrawal</div>
+          <div class="text-sm text-red-600 mt-1" [class.hidden]="amount.length === 0 || !isNaN(amount) && parseFloat(amount) > 0">Please enter a valid amount</div>
+          <div class="text-sm text-yellow-600 mt-1" 
+               [class.hidden]="!(selectedType === 'OPT-002' && accountNumber && customerData[accountNumber] && parseFloat(amount) > customerData[accountNumber].balance)">
+            Insufficient balance for this withdrawal
+          </div>
         </div>
-        <div id="recipient-field" class="hidden">
-          <label class="block text-sm font-medium text-gray-900 mb-2" id="recipient-label">Recipient Account</label>
-          <input type="text" id="recipient-account" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm" placeholder="Enter recipient details">
-          <div class="text-sm text-red-600 mt-1 hidden" id="recipient-error">Please enter valid recipient details</div>
+        <div id="recipient-field" [class.hidden]="selectedType !== 'OPT-003' && selectedType !== 'OPT-004'">
+          <label class="block text-sm font-medium text-gray-900 mb-2" id="recipient-label">
+            {{ selectedType === 'OPT-003' ? 'Recipient Account Number' : 'Recipient Wallet ID' }}
+          </label>
+          <input type="text" [(ngModel)]="recipientAccount" name="recipientAccount" (input)="validateForm()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm" 
+                 [placeholder]="selectedType === 'OPT-003' ? 'Enter recipient account number' : 'Enter recipient wallet ID'">
+          <div class="text-sm text-red-600 mt-1" [class.hidden]="recipientAccount.length > 0">Please enter valid recipient details</div>
         </div>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-900 mb-2">Purpose / Notes</label>
-        <textarea id="purpose" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm" placeholder="Enter transaction purpose or additional notes"></textarea>
+        <textarea [(ngModel)]="purpose" name="purpose" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm" placeholder="Enter transaction purpose or additional notes"></textarea>
       </div>
       <div class="flex justify-end space-x-4 pt-6">
-        <button type="button" id="clear-form" class="px-6 py-3 border border-gray-900 text-gray-900 rounded-button font-medium hover:bg-gray-50 transition-colors whitespace-nowrap">
+        <button type="button" (click)="clearForm()" class="px-6 py-3 border border-gray-900 text-gray-900 rounded-button font-medium hover:bg-gray-50 transition-colors whitespace-nowrap">
           Clear Form
         </button>
         <button type="submit" id="process-transaction" class="px-6 py-3 bg-primary text-white rounded-button font-medium hover:bg-red-700 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed" disabled>
@@ -113,6 +123,8 @@
     </form>
   </div>
 </main>
+
+<!-- Confirmation Modal -->
 <div id="confirmation-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
   <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
     <div class="bg-primary text-white px-6 py-4 rounded-t-lg">
@@ -158,16 +170,18 @@
         </div>
       </div>
       <div class="flex space-x-3">
-        <button type="button" id="cancel-transaction" class="flex-1 px-4 py-2 border border-gray-900 text-gray-900 rounded-button font-medium hover:bg-gray-50 transition-colors whitespace-nowrap">
+        <button type="button" (click)="hideConfirmationModal()" class="flex-1 px-4 py-2 border border-gray-900 text-gray-900 rounded-button font-medium hover:bg-gray-50 transition-colors whitespace-nowrap">
           Cancel
         </button>
-        <button type="button" id="confirm-transaction" class="flex-1 px-4 py-2 bg-primary text-white rounded-button font-medium hover:bg-red-700 transition-colors whitespace-nowrap">
+        <button type="button" (click)="confirmTransaction()" id="confirm-transaction" class="flex-1 px-4 py-2 bg-primary text-white rounded-button font-medium hover:bg-red-700 transition-colors whitespace-nowrap">
           Confirm Transaction
         </button>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Toast Notification -->
 <div id="toast" class="fixed top-4 right-4 z-50 hidden">
   <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-sm">
     <div class="flex items-start">
@@ -182,257 +196,3 @@
     </div>
   </div>
 </div>
-<!-- <script id="time-update">
-document.addEventListener('DOMContentLoaded', function() {
-  function updateTime() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-    document.getElementById('current-time').textContent = timeString;
-  }
-  updateTime();
-  setInterval(updateTime, 1000);
-});
-</script>
-<script id="transaction-type-selection">
-document.addEventListener('DOMContentLoaded', function() {
-  const typeCards = document.querySelectorAll('.transaction-type-card');
-  const recipientField = document.getElementById('recipient-field');
-  const recipientLabel = document.getElementById('recipient-label');
-  const recipientAccount = document.getElementById('recipient-account');
-  let selectedType = '';
-  
-  typeCards.forEach(card => {
-    card.addEventListener('click', function() {
-      typeCards.forEach(c => {
-        c.classList.remove('border-primary', 'bg-primary/5');
-        c.classList.add('border-gray-200');
-      });
-      
-      this.classList.remove('border-gray-200');
-      this.classList.add('border-primary', 'bg-primary/5');
-      
-      selectedType = this.dataset.type;
-      
-      if (selectedType === 'transfer') {
-        recipientField.classList.remove('hidden');
-        recipientLabel.textContent = 'Recipient Account Number';
-        recipientAccount.placeholder = 'Enter recipient account number';
-      } else if (selectedType === 'wallet-transfer') {
-        recipientField.classList.remove('hidden');
-        recipientLabel.textContent = 'Recipient Wallet ID';
-        recipientAccount.placeholder = 'Enter recipient wallet ID';
-      } else {
-        recipientField.classList.add('hidden');
-      }
-      
-      validateForm();
-    });
-  });
-});
-</script>
-<script id="form-validation">
-document.addEventListener('DOMContentLoaded', function() {
-  const accountNumber = document.getElementById('account-number');
-  const senderWallet = document.getElementById('sender-wallet');
-  const customerName = document.getElementById('customer-name');
-  const amount = document.getElementById('amount');
-  const recipientAccount = document.getElementById('recipient-account');
-  const processButton = document.getElementById('process-transaction');
-  const accountValid = document.getElementById('account-valid');
-  const walletValid = document.getElementById('wallet-valid');
-  const walletError = document.getElementById('wallet-error');
-  const accountLoading = document.getElementById('account-loading');
-  const accountError = document.getElementById('account-error');
-  const amountError = document.getElementById('amount-error');
-  const balanceWarning = document.getElementById('balance-warning');
-  const recipientError = document.getElementById('recipient-error');
-  
-  const customerData = {
-    '1001234567': { name: 'John Mitchell', balance: 5420.50 },
-    '1001234568': { name: 'Sarah Johnson', balance: 12350.75 },
-    '1001234569': { name: 'Michael Chen', balance: 8900.25 },
-    '1001234570': { name: 'Emily Rodriguez', balance: 15600.00 }
-  };
-  
-  accountNumber.addEventListener('input', function() {
-    const value = this.value.trim();
-    accountValid.classList.add('hidden');
-    accountLoading.classList.add('hidden');
-    accountError.classList.add('hidden');
-    customerName.value = '';
-    
-    if (value.length >= 10) {
-      accountLoading.classList.remove('hidden');
-      
-      setTimeout(() => {
-        accountLoading.classList.add('hidden');
-        
-        if (customerData[value]) {
-          accountValid.classList.remove('hidden');
-          customerName.value = customerData[value].name;
-        } else {
-          accountError.classList.remove('hidden');
-        }
-        
-        validateForm();
-      }, 800);
-    } else {
-      validateForm();
-    }
-  });
-  
-  amount.addEventListener('input', function() {
-    const value = parseFloat(this.value);
-    amountError.classList.add('hidden');
-    balanceWarning.classList.add('hidden');
-    
-    if (this.value && (isNaN(value) || value <= 0)) {
-      amountError.classList.remove('hidden');
-    } else if (this.value && accountNumber.value && customerData[accountNumber.value]) {
-      const selectedType = document.querySelector('.transaction-type-card.border-primary')?.dataset.type;
-      if (selectedType === 'withdrawal' && value > customerData[accountNumber.value].balance) {
-        balanceWarning.classList.remove('hidden');
-      }
-    }
-    
-    validateForm();
-  });
-  
-  recipientAccount.addEventListener('input', validateForm);
-  
-  senderWallet.addEventListener('input', function() {
-    const value = this.value.trim();
-    walletValid.classList.add('hidden');
-    walletError.classList.add('hidden');
-    
-    if (value.length >= 8) {
-      if (/^W\d{7}$/.test(value)) {
-        walletValid.classList.remove('hidden');
-        walletError.classList.add('hidden');
-      } else {
-        walletError.classList.remove('hidden');
-        walletValid.classList.add('hidden');
-      }
-    }
-    
-    validateForm();
-  });
-  
-  function validateForm() {
-    const selectedType = document.querySelector('.transaction-type-card.border-primary')?.dataset.type;
-    const isAccountValid = accountNumber.value && customerData[accountNumber.value];
-    const isWalletValid = senderWallet.value && /^W\d{7}$/.test(senderWallet.value);
-    const isAmountValid = amount.value && !isNaN(parseFloat(amount.value)) && parseFloat(amount.value) > 0;
-    const isRecipientValid = !recipientAccount.closest('#recipient-field').classList.contains('hidden') ? recipientAccount.value.trim() : true;
-    
-    processButton.disabled = !(selectedType && isAccountValid && isWalletValid && isAmountValid && isRecipientValid);
-  }
-  
-  window.validateForm = validateForm;
-});
-</script>
-<script id="form-actions">
-document.addEventListener('DOMContentLoaded', function() {
-  const clearButton = document.getElementById('clear-form');
-  const form = document.getElementById('transaction-form');
-  const modal = document.getElementById('confirmation-modal');
-  const cancelButton = document.getElementById('cancel-transaction');
-  const confirmButton = document.getElementById('confirm-transaction');
-  
-  clearButton.addEventListener('click', function() {
-    form.reset();
-    document.querySelectorAll('.transaction-type-card').forEach(card => {
-      card.classList.remove('border-primary', 'bg-primary/5');
-      card.classList.add('border-gray-200');
-    });
-    document.getElementById('recipient-field').classList.add('hidden');
-    document.querySelectorAll('.text-red-600, .text-yellow-600, .text-green-500').forEach(el => {
-      el.classList.add('hidden');
-    });
-    document.getElementById('account-valid').classList.add('hidden');
-    document.getElementById('process-transaction').disabled = true;
-  });
-  
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    showConfirmationModal();
-  });
-  
-  cancelButton.addEventListener('click', function() {
-    modal.classList.add('hidden');
-  });
-  
-  confirmButton.addEventListener('click', function() {
-    processTransaction();
-  });
-  
-  function showConfirmationModal() {
-    const selectedType = document.querySelector('.transaction-type-card.border-primary')?.dataset.type;
-    const typeText = {
-      'deposit': 'Deposit',
-      'withdrawal': 'Withdrawal',
-      'transfer': 'Bank Transfer',
-      'wallet-transfer': 'Wallet Transfer',
-      'card-payment': 'Card Payment',
-      'qr-payment': 'QR Payment'
-    };
-    
-    document.getElementById('confirm-type').textContent = typeText[selectedType];
-    document.getElementById('confirm-customer').textContent = document.getElementById('customer-name').value;
-    document.getElementById('confirm-account').textContent = document.getElementById('account-number').value;
-    document.getElementById('confirm-wallet').textContent = document.getElementById('sender-wallet').value;
-    document.getElementById('confirm-amount').textContent = '$' + parseFloat(document.getElementById('amount').value).toFixed(2);
-    
-    const recipientRow = document.getElementById('confirm-recipient-row');
-    if (selectedType === 'transfer' || selectedType === 'wallet-transfer') {
-      recipientRow.style.display = 'flex';
-      document.getElementById('confirm-recipient').textContent = document.getElementById('recipient-account').value;
-    } else {
-      recipientRow.style.display = 'none';
-    }
-    
-    modal.classList.remove('hidden');
-  }
-  
-  function processTransaction() {
-    modal.classList.add('hidden');
-    confirmButton.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Processing...';
-    confirmButton.disabled = true;
-    
-    setTimeout(() => {
-      const referenceNumber = 'TXN' + Date.now().toString().slice(-8);
-      showToast('success', 'Transaction Completed', 'Transaction processed successfully', 'Reference: ' + referenceNumber);
-      confirmButton.innerHTML = 'Confirm Transaction';
-      confirmButton.disabled = false;
-      document.getElementById('clear-form').click();
-    }, 2000);
-  }
-  
-  function showToast(type, title, message, reference = '') {
-    const toast = document.getElementById('toast');
-    const icon = document.getElementById('toast-icon');
-    const titleEl = document.getElementById('toast-title');
-    const messageEl = document.getElementById('toast-message');
-    const referenceEl = document.getElementById('toast-reference');
-    
-    if (type === 'success') {
-      icon.className = 'ri-check-line text-green-500';
-    } else {
-      icon.className = 'ri-close-line text-red-500';
-    }
-    
-    titleEl.textContent = title;
-    messageEl.textContent = message;
-    referenceEl.textContent = reference;
-    
-    toast.classList.remove('hidden');
-    setTimeout(() => {
-      toast.classList.add('hidden');
-    }, 5000);
-  }
-});
-</script> -->

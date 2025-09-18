@@ -1,75 +1,66 @@
-<!-- Header -->
 <header class="bg-white shadow-sm fixed top-0 left-0 w-full z-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-16">
-      <!-- Logo - Adjusted size to be more appropriate for a header -->
+      <!-- Logo -->
       <div class="flex items-center">
-        <img src="../../../../assets/logo.png" alt="App Logo"
-          class="h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity">
+        <img src="../../../../assets/logo.png" alt="App Logo" class="h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity">
       </div>
 
       <!-- Navigation and User Menu -->
       <div class="flex items-center gap-4 md:gap-6">
         <!-- Main Navigation Links -->
         <nav class="hidden md:flex items-center space-x-4 relative">
-  <!-- Links -->
-  <a routerLink="/wallet/overview" 
-     routerLinkActive="text-primary border-b-2 border-primary"
-     class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
-     Overview
-  </a>
+          <a routerLink="/wallet/overview" routerLinkActive="text-primary border-b-2 border-primary" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+            Overview
+          </a>
+          <a routerLink="/wallet/money-transfer" routerLinkActive="text-primary border-b-2 border-primary" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+            Charge wallet
+          </a>
+          <a routerLink="/wallet/transactions" routerLinkActive="text-primary border-b-2 border-primary" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+            Transactions
+          </a>
+          <a routerLink="/wallet/transfer" routerLinkActive="text-primary border-b-2 border-primary" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+            Transfer
+          </a>
+          <a routerLink="/wallet/qr-scanner" routerLinkActive="text-primary border-b-2 border-primary" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+            QR Scan
+          </a>
+          <a routerLink="/wallet/settings" routerLinkActive="text-primary border-b-2 border-primary" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
+            Settings
+          </a>
+          <!-- Notification Bell -->
+          <!-- Notification Bell -->
+<div class="relative">
+  <button (click)="toggleNotifications()" class="relative p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-600 hover:text-primary">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.243A4.5 4.5 0 0018 12.75V9a6 6 0 10-12 0v3.75a4.5 4.5 0 003.143 4.493m5.714 0A4.49 4.49 0 0112 18a4.49 4.49 0 01-2.857-.757m5.714 0L12 21m0 0l-2.143-2.757"/>
+    </svg>
+    <!-- 🔴 Only show red dot if there are unread notifications -->
+    <span *ngIf="hasUnreadNotifications" class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
+  </button>
 
-  <a routerLink="/wallet/transactions" 
-     routerLinkActive="text-primary border-b-2 border-primary"
-     class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
-     Transactions
-  </a>
-
-  <a routerLink="/wallet/transfer" 
-     routerLinkActive="text-primary border-b-2 border-primary"
-     class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
-     Transfer
-  </a>
-
-  <a routerLink="/wallet/settings" 
-     routerLinkActive="text-primary border-b-2 border-primary"
-     class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">
-     Settings
-  </a>
-
-  <!-- Notification Bell -->
-  <div class="relative">
-    <button (click)="toggleNotifications()" class="relative p-2 rounded-full hover:bg-gray-100 focus:outline-none">
-      <!-- Heroicon Bell -->
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
-           stroke-width="1.5" stroke="currentColor" 
-           class="w-6 h-6 text-gray-600 hover:text-primary">
-        <path stroke-linecap="round" stroke-linejoin="round" 
-              d="M14.857 17.243A4.5 4.5 0 0018 12.75V9a6 6 0 10-12 0v3.75a4.5 4.5 0 003.143 4.493m5.714 0A4.49 4.49 0 0112 18a4.49 4.49 0 01-2.857-.757m5.714 0L12 21m0 0l-2.143-2.757"/>
-      </svg>
-      <!-- Red Dot -->
-      <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
-    </button>
-
-    <!-- Notifications Tab -->
-    <div *ngIf="showNotifications"
-         class="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg border border-gray-200 z-50">
-      <div class="p-3 border-b border-gray-200 font-semibold text-gray-700">
-        Notifications
-      </div>
-      <ul class="max-h-60 overflow-y-auto">
-        <li *ngFor="let notif of notifications" 
-            class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">
-          {{ notif }}
-        </li>
-      </ul>
-      <div class="p-2 text-center text-sm text-primary hover:underline cursor-pointer">
-        View all
-      </div>
+  <!-- Notifications Tab -->
+  <div *ngIf="showNotifications" class="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg border border-gray-200 z-50">
+    <div class="p-3 border-b border-gray-200 font-semibold text-gray-700">
+      Notifications
+    </div>
+    <ul class="max-h-60 overflow-y-auto">
+      <li *ngFor="let notif of notifications" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">
+        {{ notif }}
+      </li>
+      <li *ngIf="notifications.length === 0" class="px-4 py-2 text-sm text-gray-600">
+        No new notifications
+      </li>
+    </ul>
+    <div class="p-2 text-center text-sm">
+      <span (click)="navigateToNotificationPreferences()" class="text-primary hover:underline cursor-pointer">
+        Manage Notification Preferences
+      </span>
     </div>
   </div>
-</nav>
+</div>
 
+        </nav>
 
         <!-- User Profile -->
         <div class="flex items-center gap-2 cursor-pointer">
@@ -77,12 +68,11 @@
             <i class="ri-user-3-line text-gray-600 text-sm md:text-base"></i>
           </div>
           <div class="hidden md:block">
-            <div class="text-sm font-medium text-gray-900">{{wallet?.customer?.fullName}}</div>
-            <div class="text-xs text-gray-500">{{wallet?.walletType?.wtyLabe}}</div>
+            <div class="text-sm font-medium text-gray-900">{{ wallet?.customer?.fullName }}</div>
+            <div class="text-xs text-gray-500">{{ wallet?.walletType?.wtyLabe }}</div>
           </div>
           <!-- Logout Button -->
-          <button (click)="logout()"
-            class="flex items-center p-2 text-gray-600 hover:text-gray-900 rounded-full transition-all hover:bg-gray-100">
+          <button (click)="logout()" class="flex items-center p-2 text-gray-600 hover:text-gray-900 rounded-full transition-all hover:bg-gray-100">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-logout-box-line ri-lg"></i>
             </div>
@@ -93,7 +83,6 @@
   </div>
 </header>
 
-<!-- Main Content -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-16">
   <router-outlet></router-outlet>
 </main>

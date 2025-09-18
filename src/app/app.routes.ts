@@ -19,6 +19,8 @@ import { TransactionsComponent } from './components/wallet/transactions/transact
 import { SettingsComponent } from './components/wallet/settings/settings.component';
 import { OperationsComponent } from './components/admin/operations/operations.component';
 import { TransferComponent } from './components/wallet/transfer/transfer.component';
+import { QrScannerComponent } from './components/wallet/qr-scanner/qr-scanner.component';
+import { MoneyTransferComponent } from './components/wallet/money-transfer/money-transfer.component';
 
 export const routes: Routes = [
 
@@ -52,7 +54,9 @@ export const routes: Routes = [
       { path: 'overview', component: OverviewComponent},
       { path: 'transactions', component: TransactionsComponent },
       { path: 'settings', component: SettingsComponent},
-      { path: 'transfer', component: TransferComponent }
+      { path: 'transfer', component: TransferComponent },
+      { path: 'qr-scanner', component: QrScannerComponent },
+      { path: 'money-transfer', component: MoneyTransferComponent },
     ]
   },
   {

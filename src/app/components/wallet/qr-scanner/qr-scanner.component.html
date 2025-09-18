@@ -1,0 +1,71 @@
+<!-- qr-scanner.component.html -->
+<div class="qr-wrapper">
+  <div class="qr-card">
+    <h2>QR Code Payment</h2>
+
+    <form [formGroup]="qrForm" (ngSubmit)="processPayment()">
+      <div class="form-group">
+        <label for="senderWalletIden">Your Wallet ID</label>
+        <input 
+          type="text" 
+          id="senderWalletIden" 
+          formControlName="senderWalletIden" 
+          class="form-control"
+          placeholder="Enter your wallet identifier">
+      </div>
+
+      <div class="form-group">
+        <label for="qrFile">Upload QR Code</label>
+        <input 
+          type="file" 
+          id="qrFile" 
+          (change)="onFileSelected($event)" 
+          accept="image/*"
+          class="form-control-file">
+      </div>
+
+      @if (isLoading) {
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Processing...</p>
+        </div>
+      }
+
+      @if (errorMessage) {
+        <div class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+      }
+
+      @if (qrData) {
+        <div class="qr-data">
+          <h3>Payment Details</h3>
+          <p><strong>Receiver:</strong> {{ qrData.receiverWalletIden }}</p>
+          <p><strong>Amount:</strong> {{ qrData.amount }} {{ qrData.currency }}</p>
+          @if (qrData.label) {
+            <p><strong>Label:</strong> {{ qrData.label }}</p>
+          }
+          @if (qrData.expiresAt) {
+            <p><strong>Expires:</strong> {{ qrData.expiresAt | date:'short' }}</p>
+          }
+        </div>
+      }
+
+      <button 
+        type="submit" 
+        class="btn"
+        [disabled]="!qrForm.valid || !qrData || !selectedFile || isLoading">
+        Process Payment
+      </button>
+    </form>
+
+    @if (paymentResult) {
+      <div class="payment-result" [ngClass]="{'success': paymentResult.status === 'SUCCESS', 'failure': paymentResult.status !== 'SUCCESS'}">
+        <h3>Payment Result</h3>
+        <p><strong>Status:</strong> {{ paymentResult.status }}</p>
+        <p><strong>Transaction ID:</strong> {{ paymentResult.transactionId }}</p>
+        <p><strong>Message:</strong> {{ paymentResult.message }}</p>
+      </div>
+    }
+  </div>
+</div>
