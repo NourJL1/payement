@@ -9,36 +9,41 @@
     <div class="w-full md:w-64 flex-shrink-0">
       <div class="bg-white rounded-lg shadow-sm overflow-hidden">
         <nav class="flex flex-col">
-          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'account'" (click)="switchSection('account')">
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'account'"
+            (click)="switchSection('account')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-user-3-line"></i>
             </div>
             <span class="font-medium">Account Information</span>
           </a>
-          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'security'" (click)="switchSection('security')">
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'security'"
+            (click)="switchSection('security')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-shield-keyhole-line"></i>
             </div>
             <span class="font-medium">Privacy & Security</span>
           </a>
-          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'documents'" (click)="switchSection('documents')">
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'documents'"
+            (click)="switchSection('documents')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-file-list-3-line"></i>
             </div>
             <span class="font-medium">Identity Documents</span>
-          </a> 
-           <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'notifications'" (click)="switchSection('notifications')">
+          </a>
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3"
+            [class.active]="activeSection === 'notifications'" (click)="switchSection('notifications')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-notification-3-line"></i>
             </div>
             <span class="font-medium">Notification Preferences</span>
           </a>
-          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'connected'" (click)="switchSection('connected')">
+          <a class="settings-nav-item flex items-center gap-3 px-4 py-3" [class.active]="activeSection === 'connected'"
+            (click)="switchSection('connected')">
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-link"></i>
             </div>
             <span class="font-medium">Connected Accounts</span>
-          </a> 
+          </a>
         </nav>
       </div>
     </div>
@@ -58,7 +63,8 @@
                 <div class="w-24 h-24 bg-gray-100 rounded-full overflow-hidden flex items-center justify-center">
                   <i class="ri-user-3-line text-gray-400 ri-2x"></i>
                 </div>
-                <button class="absolute bottom-0 right-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                <button
+                  class="absolute bottom-0 right-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-sm">
                   <i class="ri-pencil-line"></i>
                 </button>
               </div>
@@ -69,7 +75,8 @@
                   {{ customer.createdAt }}
                 </p>
                 <div class="mt-2 flex items-center">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     <span class="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
                     Verified
                   </span>
@@ -80,39 +87,23 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                <input
-                  type="text"
-                  [(ngModel)]="customer.cusFirstName"
-                  name="firstName"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+                <input type="text" [(ngModel)]="customer.cusFirstName" name="firstName"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Middle Name</label>
-                <input
-                  type="text"
-                  [(ngModel)]="customer.cusMidName"
-                  name="middleName"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+                <input type="text" [(ngModel)]="customer.cusMidName" name="middleName"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                <input
-                  type="text"
-                  [(ngModel)]="customer.cusLastName"
-                  name="lastName"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+                <input type="text" [(ngModel)]="customer.cusLastName" name="lastName"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                <input
-                  type="text"
-                  [(ngModel)]="customer.username"
-                  name="username"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+                <input type="text" [(ngModel)]="customer.username" name="username"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
               </div>
             </div>
           </div>
@@ -127,58 +118,36 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                <input
-                  type="email"
-                  [(ngModel)]="customer.cusMailAddress"
-                  name="email"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+                <input type="email" [(ngModel)]="customer.cusMailAddress" name="email"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                <input
-                  type="tel"
-                  [(ngModel)]="customer.cusPhoneNbr"
-                  name="phone"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+                <input type="tel" [(ngModel)]="customer.cusPhoneNbr" name="phone"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
               </div>
               <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                <input
-                  type="text"
-                  [(ngModel)]="customer.cusAddress"
-                  name="address"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4"
-                />
+                <input type="text" [(ngModel)]="customer.cusAddress" name="address"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4" />
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div *ngIf="customer.city">
                     <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
-                    <input
-                      type="text"
-                      [(ngModel)]="customer.city.ctyLabe"
-                      name="city"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
+                    <input type="text" [(ngModel)]="customer.city.ctyLabe" name="city"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                   </div>
                   <div *ngIf="customer.country">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
-                    <input
-                      type="text"
-                      [(ngModel)]="customer.country.ctrLabe"
-                      name="country"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
+                    <input type="text" [(ngModel)]="customer.country.ctrLabe" name="country"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="px-6 py-4 bg-gray-50 flex justify-end">
-            <button
-              (click)="updateCustomer()"
-              class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium"
-            >
+            <button (click)="updateCustomer()"
+              class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium">
               Save Changes
             </button>
           </div>
@@ -202,7 +171,8 @@
                     <div class="text-sm text-gray-500">Receive updates via email</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" [(ngModel)]="notificationPreferences.email" (change)="updateNotificationPreference('email')">
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.email"
+                      (change)="updateNotificationPreference('email')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -212,7 +182,8 @@
                     <div class="text-sm text-gray-500">Receive notifications on your devices</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" [(ngModel)]="notificationPreferences.push" (change)="updateNotificationPreference('push')">
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.push"
+                      (change)="updateNotificationPreference('push')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -228,7 +199,8 @@
                     <div class="text-sm text-gray-500">Get notified for every transaction</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" [(ngModel)]="notificationPreferences.allTransactions" (change)="updateNotificationPreference('allTransactions')">
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.allTransactions"
+                      (change)="updateNotificationPreference('allTransactions')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -238,7 +210,8 @@
                     <div class="text-sm text-gray-500">When money is added to your account</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" [(ngModel)]="notificationPreferences.deposits" (change)="updateNotificationPreference('deposits')">
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.deposits"
+                      (change)="updateNotificationPreference('deposits')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -248,7 +221,8 @@
                     <div class="text-sm text-gray-500">When money leaves your account</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" [(ngModel)]="notificationPreferences.withdrawals" (change)="updateNotificationPreference('withdrawals')">
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.withdrawals"
+                      (change)="updateNotificationPreference('withdrawals')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -264,7 +238,8 @@
                     <div class="text-sm text-gray-500">Login attempts and security updates</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" [(ngModel)]="notificationPreferences.securityAlerts" (change)="updateNotificationPreference('securityAlerts')">
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.securityAlerts"
+                      (change)="updateNotificationPreference('securityAlerts')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -274,7 +249,8 @@
                     <div class="text-sm text-gray-500">Changes to your account settings</div>
                   </div>
                   <label class="custom-switch">
-                    <input type="checkbox" [(ngModel)]="notificationPreferences.accountUpdates" (change)="updateNotificationPreference('accountUpdates')">
+                    <input type="checkbox" [(ngModel)]="notificationPreferences.accountUpdates"
+                      (change)="updateNotificationPreference('accountUpdates')">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -282,7 +258,9 @@
             </div>
           </div>
           <div class="px-6 py-4 bg-gray-50 flex justify-end">
-            <button (click)="saveSettings()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save Preferences</button>
+            <button (click)="saveSettings()"
+              class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Save
+              Preferences</button>
           </div>
         </div>
       </div>
@@ -301,18 +279,26 @@
                 <div class="space-y-4">
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-                    <input [(ngModel)]="currentPassword" name="currentPassword" type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter current password">
+                    <input [(ngModel)]="currentPassword" name="currentPassword" type="password"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                      placeholder="Enter current password">
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                    <input [(ngModel)]="newPassword" name="newPassword" type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter new password">
+                    <input [(ngModel)]="newPassword" name="newPassword" type="password"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                      placeholder="Enter new password">
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
-                    <input [(ngModel)]="confirmNewPassword" name="confirmNewPassword" type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Confirm new password">
+                    <input [(ngModel)]="confirmNewPassword" name="confirmNewPassword" type="password"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                      placeholder="Confirm new password">
                   </div>
                 </div>
-                <button (click)="resetPassword()" class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Update Password</button>
+                <button (click)="resetPassword()"
+                  class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium !rounded-button whitespace-nowrap">Update
+                  Password</button>
               </div>
 
               <!-- <div class="pt-6 border-t border-gray-100">
@@ -454,7 +440,8 @@
             <div class="mb-6">
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-md font-medium text-gray-900">Identity Verification Status</h3>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                   <span class="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
                   Verified
                 </span>
@@ -463,20 +450,20 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <div class="text-sm text-gray-500">Document Type</div>
-                    <div class="font-medium text-gray-800">Passport</div>
+                    <div class="font-medium text-gray-800">{{ customer.identity?.customerIdentityType?.citLabe }}</div>
                   </div>
                   <div>
                     <div class="text-sm text-gray-500">Document Number</div>
-                    <div class="font-medium text-gray-800">P123456789</div>
+                    <div class="font-medium text-gray-800">{{ customer.identity?.cidNum }}</div>
                   </div>
-                  <div>
+                  <!-- <div>
                     <div class="text-sm text-gray-500">Issue Date</div>
                     <div class="font-medium text-gray-800">March 15, 2020</div>
                   </div>
                   <div>
                     <div class="text-sm text-gray-500">Expiry Date</div>
                     <div class="font-medium text-gray-800">March 14, 2030</div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -484,55 +471,28 @@
             <div class="mb-6">
               <h3 class="text-md font-medium text-gray-900 mb-4">Uploaded Documents</h3>
               <div class="space-y-4">
-                <div class="flex items-start p-4 border border-gray-200 rounded-lg">
-                  <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
-                    <i class="ri-file-text-line text-blue-600 ri-lg"></i>
-                  </div>
-                  <div class="flex-1">
-                    <div class="flex justify-between">
-                      <div class="font-medium text-gray-800">Passport.pdf</div>
-                      <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Verified</div>
+                <div *ngFor="let doc of customerDocs" (click)="previewDocument(doc)"
+                  class="document-item group flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                  <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 mr-3">
+                      <i class="ri-file-line"></i>
                     </div>
-                    <div class="text-sm text-gray-500">Uploaded on June 10, 2023</div>
-                    <div class="mt-2 flex gap-2">
-                      <button class="text-xs text-primary flex items-center">
-                        <i class="ri-eye-line mr-1"></i>
-                        View
-                      </button>
-                      <button class="text-xs text-gray-500 flex items-center">
-                        <i class="ri-download-2-line mr-1"></i>
-                        Download
-                      </button>
+                    <div>
+                      <div class="font-medium text-gray-800">{{doc.cdoLabe}}</div>
+                      <div class="text-xs text-gray-500">{{doc.docType?.dtyLabe}}
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <div class="flex items-start p-4 border border-gray-200 rounded-lg">
-                  <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
-                    <i class="ri-file-text-line text-blue-600 ri-lg"></i>
-                  </div>
-                  <div class="flex-1">
-                    <div class="flex justify-between">
-                      <div class="font-medium text-gray-800">Address_Proof.pdf</div>
-                      <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Verified</div>
-                    </div>
-                    <div class="text-sm text-gray-500">Uploaded on June 10, 2023</div>
-                    <div class="mt-2 flex gap-2">
-                      <button class="text-xs text-primary flex items-center">
-                        <i class="ri-eye-line mr-1"></i>
-                        View
-                      </button>
-                      <button class="text-xs text-gray-500 flex items-center">
-                        <i class="ri-download-2-line mr-1"></i>
-                        Download
-                      </button>
-                    </div>
+                  <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button class="p-1 text-gray-500 hover:text-blue-500" title="Preview">
+                      <i class="ri-eye-line"></i>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div>
+            <!-- <div>
               <h3 class="text-md font-medium text-gray-900 mb-4">Upload New Document</h3>
               <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                 <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -540,10 +500,12 @@
                 </div>
                 <h4 class="text-sm font-medium text-gray-900 mb-1">Drag and drop your files here</h4>
                 <p class="text-xs text-gray-500 mb-4">or</p>
-                <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm font-medium !rounded-button whitespace-nowrap">Browse Files</button>
+                <button
+                  class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm font-medium !rounded-button whitespace-nowrap">Browse
+                  Files</button>
                 <p class="text-xs text-gray-500 mt-4">Supported formats: PDF, JPG, PNG (Max size: 10MB)</p>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -626,19 +588,22 @@
             <div class="mt-8">
               <h3 class="text-md font-medium text-gray-900 mb-4">Connect New Account</h3>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
+                <button
+                  class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
                   <div class="w-6 h-6 flex items-center justify-center">
                     <i class="ri-bank-line text-gray-600"></i>
                   </div>
                   <span class="font-medium">Connect Bank</span>
                 </button>
-                <button class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
+                <button
+                  class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
                   <div class="w-6 h-6 flex items-center justify-center">
                     <i class="ri-apple-fill text-gray-600"></i>
                   </div>
                   <span class="font-medium">Connect Apple</span>
                 </button>
-                <button class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
+                <button
+                  class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
                   <div class="w-6 h-6 flex items-center justify-center">
                     <i class="ri-facebook-fill text-gray-600"></i>
                   </div>

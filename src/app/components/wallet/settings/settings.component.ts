@@ -5,6 +5,9 @@ import { NotificationService } from '../../../services/notification.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
+import { CustomerIdentity } from '../../../entities/customer-identity';
+import { CustomerDoc } from '../../../entities/customer-doc';
+import { CustomerDocService } from '../../../services/customer-doc.service';
 
 @Component({
   selector: 'app-settings',
@@ -21,6 +24,9 @@ export class SettingsComponent implements OnInit {
   currentPassword?: string;
   newPassword?: string;
   confirmNewPassword?: string;
+
+  customerDocs: CustomerDoc[] = [] // List of customer documents
+  selectedDoc?: CustomerDoc
 
   notificationPreferences = {
     email: true,
@@ -62,6 +68,7 @@ export class SettingsComponent implements OnInit {
 
   constructor(
     private customerService: CustomerService,
+    private customerDocService: CustomerDocService,
     private authService: AuthService,
     private notificationService: NotificationService
   ) {
@@ -99,6 +106,13 @@ export class SettingsComponent implements OnInit {
         this.customer.city = data.city || { ctyLabe: '' };
         this.customer.country = data.country || { ctrLabe: '' };
         this.loading = false;
+        this.customerDocService.getByCustomerDocListe(this.customer?.identity?.customerDocListe?.cdlCode!).subscribe({
+      next: (docs: CustomerDoc[]) => {
+        this.customerDocs = docs
+        console.log(this.customerDocs)
+      },
+      error: (err) => { console.log(err) }
+    })
       },
       error: (err) => {
         this.error = 'Failed to fetch customer data';
@@ -192,4 +206,13 @@ export class SettingsComponent implements OnInit {
       },
     });
   }
+
+  previewDocument(customerDoc: CustomerDoc) {
+    this.customerDocService.getFileById(customerDoc.cdoCode!)
+  }
+
+  closePreview() {
+    this.selectedDoc = undefined
+  }
+
 }
