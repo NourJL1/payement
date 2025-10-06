@@ -1,3 +1,27 @@
-:where([class^="ri-"])::before {
-content: "\f3c2";
+.red-underline {
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.red-underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background-color: #dc2626; /* red-600 */
+  border-radius: 2px;
+}
+
+/* Add red accent to form elements on focus */
+input:focus, select:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+}
+
+/* Red-themed button hover effects */
+button:hover {
+  transition: all 0.2s ease-in-out;
 }

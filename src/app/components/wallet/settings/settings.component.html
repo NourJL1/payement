@@ -42,7 +42,7 @@
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-link"></i>
             </div>
-            <span class="font-medium">Connected Accounts</span>
+            <span class="font-medium">Connected Accounts and Cards</span>
           </a>
         </nav>
       </div>
@@ -510,110 +510,159 @@
         </div>
       </div>
 
-      <!-- Connected Accounts Section -->
-      <div *ngIf="activeSection === 'connected'" id="connected" class="settings-section">
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-          <div class="p-6 border-b border-gray-100">
-            <h2 class="text-lg font-semibold text-gray-900">Connected Accounts</h2>
-            <p class="text-sm text-gray-500 mt-1">Manage your linked external accounts</p>
+<!-- Connected Accounts Section -->
+<div *ngIf="activeSection === 'connected'" id="connected" class="settings-section">
+  <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+    <div class="p-6 border-b border-gray-100">
+      <h2 class="text-lg font-semibold text-gray-900">Connected Accounts</h2>
+      <p class="text-sm text-gray-500 mt-1">Manage your linked bank accounts</p>
+    </div>
+    <div class="p-6">
+      <!-- Accounts List -->
+      <div class="space-y-6 mb-8">
+        <h3 class="text-md font-medium text-gray-900">Bank Accounts</h3>
+        
+        <!-- Edit Account Form -->
+        <div *ngIf="editingAccount || isAddingAccount" class="bg-gray-50 p-4 rounded-lg mb-4">
+          <h4 class="font-medium text-gray-900 mb-4">{{isAddingAccount ? 'Add New Account' : 'Edit Account'}}</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Account Label</label>
+              <input type="text" [(ngModel)]="(editingAccount || newAccount).accIden" 
+                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">RIB</label>
+              <input type="text" [(ngModel)]="(editingAccount || newAccount).accRib" 
+                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Balance</label>
+              <input type="number" [(ngModel)]="(editingAccount || newAccount).accBalance" 
+                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
           </div>
-          <div class="p-6">
-            <div class="space-y-6">
-              <div class="flex items-start p-4 border border-gray-200 rounded-lg">
-                <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
-                  <i class="ri-bank-fill text-blue-600 ri-lg"></i>
-                </div>
-                <div class="flex-1">
-                  <div class="flex justify-between">
-                    <div>
-                      <div class="font-medium text-gray-800">Chase Bank</div>
-                      <div class="text-sm text-gray-500">Checking Account ****4582</div>
-                    </div>
-                    <label class="custom-switch">
-                      <input type="checkbox" checked>
-                      <span class="slider"></span>
-                    </label>
-                  </div>
-                  <div class="mt-2 text-xs text-gray-500">Connected on May 15, 2023</div>
-                  <div class="mt-2">
-                    <button class="text-red-500 text-sm">Disconnect</button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex items-start p-4 border border-gray-200 rounded-lg">
-                <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
-                  <i class="ri-paypal-fill text-blue-600 ri-lg"></i>
-                </div>
-                <div class="flex-1">
-                  <div class="flex justify-between">
-                    <div>
-                      <div class="font-medium text-gray-800">PayPal</div>
-                      <div class="text-sm text-gray-500">michael.andersonexample.com</div>
-                    </div>
-                    <label class="custom-switch">
-                      <input type="checkbox" checked>
-                      <span class="slider"></span>
-                    </label>
-                  </div>
-                  <div class="mt-2 text-xs text-gray-500">Connected on April 3, 2023</div>
-                  <div class="mt-2">
-                    <button class="text-red-500 text-sm">Disconnect</button>
-                  </div>
-                </div>
-              </div>
-              <div class="flex items-start p-4 border border-gray-200 rounded-lg">
-                <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg mr-4">
-                  <i class="ri-google-fill text-red-500 ri-lg"></i>
-                </div>
-                <div class="flex-1">
-                  <div class="flex justify-between">
-                    <div>
-                      <div class="font-medium text-gray-800">Google</div>
-                      <div class="text-sm text-gray-500">michael.andersongmail.com</div>
-                    </div>
-                    <label class="custom-switch">
-                      <input type="checkbox" checked>
-                      <span class="slider"></span>
-                    </label>
-                  </div>
-                  <div class="mt-2 text-xs text-gray-500">Connected on March 20, 2023</div>
-                  <div class="mt-2">
-                    <button class="text-red-500 text-sm">Disconnect</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-8">
-              <h3 class="text-md font-medium text-gray-900 mb-4">Connect New Account</h3>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button
-                  class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
-                  <div class="w-6 h-6 flex items-center justify-center">
-                    <i class="ri-bank-line text-gray-600"></i>
-                  </div>
-                  <span class="font-medium">Connect Bank</span>
-                </button>
-                <button
-                  class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
-                  <div class="w-6 h-6 flex items-center justify-center">
-                    <i class="ri-apple-fill text-gray-600"></i>
-                  </div>
-                  <span class="font-medium">Connect Apple</span>
-                </button>
-                <button
-                  class="flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5">
-                  <div class="w-6 h-6 flex items-center justify-center">
-                    <i class="ri-facebook-fill text-gray-600"></i>
-                  </div>
-                  <span class="font-medium">Connect Facebook</span>
-                </button>
-              </div>
-            </div>
+          <div class="flex gap-2 mt-4">
+            <button (click)="saveAccount()" 
+                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium">
+              {{isAddingAccount ? 'Add Account' : 'Save Changes'}}
+            </button>
+            <button (click)="cancelEditAccount()" 
+                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium">
+              Cancel
+            </button>
           </div>
         </div>
+
+        <!-- Accounts -->
+        <div *ngFor="let account of accounts" class="flex items-start p-4 border border-gray-200 rounded-lg">
+          <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-lg mr-4">
+            <i class="ri-bank-fill text-blue-600 ri-lg"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="font-medium text-gray-800">{{account.bank?.banCorpName || 'Bank Account'}}</div>
+                <div class="text-sm text-gray-500">RIB: {{account.accRib}}</div>
+                <div class="text-sm text-gray-500">Balance: {{account.accBalance | currency}}</div>
+                <div class="text-sm text-gray-500">Type: {{account.accountType?.atyLabe}}</div>
+              </div>
+              <div class="flex gap-2">
+                <button (click)="editAccount(account)" 
+                        class="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm">
+                  Edit
+                </button>
+                <button (click)="deleteAccount(account)" 
+                        class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm">
+                  Delete
+                </button>
+              </div>
+            </div>
+            <div class="mt-2 text-xs text-gray-500">Account ID: {{account.accCode}}</div>
+          </div>
+        </div>
+
+        <div *ngIf="accounts.length === 0" class="text-center py-8 text-gray-500">
+          No bank accounts connected yet.
+        </div>
       </div>
+
+      <!-- Cards List -->
+      <div class="space-y-6 mb-8">
+        <h3 class="text-md font-medium text-gray-900">Credit/Debit Cards</h3>
+        
+        <!-- Edit Card Form -->
+        <div *ngIf="editingCard || isAddingCard" class="bg-gray-50 p-4 rounded-lg mb-4">
+          <h4 class="font-medium text-gray-900 mb-4">{{isAddingCard ? 'Add New Card' : 'Edit Card'}}</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Card Label</label>
+              <input type="text" [(ngModel)]="(editingCard || newCard).carLabe" 
+                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+              <input type="text" [(ngModel)]="(editingCard || newCard).carNumb" 
+                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+              <input type="date" [(ngModel)]="(editingCard || newCard).carExpiryDate" 
+                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Balance</label>
+              <input type="number" [(ngModel)]="(editingCard || newCard).carAmount" 
+                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+          </div>
+          <div class="flex gap-2 mt-4">
+            <button (click)="saveCard()" 
+                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium">
+              {{isAddingCard ? 'Add Card' : 'Save Changes'}}
+            </button>
+            <button (click)="cancelEditCard()" 
+                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium">
+              Cancel
+            </button>
+          </div>
+        </div>
+
+        <!-- Cards -->
+        <div *ngFor="let card of cards" class="flex items-start p-4 border border-gray-200 rounded-lg">
+          <div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-lg mr-4">
+            <i class="ri-bank-card-fill text-green-600 ri-lg"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="font-medium text-gray-800">{{card.carLabe}}</div>
+                <div class="text-sm text-gray-500">Number: **** {{card.carNumb?.slice(-4)}}</div>
+                <div class="text-sm text-gray-500">Balance: {{card.carAmount | currency}}</div>
+                <div class="text-sm text-gray-500">Type: {{card.cardType?.ctypLabe}}</div>
+              </div>
+              <div class="flex gap-2">
+                <button (click)="editCard(card)" 
+                        class="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm">
+                  Edit
+                </button>
+                <button (click)="deleteCard(card)" 
+                        class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm">
+                  Delete
+                </button>
+              </div>
+            </div>
+            <div class="mt-2 text-xs text-gray-500">Expires: {{card.carExpiryDate | date}}</div>
+          </div>
+        </div>
+
+        <div *ngIf="cards.length === 0" class="text-center py-8 text-gray-500">
+          No cards connected yet.
+        </div>
+      </div>
+
+      
     </div>
   </div>
-</main>
+
+  </div>

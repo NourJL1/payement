@@ -1,0 +1,228 @@
+/* Root Variables for Fintech Theme */
+:root {
+  --red: #e50914;
+  --red-dark: #b20710;
+  --black: #000000;
+  --white: #ffffff;
+  --gray-light: #f8f9fa;
+  --gray-dark: #333333;
+  --shadow-soft: 0 4px 12px rgba(229, 9, 20, 0.15);
+  --shadow-hover: 0 8px 24px rgba(229, 9, 20, 0.25);
+  --border-radius: 8px;
+  --transition: all 0.3s ease;
+  --font-bold: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Overall Container - Ensure Visibility */
+.fintech-products {
+  background-color: var(--white) !important;
+  color: var(--white) !important;
+  font-family: var(--font-bold);
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+/* Header - Bold Red Accent */
+.header-title {
+  color: var(--red) !important;
+  font-size: 2.5rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.subtitle {
+  color: var(--white) !important;
+  font-size: 1.1rem !important;
+  opacity: 0.9 !important;
+  font-weight: 500;
+}
+.header-divider {
+  border: none !important;
+  height: 3px !important;
+  background: linear-gradient(90deg, transparent, var(--red), transparent) !important;
+  width: 100px !important;
+  margin: 20px auto !important;
+}
+
+/* Search Bar - White Input on Black BG */
+.search-group {
+  border: 2px solid var(--red) !important;
+  border-radius: var(--border-radius) !important;
+  overflow: hidden !important;
+  background: var(--white) !important;
+  box-shadow: var(--shadow-soft) !important;
+  transition: var(--transition);
+  display: flex !important; /* Ensure layout */
+}
+.search-group:hover {
+  box-shadow: var(--shadow-hover) !important;
+  border-color: var(--red-dark) !important;
+}
+.search-icon {
+  background: var(--black) !important;
+  border: none !important;
+  color: var(--red) !important;
+  padding: 12px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+.search-input {
+  border: none !important;
+  background: var(--white) !important;
+  color: var(--black) !important;
+  padding: 12px 16px !important;
+  font-size: 1rem !important;
+  flex: 1 !important; /* Take available space */
+}
+.search-input::placeholder {
+  color: var(--gray-dark) !important;
+}
+.search-btn {
+  background: var(--red) !important;
+  border: none !important;
+  color: var(--white) !important;
+  padding: 12px 24px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px;
+  white-space: nowrap !important;
+  transition: var(--transition);
+}
+.search-btn:hover:not(:disabled) {
+  background: var(--red-dark) !important;
+  transform: translateY(-1px);
+}
+
+/* Product Cards - White on Black with Red Borders */
+.product-card {
+  background: var(--white) !important;
+  border: 1px solid var(--red) !important;
+  border-radius: var(--border-radius) !important;
+  overflow: hidden !important;
+  transition: var(--transition);
+  height: 100% !important;
+  color: var(--white) !important;
+  box-shadow: var(--shadow-soft) !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+.product-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow-hover) !important;
+  border-color: var(--red-dark) !important;
+}
+.card-image-placeholder {
+  height: 180px !important;
+  background: linear-gradient(135deg, var(--gray-light), var(--white)) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--red) !important;
+  font-size: 3rem !important;
+  border-bottom: 1px solid var(--red) !important;
+}
+.product-name {
+  color: var(--black) !important;
+  font-size: 1.2rem !important;
+  margin-bottom: 8px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.product-desc {
+  color: var(--gray-dark) !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  min-height: 40px; /* Prevent collapse */
+}
+.product-meta {
+  border-top: 1px solid var(--gray-light) !important;
+  padding-top: 12px !important;
+}
+.product-price {
+  color: var(--red) !important;
+  font-size: 1.1rem !important;
+  margin-bottom: 4px !important;
+  font-weight: 800 !important;
+}
+.stock-info {
+  color: var(--gray-dark) !important;
+  font-size: 0.85rem !important;
+  margin: 0 !important;
+}
+
+/* Card Footer */
+.card-footer {
+  background: var(--black) !important;
+  border: none !important;
+  padding: 16px !important;
+  color: var(--white) !important;
+  flex-shrink: 0 !important; /* Prevent compression */
+}
+.purchase-btn {
+  background: var(--red) !important;
+  border: none !important;
+  color: var(--white) !important;
+  font-size: 0.95rem !important;
+  padding: 10px 16px !important;
+  border-radius: 20px !important;
+  transition: var(--transition);
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+.purchase-btn:hover:not(:disabled) {
+  background: var(--red-dark) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3) !important;
+}
+.purchase-btn:disabled {
+  background: var(--gray-dark) !important;
+  color: var(--white) !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
+
+/* No Products - Ensure Visibility */
+.no-products {
+  color: var(--white) !important;
+  opacity: 0.9 !important;
+  padding: 40px 0 !important;
+}
+.no-products .bi {
+  color: var(--red) !important;
+  opacity: 0.8 !important;
+  font-size: 4rem !important;
+}
+.no-products p {
+  font-size: 1.2rem !important;
+  margin-top: 16px !important;
+}
+
+/* Responsive & Fallbacks */
+@media (max-width: 768px) {
+  .header-title { font-size: 2rem !important; }
+  .search-group { margin: 0 10px !important; }
+  .product-card { margin-bottom: 20px !important; }
+}
+
+/* Custom Truncation */
+.text-truncate-2 {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+/* Bootstrap Override for Dark BG */
+.row, .col-*, .card { background: transparent !important; }
+.form-control:focus { border-color: var(--red) !important; box-shadow: 0 0 0 0.2rem rgba(229, 9, 20, 0.25) !important; }

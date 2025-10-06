@@ -37,12 +37,10 @@ export class OverviewComponent implements OnInit {
   showAddCardModal: boolean = false;
   showAddAccountModal: boolean = false;
   
-  // Arrays to store data fetched from services
   availableCardTypes: CardType[] = [];
   availableAccountTypes: AccountType[] = [];
   availableBanks: Bank[] = [];
   
-  // Loading states
   isLoadingCardTypes: boolean = false;
   isLoadingAccountTypes: boolean = false;
   isLoadingBanks: boolean = false;
@@ -107,7 +105,6 @@ export class OverviewComponent implements OnInit {
       error: (err) => {
         console.error('Failed to load card types', err);
         this.isLoadingCardTypes = false;
-        // Fallback to default values if API fails
         this.availableCardTypes = [
           { ctypCode: 1, ctypLabe: 'visa' },
           { ctypCode: 2, ctypLabe: 'mastercard' }
@@ -117,23 +114,22 @@ export class OverviewComponent implements OnInit {
   }
 
   loadAccountTypes(): void {
-  this.isLoadingAccountTypes = true;
-  this.accountTypeService.getAll().subscribe({
-    next: (accountTypes: AccountType[]) => {
-      this.availableAccountTypes = accountTypes;
-      this.isLoadingAccountTypes = false;
-    },
-    error: (err) => {
-      console.error('Failed to load account types', err);
-      this.isLoadingAccountTypes = false;
-      // Fallback to default values if API fails
-      this.availableAccountTypes = [
-        { atyCode: 1, atyLabe: 'checking' },
-        { atyCode: 2, atyLabe: 'savings' }
-      ];
-    }
-  });
-}
+    this.isLoadingAccountTypes = true;
+    this.accountTypeService.getAll().subscribe({
+      next: (accountTypes: AccountType[]) => {
+        this.availableAccountTypes = accountTypes;
+        this.isLoadingAccountTypes = false;
+      },
+      error: (err) => {
+        console.error('Failed to load account types', err);
+        this.isLoadingAccountTypes = false;
+        this.availableAccountTypes = [
+          { atyCode: 1, atyLabe: 'checking' },
+          { atyCode: 2, atyLabe: 'savings' }
+        ];
+      }
+    });
+  }
 
   loadBanks(): void {
     this.isLoadingBanks = true;
@@ -145,7 +141,6 @@ export class OverviewComponent implements OnInit {
       error: (err) => {
         console.error('Failed to load banks', err);
         this.isLoadingBanks = false;
-        // Fallback to default values if API fails
         this.availableBanks = [
           { banCode: 1, banCorpName: 'Bank A' },
           { banCode: 2, banCorpName: 'Bank B' },
@@ -155,41 +150,38 @@ export class OverviewComponent implements OnInit {
     });
   }
 
-loadWallet(cusCode: number): void {
-  this.walletService.getWalletByCustomerCode(cusCode).subscribe({
-    next: (data: Wallet) => {
-      console.log('Raw wallet response:', data);  // 👈 ADD THIS FIRST
+  loadWallet(cusCode: number): void {
+    this.walletService.getWalletByCustomerCode(cusCode).subscribe({
+      next: (data: Wallet) => {
+        console.log('Raw wallet response:', data);
 
-      this.wallet = data;
+        this.wallet = data;
 
-      // Ensure cardList and accountList are properly initialized
-      if (!this.wallet.cardList) {
+        if (!this.wallet.cardList) {
+          this.wallet.cardList = new CardList({ cliLabe: 'My Cards', cards: [] });
+        } else if (!this.wallet.cardList.cards) {
+          this.wallet.cardList.cards = [];
+        }
+
+        if (!this.wallet.accountList) {
+          this.wallet.accountList = new AccountList({ aliLabe: 'My Accounts', accounts: [] });
+        } else if (!this.wallet.accountList.accounts) {
+          this.wallet.accountList.accounts = [];
+        }
+
+        console.log('Wallet after initialization:', this.wallet);
+        console.log('Accounts array:', this.wallet.accountList?.accounts);
+        console.log('Cards array:', this.wallet.cardList?.cards);
+      },
+      error: (err) => {
+        console.error('Failed to load wallet', err);
+        this.wallet = new Wallet();
         this.wallet.cardList = new CardList({ cliLabe: 'My Cards', cards: [] });
-      } else if (!this.wallet.cardList.cards) {
-        this.wallet.cardList.cards = [];
-      }
-
-      if (!this.wallet.accountList) {
         this.wallet.accountList = new AccountList({ aliLabe: 'My Accounts', accounts: [] });
-      } else if (!this.wallet.accountList.accounts) {
-        this.wallet.accountList.accounts = [];
       }
+    });
+  }
 
-      console.log('Wallet after initialization:', this.wallet);  // 👈 ADD THIS TOO
-      console.log('Accounts array:', this.wallet.accountList?.accounts);
-      console.log('Cards array:', this.wallet.cardList?.cards);
-    },
-    error: (err) => {
-      console.error('Failed to load wallet', err);
-      this.wallet = new Wallet();
-      this.wallet.cardList = new CardList({ cliLabe: 'My Cards', cards: [] });
-      this.wallet.accountList = new AccountList({ aliLabe: 'My Accounts', accounts: [] });
-    }
-  });
-}
-
-
-  // Method to mask card number
   maskCardNumber(cardNumber: string | undefined): string {
     if (!cardNumber) {
       return '•••• •••• •••• ••••';
@@ -201,7 +193,6 @@ loadWallet(cusCode: number): void {
     return '**** **** **** ' + cleaned.substring(cleaned.length - 4);
   }
 
-  // Method to mask RIB number
   maskRib(rib: string | undefined): string {
     if (!rib) {
       return '•••• •••• •••• ••••';
@@ -278,95 +269,124 @@ loadWallet(cusCode: number): void {
     this.showAddAccountModal = false;
   }
 
+  // UPDATED: Add duplicate validation for cards
   addCard(): void {
-  if (!this.newCard.carNumb || !this.newCard.carLabe || !this.newCard.carExpiryDate || !this.newCard.cardType) {
-    alert('Please fill all required fields');
-    return;
-  }
-
-  const cleanedCardNumber = this.newCard.carNumb.replace(/\s/g, '');
-  if (!/^\d{16,19}$/.test(cleanedCardNumber)) {
-    alert('Card number must be 16-19 digits');
-    return;
-  }
-
-  // Create a new object without the carCode to avoid primary key conflicts
-  const cardToCreate = {
-    carNumb: cleanedCardNumber,
-    carLabe: this.newCard.carLabe,
-    carExpiryDate: this.newCard.carExpiryDate,
-    cardType: this.newCard.cardType,
-    carAmount: this.newCard.carAmount || 0,
-    carPlafond: this.newCard.carPlafond || 5000,
-    carPlafondPeriod: this.newCard.carPlafondPeriod || 'MONTH',
-    // Link the card to the wallet's card list
-    cardList: this.wallet?.cardList?.cliCode ? { cliCode: this.wallet.cardList.cliCode } : undefined
-  };
-
-  this.cardService.create(cardToCreate).subscribe({
-    next: (createdCard) => {
-      if (!this.wallet) {
-        this.wallet = new Wallet();
-      }
-      if (!this.wallet.cardList) {
-        this.wallet.cardList = new CardList({ cliLabe: 'My Cards', cards: [] });
-      }
-      if (!this.wallet.cardList.cards) {
-        this.wallet.cardList.cards = [];
-      }
-      this.wallet.cardList.cards.push(createdCard);
-      this.closeAddCardModal();
-      alert('Card added successfully!');
-    },
-    error: (err) => {
-      console.error('Failed to add card', err);
-      alert('Failed to add card: ' + (err.error?.message || 'Unknown error'));
+    if (!this.newCard.carNumb || !this.newCard.carLabe || !this.newCard.carExpiryDate || !this.newCard.cardType) {
+      alert('Please fill all required fields');
+      return;
     }
-  });
-}
 
-
-  // In your OverviewComponent, update the addAccount method:
-addAccount(): void {
-  if (!this.newAccount.accRib || !this.newAccount.accKey || !this.newAccount.accountType || !this.newAccount.bank) {
-    alert('Please fill all required fields');
-    return;
-  }
-
-  if (!/^[A-Z0-9]{20,34}$/.test(this.newAccount.accRib)) {
-    alert('RIB must be 20-34 alphanumeric characters (uppercase letters and numbers only)');
-    return;
-  }
-
-  // Remove accIden from the payload - it will be auto-generated by backend
-  const accountToCreate = {
-    accRib: this.newAccount.accRib,
-    accKey: this.newAccount.accKey,
-    accountType: this.newAccount.accountType,
-    bank: this.newAccount.bank,
-    accBalance: this.newAccount.accBalance || 0.0,
-    accountList: this.wallet?.accountList?.aliCode ? { aliCode: this.wallet.accountList.aliCode } : undefined
-  };
-
-  this.accountService.createAccount(accountToCreate).subscribe({
-    next: (createdAccount) => {
-      if (!this.wallet) {
-        this.wallet = new Wallet();
-      }
-      if (!this.wallet.accountList) {
-        this.wallet.accountList = new AccountList({ aliLabe: 'My Accounts', accounts: [] });
-      }
-      if (!this.wallet.accountList.accounts) {
-        this.wallet.accountList.accounts = [];
-      }
-      this.wallet.accountList.accounts.push(createdAccount);
-      this.closeAddAccountModal();
-      alert('Account added successfully!');
-    },
-    error: (err) => {
-      console.error('Failed to add account', err);
-      alert('Failed to add account: ' + (err.error?.message || 'Unknown error'));
+    const cleanedCardNumber = this.newCard.carNumb.replace(/\s/g, '');
+    if (!/^\d{16,19}$/.test(cleanedCardNumber)) {
+      alert('Card number must be 16-19 digits');
+      return;
     }
-  });
-}
+
+    // Frontend duplicate check
+    const existingCard = this.wallet?.cardList?.cards?.find(card => 
+      card.carNumb?.replace(/\s/g, '') === cleanedCardNumber
+    );
+    
+    if (existingCard) {
+      alert('This card is already linked to your wallet');
+      return;
+    }
+
+    const cardToCreate = {
+      carNumb: cleanedCardNumber,
+      carLabe: this.newCard.carLabe,
+      carExpiryDate: this.newCard.carExpiryDate,
+      cardType: this.newCard.cardType,
+      carAmount: this.newCard.carAmount || 0,
+      carPlafond: this.newCard.carPlafond || 5000,
+      carPlafondPeriod: this.newCard.carPlafondPeriod || 'MONTH',
+      cardList: this.wallet?.cardList?.cliCode ? { cliCode: this.wallet.cardList.cliCode } : undefined
+    };
+
+    this.cardService.create(cardToCreate).subscribe({
+      next: (createdCard) => {
+        if (!this.wallet) {
+          this.wallet = new Wallet();
+        }
+        if (!this.wallet.cardList) {
+          this.wallet.cardList = new CardList({ cliLabe: 'My Cards', cards: [] });
+        }
+        if (!this.wallet.cardList.cards) {
+          this.wallet.cardList.cards = [];
+        }
+        this.wallet.cardList.cards.push(createdCard);
+        this.closeAddCardModal();
+        alert('Card added successfully!');
+      },
+      error: (err) => {
+        console.error('Failed to add card', err);
+        
+        // Handle duplicate error from backend
+        if (err.error?.message?.includes('already exists') || err.message?.includes('already exists')) {
+          alert('This card number is already registered in the system');
+        } else {
+          alert('Failed to add card: ' + (err.error?.message || 'Unknown error'));
+        }
+      }
+    });
+  }
+
+  // UPDATED: Add duplicate validation for accounts
+  addAccount(): void {
+    if (!this.newAccount.accRib || !this.newAccount.accKey || !this.newAccount.accountType || !this.newAccount.bank) {
+      alert('Please fill all required fields');
+      return;
+    }
+
+    if (!/^[A-Z0-9]{20,34}$/.test(this.newAccount.accRib)) {
+      alert('RIB must be 20-34 alphanumeric characters (uppercase letters and numbers only)');
+      return;
+    }
+
+    // Frontend duplicate check
+    const existingAccount = this.wallet?.accountList?.accounts?.find(account => 
+      account.accRib === this.newAccount.accRib
+    );
+    
+    if (existingAccount) {
+      alert('This account is already linked to your wallet');
+      return;
+    }
+
+    const accountToCreate = {
+      accRib: this.newAccount.accRib,
+      accKey: this.newAccount.accKey,
+      accountType: this.newAccount.accountType,
+      bank: this.newAccount.bank,
+      accBalance: this.newAccount.accBalance || 0.0,
+      accountList: this.wallet?.accountList?.aliCode ? { aliCode: this.wallet.accountList.aliCode } : undefined
+    };
+
+    this.accountService.createAccount(accountToCreate).subscribe({
+      next: (createdAccount) => {
+        if (!this.wallet) {
+          this.wallet = new Wallet();
+        }
+        if (!this.wallet.accountList) {
+          this.wallet.accountList = new AccountList({ aliLabe: 'My Accounts', accounts: [] });
+        }
+        if (!this.wallet.accountList.accounts) {
+          this.wallet.accountList.accounts = [];
+        }
+        this.wallet.accountList.accounts.push(createdAccount);
+        this.closeAddAccountModal();
+        alert('Account added successfully!');
+      },
+      error: (err) => {
+        console.error('Failed to add account', err);
+        
+        // Handle duplicate error from backend
+        if (err.error?.message?.includes('already exists') || err.message?.includes('already exists')) {
+          alert('This RIB is already registered in the system');
+        } else {
+          alert('Failed to add account: ' + (err.error?.message || 'Unknown error'));
+        }
+      }
+    });
+  }
 }
