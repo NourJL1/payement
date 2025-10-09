@@ -36,7 +36,7 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/login`, { username, password }, { withCredentials: true })
       .pipe(map(user => {
         // Store the complete user data with wallet information
-        localStorage.setItem('currentUser', JSON.stringify(user));
+        //localStorage.setItem('currentUser', JSON.stringify(user));
         this.currentUserSubject.next(user);
         return user;
       }));
@@ -45,7 +45,7 @@ export class AuthService {
   logout() {
     return this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true, responseType: 'text' })
       .pipe(tap(() => {
-          localStorage.removeItem('currentUser');
+          //localStorage.removeItem('currentUser');
           this.currentUserSubject.next(null);
         })
       );
