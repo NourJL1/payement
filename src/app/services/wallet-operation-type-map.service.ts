@@ -14,26 +14,26 @@ export class WalletOperationTypeMapService {
   constructor(private http: HttpClient) {}
 
   getAll(httpOptions: { headers: HttpHeaders }): Observable<WalletOperationTypeMap[]> {
-    return this.http.get<WalletOperationTypeMap[]>(this.apiUrl, httpOptions);
+    return this.http.get<WalletOperationTypeMap[]>(this.apiUrl, { withCredentials: true });
   }
 
-  getById(id: number, httpOptions: { headers: HttpHeaders }): Observable<WalletOperationTypeMap> {
-    return this.http.get<WalletOperationTypeMap>(`${this.apiUrl}/${id}`, httpOptions);
+  getById(id: number): Observable<WalletOperationTypeMap> {
+    return this.http.get<WalletOperationTypeMap>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  create(mapping: WalletOperationTypeMap, httpOptions: { headers: HttpHeaders }): Observable<WalletOperationTypeMap> {
-    return this.http.post<WalletOperationTypeMap>(this.apiUrl, mapping, httpOptions);
+  create(mapping: WalletOperationTypeMap): Observable<WalletOperationTypeMap> {
+    return this.http.post<WalletOperationTypeMap>(this.apiUrl, mapping, { withCredentials: true });
   }
 
-  update(id: number, mapping: WalletOperationTypeMap, httpOptions: { headers: HttpHeaders }): Observable<WalletOperationTypeMap> {
-    return this.http.put<WalletOperationTypeMap>(`${this.apiUrl}/${id}`, mapping, httpOptions);
+  update(id: number, mapping: WalletOperationTypeMap): Observable<WalletOperationTypeMap> {
+    return this.http.put<WalletOperationTypeMap>(`${this.apiUrl}/${id}`, mapping, { withCredentials: true });
   }
 
-  delete(id: number, httpOptions: { headers: HttpHeaders }): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, httpOptions);
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  search(word: string, httpOptions: { headers: HttpHeaders }): Observable<WalletOperationTypeMap[]> {
-    return this.http.get<WalletOperationTypeMap[]>(`${this.apiUrl}/search?word=${word}`, httpOptions);
+  search(word: string): Observable<WalletOperationTypeMap[]> {
+    return this.http.get<WalletOperationTypeMap[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }
 }

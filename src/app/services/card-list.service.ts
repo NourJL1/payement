@@ -29,7 +29,7 @@ export class CardListService {
   }
 
   getAll(): Observable<CardList[]> {
-    return this.http.get<CardList[]>(this.apiUrl, { headers: this.getHeaders(true) }).pipe(
+    return this.http.get<CardList[]>(this.apiUrl, { withCredentials: true, headers: this.getHeaders(true) }).pipe(
       map(cardLists => cardLists.map(cardList => new CardList(cardList))),
       catchError(error => {
         console.error('getAll: Error:', error);
@@ -39,7 +39,7 @@ export class CardListService {
   }
 
   create(cardList: CardList): Observable<CardList> {
-    return this.http.post<CardList>(this.apiUrl, cardList, { headers: this.getHeaders(true) }).pipe(
+    return this.http.post<CardList>(this.apiUrl, cardList, { withCredentials: true, headers: this.getHeaders(true) }).pipe(
       map(createdCardList => new CardList(createdCardList)),
       catchError(error => {
         console.error('create: Error:', error);
@@ -49,7 +49,7 @@ export class CardListService {
   }
 
   update(cliCode: number, cardList: CardList): Observable<CardList> {
-    return this.http.put<CardList>(`${this.apiUrl}/${cliCode}`, cardList, { headers: this.getHeaders(true) }).pipe(
+    return this.http.put<CardList>(`${this.apiUrl}/${cliCode}`, cardList, { withCredentials: true, headers: this.getHeaders(true) }).pipe(
       map(updatedCardList => new CardList(updatedCardList)),
       catchError(error => {
         console.error('update: Error:', error);
@@ -59,7 +59,7 @@ export class CardListService {
   }
 
   delete(cliCode: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${cliCode}`, { headers: this.getHeaders(true) }).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/${cliCode}`, { withCredentials: true, headers: this.getHeaders(true) }).pipe(
       catchError(error => {
         console.error('delete: Error:', error);
         return throwError(() => new Error('Failed to delete card list'));
@@ -70,7 +70,7 @@ export class CardListService {
   // Add this method to your CardListService
 searchCardLists(searchWord: string): Observable<CardList[]> {
   return this.http.get<CardList[]>(`${this.apiUrl}/search?word=${encodeURIComponent(searchWord)}`, { 
-    headers: this.getHeaders(true) 
+    withCredentials: true, headers: this.getHeaders(true) 
   }).pipe(
     map(cardLists => cardLists.map(cardList => new CardList(cardList))),
     catchError(error => {

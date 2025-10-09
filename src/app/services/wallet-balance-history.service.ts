@@ -18,29 +18,29 @@ private apiUrl = `${environment.apiUrl}/api/wallet-balance-history`;
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<WalletBalanceHistory[]> {
-    return this.http.get<WalletBalanceHistory[]>(this.apiUrl);
+    return this.http.get<WalletBalanceHistory[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<WalletBalanceHistory> {
-    return this.http.get<WalletBalanceHistory>(`${this.apiUrl}/${id}`);
+    return this.http.get<WalletBalanceHistory>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   getByWalletCode(walCode: number): Observable<WalletBalanceHistory[]> {
-    return this.http.get<WalletBalanceHistory[]>(`${this.apiUrl}/wallet/${walCode}`);
+    return this.http.get<WalletBalanceHistory[]>(`${this.apiUrl}/wallet/${walCode}`, { withCredentials: true });
   }
 
   create(walletBalanceHistory: WalletBalanceHistory): Observable<WalletBalanceHistory> {
-    return this.http.post<WalletBalanceHistory>(this.apiUrl, walletBalanceHistory, this.httpOptions);
+    return this.http.post<WalletBalanceHistory>(this.apiUrl, walletBalanceHistory, { withCredentials: true });
   }
 
   update(id: number, walletBalanceHistory: WalletBalanceHistory): Observable<WalletBalanceHistory> {
-    return this.http.put<WalletBalanceHistory>(`${this.apiUrl}/${id}`, walletBalanceHistory, this.httpOptions);
+    return this.http.put<WalletBalanceHistory>(`${this.apiUrl}/${id}`, walletBalanceHistory, { withCredentials: true });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.httpOptions);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   search(word: string): Observable<WalletBalanceHistory[]> {
-    return this.http.get<WalletBalanceHistory[]>(`${this.apiUrl}/search?word=${word}`);
+    return this.http.get<WalletBalanceHistory[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }}

@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CountryService } from '../../../services/country.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Customer, CustomerService } from '../../../services/customer.service';
+import { CustomerService } from '../../../services/customer.service';
 import { CustomerStatusService } from '../../../services/customer-status.service';
 import { CustomerStatus } from '../../../entities/customer-status';
 import { City } from '../../../entities/city';
@@ -28,6 +28,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { UserProfileMenuOption } from '../../../entities/user-profile-menu-option';
 import { MenuOption } from '../../../entities/menu-option';
+import { Customer } from '../../../entities/customer';
 
 interface PhoneNumber {
   number?: string;

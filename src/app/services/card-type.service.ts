@@ -30,7 +30,7 @@ export class CardTypeService {
   }
 
   findAll(): Observable<CardType[]> {
-    return this.http.get(this.apiUrl, { headers: this.getHeaders(true), responseType: 'json' }).pipe(
+    return this.http.get(this.apiUrl, { withCredentials: true, headers: this.getHeaders(true), responseType: 'json' }).pipe(
       map((response: any) => (response as CardType[]).map(cardType => new CardType(cardType))),
       catchError(error => {
         console.error('findAll: Error:', error);
@@ -44,7 +44,7 @@ export class CardTypeService {
     const method = cardType.ctypCode ? 'put' : 'post';
     return this.http.request<CardType>(method, url, {
       body: cardType,
-      headers: this.getHeaders(true),
+      withCredentials: true, headers: this.getHeaders(true),
       responseType: 'json'
     }).pipe(
       map(savedCardType => new CardType(savedCardType)),
@@ -56,7 +56,7 @@ export class CardTypeService {
   }
 
   deleteById(ctypCode: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${ctypCode}`, { headers: this.getHeaders(true), responseType: 'json' }).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/${ctypCode}`, { withCredentials: true, headers: this.getHeaders(true), responseType: 'json' }).pipe(
       catchError(error => {
         console.error('deleteById: Error:', error);
         return throwError(() => new Error(`Failed to delete card type: ${error.status} ${error.statusText || 'Unknown error'}`));
@@ -67,7 +67,7 @@ export class CardTypeService {
   // Add this method to your CardTypeService
 searchCardTypes(searchWord: string): Observable<CardType[]> {
   return this.http.get<CardType[]>(`${this.apiUrl}/search?word=${encodeURIComponent(searchWord)}`, { 
-    headers: this.getHeaders(true) 
+    withCredentials: true, headers: this.getHeaders(true) 
   }).pipe(
     map(cardTypes => cardTypes.map(cardType => new CardType(cardType))),
     catchError(error => {

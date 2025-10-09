@@ -45,8 +45,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "3mb",
+                  "maximumError": "5MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -70,6 +70,15 @@
             "sslKey": "C:/Users/nourj/OneDrive/Bureau/ssl/gateway.key",
             "sslCert": "C:/Users/nourj/OneDrive/Bureau/ssl/gateway.crt"},
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "ssl": true,
+            "sslKey": "../ssl/gateway.key",
+            "sslCert": "../ssl/gateway.crt",
+            "port": 4200,
+            "allowedHosts": ["all"],
+            "host": "0.0.0.0",
+            "disableHostCheck": true
+          },
           "configurations": {
             "production": {
               "buildTarget": "payement:build:production"

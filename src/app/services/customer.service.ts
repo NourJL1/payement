@@ -24,112 +24,82 @@ export class CustomerService {
     };
   } */
 
-  login(username: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, { username, password });
-  }
-
   register(customer: Customer): Observable<Customer> {
     return this.http.post<Customer>(`${this.apiUrl}`, customer);
   }
 
   getTotalCustomerCount(): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/count`);
+    return this.http.get<number>(`${this.apiUrl}/count`, { withCredentials: true });
   }
 
   getActiveCustomerCount(statusCode: number): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/count/active/${statusCode}`);
+    return this.http.get<number>(`${this.apiUrl}/count/active/${statusCode}`, { withCredentials: true });
   }
 
   getCustomer(username: string): Observable<Customer> {
-    return this.http.get<Customer>(`${this.apiUrl}/${username}`);
+    return this.http.get<Customer>(`${this.apiUrl}/${username}`, { withCredentials: true });
   }
 
   checkPassword(cusCode: number, password: string) {
-    return this.http.post<boolean>(`${this.apiUrl}/check-password/${cusCode}`, { password });
+    return this.http.post<boolean>(`${this.apiUrl}/check-password/${cusCode}`, { password }, { withCredentials: true });
   }
 
   getNewCustomersTodayCount(): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/count/new-today`);
+    return this.http.get<number>(`${this.apiUrl}/count/new-today`, { withCredentials: true });
   }
 
   getNewCustomersToday(): Observable<Customer[]> {
-    return this.http.get<Customer[]>(`${this.apiUrl}/new-today`);
+    return this.http.get<Customer[]>(`${this.apiUrl}/new-today`, { withCredentials: true });
   }
 
   getGrowthRate(): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/growth-rate`);
+    return this.http.get<number>(`${this.apiUrl}/growth-rate`, { withCredentials: true });
   }
 
   getCustomerByEmail(email: string): Observable<Customer> {
-    return this.http.get<Customer>(
-      `${this.apiUrl}/email/${email}`/* ,
-      this.getHttpOptions() */
-    );
+    return this.http.get<Customer>(`${this.apiUrl}/email/${email}`, { withCredentials: true });
   }
 
 
   existsByEmail(email: string) {
-    return this.http.get<boolean>(`${this.apiUrl}/existsByEmail/${email}`)
+    return this.http.get<boolean>(`${this.apiUrl}/existsByEmail/${email}`, { withCredentials: true });
   }
 
   existsByUsername(username: string) {
-    return this.http.get<boolean>(`${this.apiUrl}/existsByUsername/${username}`);
+    return this.http.get<boolean>(`${this.apiUrl}/existsByUsername/${username}`, { withCredentials: true });
   }
 
   existsByPhone(phone: string) {
     console.log(`${this.apiUrl}/existsByCusPhoneNbr/${phone}`)
-    return this.http.get<boolean>(`${this.apiUrl}/existsByCusPhoneNbr/${phone}`);
+    return this.http.get<boolean>(`${this.apiUrl}/existsByCusPhoneNbr/${phone}`, { withCredentials: true });
   }
 
   getCustomerById(customerId: number): Observable<Customer> {
-    return this.http.get<Customer>(`${this.apiUrl}/${customerId}`);
+    return this.http.get<Customer>(`${this.apiUrl}/${customerId}`, { withCredentials: true });
   }
 
   updateCustomer(cusCode: number, customer: Customer): Observable<Customer> {
-    return this.http.put<Customer>(`${this.apiUrl}/${cusCode}`, customer);
+    return this.http.put<Customer>(`${this.apiUrl}/${cusCode}`, customer, { withCredentials: true });
   }
 
   resetPassword(cusCode: number, password: string) {
-    return this.http.put<string>(`${this.apiUrl}/resetPassword/${cusCode}`, password);
-  }
-
-  assignRoles(username: string, roleIds: number[]): Observable<Customer> {
-    console.log('Assigning roles to customer:', username);
-    console.log('Roles:', roleIds);
-    return this.http.put<Customer>(
-      `${this.apiUrl}/${username}/assignRoles`,
-      roleIds
-    );
+    return this.http.put<string>(`${this.apiUrl}/resetPassword/${cusCode}`, password, { withCredentials: true });
   }
 
   deleteCustomer(cusCode: number): Observable<void> {
-    return this.http.delete<any>(`${this.apiUrl}/${cusCode}`);
+    return this.http.delete<any>(`${this.apiUrl}/${cusCode}`, { withCredentials: true });
   }
 
   getAllCustomers(): Observable<Customer[]> {
-    return this.http.get<Customer[]>(`${this.apiUrl}`);
+    return this.http.get<Customer[]>(`${this.apiUrl}`, { withCredentials: true });
   }
 
   getAllCustomersWithWallets() {
-    return this.http.get<Customer[]>(`${this.apiUrl}/with-wallets`);
+    return this.http.get<Customer[]>(`${this.apiUrl}/with-wallets`, { withCredentials: true });
   }
 
   getEmail(cusCode: number) {
-    return this.http.get(`${this.apiUrl}/getEmail/${cusCode}`);
-  }
-
-  sendEmail(email: string, subject: string) {
-    return this.http.post<string>(`${this.apiUrl}/sendEmail`, {
-      cusMailAdress: email,
-      subject: subject,
-    });
-  }
-
-  verifyOTP(email: string, code: string) {
-    return this.http.post<boolean>(`${this.apiUrl}/compareTOTP`, {
-      cusMailAdress: email,
-      code: code,
-    });
+    return this.http.get(`${this.apiUrl}/getEmail/${cusCode}`, { withCredentials: true });
   }
 
   search(criteria: any) {
@@ -138,7 +108,6 @@ export class CustomerService {
 
 
   getCustomerCountByCity(): Observable<{ [key: string]: number }> {
-    return this.http.get<{ [key: string]: number }>(`${this.apiUrl}/count-by-city`);
+    return this.http.get<{ [key: string]: number }>(`${this.apiUrl}/count-by-city`, { withCredentials: true });
   }
 }
-export { Customer };

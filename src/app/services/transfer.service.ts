@@ -30,7 +30,7 @@ export class TransferService {
   transferFromAccountToWallet(request: TransferRequest): Observable<TransferResponse> {
     return this.http.post<TransferResponse>(
       `${this.apiUrl}/api/transfers/account-to-wallet`, 
-      request
+      request, { withCredentials: true }
     );
   }
 }

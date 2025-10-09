@@ -24,23 +24,23 @@ export class PeriodicityService {
   }
 
   getAll(): Observable<Periodicity[]> {
-    return this.http.get<Periodicity[]>(this.apiUrl, this.getHttpOptions());
+    return this.http.get<Periodicity[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<Periodicity> {
-    return this.http.get<Periodicity>(`${this.apiUrl}/${id}`, this.getHttpOptions());
+    return this.http.get<Periodicity>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   create(periodicity: Periodicity, httpOptions?: { headers?: HttpHeaders }): Observable<Periodicity> {
-    return this.http.post<Periodicity>(this.apiUrl, periodicity, httpOptions || this.getHttpOptions());
+    return this.http.post<Periodicity>(this.apiUrl, periodicity, { withCredentials: true });
   }
 
   update(id: number, periodicity: Periodicity, httpOptions?: { headers?: HttpHeaders }): Observable<Periodicity> {
-    return this.http.put<Periodicity>(`${this.apiUrl}/${id}`, periodicity, httpOptions || this.getHttpOptions());
+    return this.http.put<Periodicity>(`${this.apiUrl}/${id}`, periodicity, { withCredentials: true });
   }
 
   delete(id: number, httpOptions?: { headers?: HttpHeaders }): Observable<void> {
-    return this.http.delete(`${this.apiUrl}/${id}`, { ...httpOptions || this.getHttpOptions(), responseType: 'text' }).pipe(
+    return this.http.delete(`${this.apiUrl}/${id}`, { withCredentials: true, responseType: 'text' }).pipe(
       map(() => void 0),
       catchError((err) => {
         console.error('delete: Error:', err.status, err.message);
@@ -50,6 +50,6 @@ export class PeriodicityService {
   }
 
   search(word: string): Observable<Periodicity[]> {
-    return this.http.get<Periodicity[]>(`${this.apiUrl}/search?word=${word}`, this.getHttpOptions());
+    return this.http.get<Periodicity[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }
 }

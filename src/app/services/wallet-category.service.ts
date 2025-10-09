@@ -22,27 +22,27 @@ export class WalletCategoryService {
     };
   }
 
-  getAll(httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<WalletCategory[]> {
-    return this.http.get<WalletCategory[]>(this.apiUrl, httpOptions);
+  getAll(): Observable<WalletCategory[]> {
+    return this.http.get<WalletCategory[]>(this.apiUrl, { withCredentials: true });
   }
 
-  getById(id: number, httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<WalletCategory> {
-    return this.http.get<WalletCategory>(`${this.apiUrl}/${id}`, httpOptions);
+  getById(id: number): Observable<WalletCategory> {
+    return this.http.get<WalletCategory>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  create(walletCategory: WalletCategory, httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<WalletCategory> {
-    return this.http.post<WalletCategory>(this.apiUrl, walletCategory, httpOptions);
+  create(walletCategory: WalletCategory): Observable<WalletCategory> {
+    return this.http.post<WalletCategory>(this.apiUrl, walletCategory, { withCredentials: true });
   }
 
-  update(id: number, walletCategory: WalletCategory, httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<WalletCategory> {
-    return this.http.put<WalletCategory>(`${this.apiUrl}/${id}`, walletCategory, httpOptions);
+  update(id: number, walletCategory: WalletCategory): Observable<WalletCategory> {
+    return this.http.put<WalletCategory>(`${this.apiUrl}/${id}`, walletCategory, { withCredentials: true });
   }
 
-  delete(id: number, httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, httpOptions);
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  search(word: string, httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<WalletCategory[]> {
-    return this.http.get<WalletCategory[]>(`${this.apiUrl}/search?word=${word}`, httpOptions);
+  search(word: string): Observable<WalletCategory[]> {
+    return this.http.get<WalletCategory[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }
 }

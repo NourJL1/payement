@@ -6,6 +6,7 @@ import { WalletService } from '../../services/wallet.service';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription, interval, switchMap } from 'rxjs';
 import { Wallet } from '../../entities/wallet';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-wallet',
@@ -27,10 +28,11 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
+    private authService: AuthService,
     private walletService: WalletService,
     private notificationService: NotificationService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadWallet();
@@ -114,6 +116,7 @@ export class WalletComponent implements OnInit, OnDestroy {
   logout() {
     localStorage.clear();
     this.router.navigate(['/home']);
+    this.authService.logout().subscribe();
   }
 
   ngOnDestroy() {

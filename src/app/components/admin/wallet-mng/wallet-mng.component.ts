@@ -894,7 +894,7 @@ export class WalletMngComponent implements OnInit {
   // Load wallet statuses
   loadWalletStatuses(): void {
     this.errorMessage = null;
-    this.walletStatusService.getAll(this.getHttpOptions()).subscribe({
+    this.walletStatusService.getAll().subscribe({
       next: (statuses: WalletStatus[]) => {
         this.walletStatuses = statuses;
         this.filteredStatuses = [...this.walletStatuses]; // ✅ corrected here
@@ -911,7 +911,7 @@ export class WalletMngComponent implements OnInit {
   // Load wallet categories
   loadWalletCategories(): void {
     this.errorMessage = null;
-    this.walletCategoryService.getAll(this.getHttpOptions()).subscribe({
+    this.walletCategoryService.getAll().subscribe({
       next: (categories: WalletCategory[]) => {
         this.walletCategories = categories;
         this.filteredWalletCategories = [...this.walletCategories]; // ✅ corrected here
@@ -928,7 +928,7 @@ export class WalletMngComponent implements OnInit {
   // Load wallet types
   loadWalletTypes(): void {
     this.errorMessage = null;
-    this.walletTypeService.getAll(this.getHttpOptions()).subscribe({
+    this.walletTypeService.getAll().subscribe({
       next: (types: WalletType[]) => {
         this.walletTypesList = types;
         this.filteredWalletTypes = this.walletTypesList; // ✅ corrected here
@@ -1403,7 +1403,7 @@ export class WalletMngComponent implements OnInit {
       return;
     }
     if (this.isStatusEditMode) {
-      this.walletStatusService.update(this.selectedStatus!.wstCode!, this.selectedStatus!, this.getHttpOptions()).subscribe({
+      this.walletStatusService.update(this.selectedStatus!.wstCode!, this.selectedStatus!).subscribe({
         next: () => {
           // console.log('saveStatus: Wallet status updated');
           this.loadWalletStatuses();
@@ -1417,7 +1417,7 @@ export class WalletMngComponent implements OnInit {
         }
       });
     } else {
-      this.walletStatusService.create(this.selectedStatus!, this.getHttpOptions()).subscribe({
+      this.walletStatusService.create(this.selectedStatus!).subscribe({
         next: () => {
           // console.log('saveStatus: Wallet status created');
           this.loadWalletStatuses();
@@ -1442,7 +1442,7 @@ export class WalletMngComponent implements OnInit {
       return;
     }
     if (this.isCategoryEditMode) {
-      this.walletCategoryService.update(this.selectedCategory!.wcaCode!, this.selectedCategory!, this.getHttpOptions()).subscribe({
+      this.walletCategoryService.update(this.selectedCategory!.wcaCode!, this.selectedCategory!).subscribe({
         next: () => {
           // console.log('saveCategory: Wallet category updated');
           this.loadWalletCategories();
@@ -1456,7 +1456,7 @@ export class WalletMngComponent implements OnInit {
         }
       });
     } else {
-      this.walletCategoryService.create(this.selectedCategory!, this.getHttpOptions()).subscribe({
+      this.walletCategoryService.create(this.selectedCategory!).subscribe({
         next: () => {
           // console.log('saveCategory: Wallet category created');
           this.loadWalletCategories();
@@ -1479,7 +1479,7 @@ export class WalletMngComponent implements OnInit {
       this.showErrorMessage('Please fill in all required fields: Type Label.');
       return;
     }
-    this.walletTypeService.create(this.newWalletType!, this.getHttpOptions()).subscribe({
+    this.walletTypeService.create(this.newWalletType!).subscribe({
       next: (createdWalletType: WalletType) => {
         // console.log('addWalletType: Wallet type added:', createdWalletType);
         this.walletTypesList.push(createdWalletType);
@@ -1514,7 +1514,7 @@ export class WalletMngComponent implements OnInit {
       return;
     }
     if (this.selectedWalletType?.wtyCode) {
-      this.walletTypeService.update(this.selectedWalletType.wtyCode, this.newWalletType!, this.getHttpOptions()).subscribe({
+      this.walletTypeService.update(this.selectedWalletType.wtyCode, this.newWalletType!).subscribe({
         next: (updatedWalletType: WalletType) => {
           // console.log('updateWalletType: Wallet type updated:', updatedWalletType);
           const index = this.walletTypesList.findIndex(t => t.wtyCode === updatedWalletType.wtyCode);
@@ -1554,7 +1554,7 @@ export class WalletMngComponent implements OnInit {
   deleteWalletType(wtyCode: number | undefined): void {
     // console.log('deleteWalletType: wtyCode:', wtyCode);
     if (wtyCode && confirm('Are you sure you want to delete this wallet type?')) {
-      this.walletTypeService.delete(wtyCode, this.getHttpOptions()).subscribe({
+      this.walletTypeService.delete(wtyCode).subscribe({
         next: () => {
           // console.log('deleteWalletType: Success, wtyCode:', wtyCode);
           this.walletTypesList = this.walletTypesList.filter(t => t.wtyCode !== wtyCode);
@@ -1596,7 +1596,7 @@ export class WalletMngComponent implements OnInit {
     this.errorMessage = null;
     // console.log('deleteStatus: wstCode:', wstCode);
     if (wstCode && confirm('Are you sure you want to delete this status?')) {
-      this.walletStatusService.delete(wstCode, this.getHttpOptions()).subscribe({
+      this.walletStatusService.delete(wstCode).subscribe({
         next: () => {
           // console.log('deleteStatus: Success, wstCode:', wstCode);
           this.walletStatuses = this.walletStatuses.filter(s => s.wstCode !== wstCode);
@@ -1617,7 +1617,7 @@ export class WalletMngComponent implements OnInit {
     this.errorMessage = null;
     // console.log('deleteCategory: wcaCode:', wcaCode);
     if (wcaCode && confirm('Are you sure you want to delete this category?')) {
-      this.walletCategoryService.delete(wcaCode, this.getHttpOptions()).subscribe({
+      this.walletCategoryService.delete(wcaCode).subscribe({
         next: () => {
           // console.log('deleteCategory: Success, wcaCode:', wcaCode);
           this.walletCategories = this.walletCategories.filter(c => c.wcaCode !== wcaCode);

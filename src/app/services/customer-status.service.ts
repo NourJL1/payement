@@ -18,25 +18,25 @@ export class CustomerStatusService {
   };
 
   getAll(): Observable<CustomerStatus[]> {
-    return this.http.get<CustomerStatus[]>(this.apiUrl);
+    return this.http.get<CustomerStatus[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<CustomerStatus> {
-    return this.http.get<CustomerStatus>(`${this.apiUrl}/${id}`);
+    return this.http.get<CustomerStatus>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   create(status: CustomerStatus): Observable<CustomerStatus> {
-    return this.http.post<CustomerStatus>(this.apiUrl, status, this.httpOptions);
+    return this.http.post<CustomerStatus>(this.apiUrl, status, { withCredentials: true });
   }
 
   update(id: number, status: CustomerStatus): Observable<CustomerStatus> {
-    return this.http.put<CustomerStatus>(`${this.apiUrl}/${id}`, status, this.httpOptions);
+    return this.http.put<CustomerStatus>(`${this.apiUrl}/${id}`, status, { withCredentials: true });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.httpOptions);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   search(word: string): Observable<CustomerStatus[]> {
-    return this.http.get<CustomerStatus[]>(`${this.apiUrl}/search?word=${word}`);
+    return this.http.get<CustomerStatus[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }}

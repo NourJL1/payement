@@ -24,7 +24,7 @@ export class AccountService {
 
   // Create a new account
   createAccount(account: Account): Observable<Account> {
-  return this.http.post<Account>(this.apiUrl, account, this.getHttpOptions()).pipe(
+  return this.http.post<Account>(this.apiUrl, account, { withCredentials: true }).pipe(
     catchError(error => {
       console.error('createAccount: Error:', error);
       
@@ -42,27 +42,27 @@ export class AccountService {
 
   // Get account by ID
   getAccountById(id: number): Observable<Account> {
-    return this.http.get<Account>(`${this.apiUrl}/${id}`, this.getHttpOptions());
+    return this.http.get<Account>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   // Get all accounts
   getAllAccounts(): Observable<Account[]> {
-    return this.http.get<Account[]>(this.apiUrl, this.getHttpOptions());
+    return this.http.get<Account[]>(this.apiUrl, { withCredentials: true });
   }
 
   // Update an account
   updateAccount(id: number, account: Account): Observable<Account> {
-    return this.http.put<Account>(`${this.apiUrl}/${id}`, account, this.getHttpOptions());
+    return this.http.put<Account>(`${this.apiUrl}/${id}`, account, { withCredentials: true });
   }
 
   // Delete an account
   deleteAccount(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.getHttpOptions());
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   // Search accounts by word
   searchAccounts(word: string): Observable<Account[]> {
-    return this.http.get<Account[]>(`${this.apiUrl}/search?word=${word}`, this.getHttpOptions());
+    return this.http.get<Account[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }
 
   

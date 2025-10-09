@@ -18,25 +18,25 @@ export class CustomerDocListeService {
   };
 
   getAll(): Observable<CustomerDocListe[]> {
-    return this.http.get<CustomerDocListe[]>(this.apiUrl);
+    return this.http.get<CustomerDocListe[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<CustomerDocListe> {
-    return this.http.get<CustomerDocListe>(`${this.apiUrl}/${id}`);
+    return this.http.get<CustomerDocListe>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   create(doc: CustomerDocListe): Observable<CustomerDocListe> {
-    return this.http.post<CustomerDocListe>(this.apiUrl, doc, this.httpOptions);
+    return this.http.post<CustomerDocListe>(this.apiUrl, doc, { withCredentials: true });
   }
 
   update(id: number, doc: CustomerDocListe): Observable<CustomerDocListe> {
-    return this.http.put<CustomerDocListe>(`${this.apiUrl}/${id}`, doc, this.httpOptions);
+    return this.http.put<CustomerDocListe>(`${this.apiUrl}/${id}`, doc, { withCredentials: true });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.httpOptions);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   search(word: string): Observable<CustomerDocListe[]> {
-    return this.http.get<CustomerDocListe[]>(`${this.apiUrl}/search?word=${word}`);
+    return this.http.get<CustomerDocListe[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }}

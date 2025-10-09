@@ -14,23 +14,23 @@ export class OperationTypeService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<OperationType[]> {
-    return this.http.get<OperationType[]>(this.apiUrl);
+    return this.http.get<OperationType[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<OperationType> {
-    return this.http.get<OperationType>(`${this.apiUrl}/${id}`);
+    return this.http.get<OperationType>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  create(operationType: OperationType, httpOptions?: { headers?: HttpHeaders }): Observable<OperationType> {
-    return this.http.post<OperationType>(this.apiUrl, operationType, httpOptions || { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) });
+  create(operationType: OperationType): Observable<OperationType> {
+    return this.http.post<OperationType>(this.apiUrl, operationType, { withCredentials: true });
   }
 
-  update(id: number, operationType: OperationType, httpOptions?: { headers?: HttpHeaders }): Observable<OperationType> {
-    return this.http.put<OperationType>(`${this.apiUrl}/${id}`, operationType, httpOptions);
+  update(id: number, operationType: OperationType): Observable<OperationType> {
+    return this.http.put<OperationType>(`${this.apiUrl}/${id}`, operationType, { withCredentials: true });
   }
 
-  delete(id: number, httpOptions?: { headers?: HttpHeaders }): Observable<void> {
-    return this.http.delete(`${this.apiUrl}/${id}`, { ...httpOptions, responseType: 'text' }).pipe(
+  delete(id: number): Observable<void> {
+    return this.http.delete(`${this.apiUrl}/${id}`, { withCredentials: true,  responseType: 'text' }).pipe(
       map(() => void 0), // Convert text response to void
       catchError((err) => {
         console.error('delete: Error:', err.status, err.message);
@@ -40,6 +40,6 @@ export class OperationTypeService {
   }
 
   search(word: string): Observable<OperationType[]> {
-    return this.http.get<OperationType[]>(`${this.apiUrl}/search?word=${word}`);
+    return this.http.get<OperationType[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }
 }

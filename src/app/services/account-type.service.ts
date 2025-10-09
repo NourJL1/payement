@@ -23,25 +23,25 @@ private apiUrl = `${environment.apiUrl}/api/account-types`;
   }
 
   create(accountType: AccountType): Observable<AccountType> {
-    return this.http.post<AccountType>(this.apiUrl, accountType, this.getHttpOptions());
+    return this.http.post<AccountType>(this.apiUrl, accountType, { withCredentials: true });
   }
 
   update(id: number, accountType: AccountType): Observable<AccountType> {
-    return this.http.put<AccountType>(`${this.apiUrl}/${id}`, accountType, this.getHttpOptions());
+    return this.http.put<AccountType>(`${this.apiUrl}/${id}`, accountType, { withCredentials: true });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.getHttpOptions());
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   getById(id: number): Observable<AccountType> {
-    return this.http.get<AccountType>(`${this.apiUrl}/${id}`, this.getHttpOptions());
+    return this.http.get<AccountType>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   getAll(): Observable<AccountType[]> {
-    return this.http.get<AccountType[]>(this.apiUrl, this.getHttpOptions());
+    return this.http.get<AccountType[]>(this.apiUrl, { withCredentials: true });
   }
 
   searchAccountTypes(searchWord: string): Observable<AccountType[]> {
-    return this.http.get<AccountType[]>(`${this.apiUrl}/search?word=${searchWord}`, this.getHttpOptions());
+    return this.http.get<AccountType[]>(`${this.apiUrl}/search?word=${searchWord}`, { withCredentials: true });
   }}

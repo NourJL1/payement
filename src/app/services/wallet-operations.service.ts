@@ -18,25 +18,25 @@ private apiUrl = `${environment.apiUrl}/api/wallet-operations`;
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<WalletOperations[]> {
-    return this.http.get<WalletOperations[]>(this.apiUrl);
+    return this.http.get<WalletOperations[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<WalletOperations> {
-    return this.http.get<WalletOperations>(`${this.apiUrl}/${id}`);
+    return this.http.get<WalletOperations>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   create(operation: WalletOperations): Observable<WalletOperations> {
-    return this.http.post<WalletOperations>(this.apiUrl, operation, this.httpOptions);
+    return this.http.post<WalletOperations>(this.apiUrl, operation, { withCredentials: true });
   }
 
   update(id: number, operation: WalletOperations): Observable<WalletOperations> {
-    return this.http.put<WalletOperations>(`${this.apiUrl}/${id}`, operation, this.httpOptions);
+    return this.http.put<WalletOperations>(`${this.apiUrl}/${id}`, operation, { withCredentials: true });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.httpOptions);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   search(word: string): Observable<WalletOperations[]> {
-    return this.http.get<WalletOperations[]>(`${this.apiUrl}/search?word=${word}`);
+    return this.http.get<WalletOperations[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }}
