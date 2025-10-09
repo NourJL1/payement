@@ -36,14 +36,14 @@ export class AdminComponent implements OnInit {
   private intervalId: any;
 
   ngOnInit(): void {
-    //this.loadUserProfile(parseInt(localStorage.getItem("profileCode")!))
+    this.loadUserProfile(parseInt(localStorage.getItem("profileCode")!))
 
     this.getNewCustomers()
     this.intervalId = setInterval(() => this.getNewCustomers(), 30000);
   }
 
   ngOnDestroy(): void {
-    // Clear the interval when component is destroyed
+    //  Clear the interval when component is destroyed
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
@@ -51,8 +51,8 @@ export class AdminComponent implements OnInit {
 
   isCollapsed = false;
   profile?: UserProfile
-  fullname?: string //= localStorage.getItem('fullname');
-  username?: string //= localStorage.getItem('username')
+  fullname = localStorage.getItem('fullname');
+  username = localStorage.getItem('username')
   modules: Module[] = []
   options: MenuOption[] = []
 
