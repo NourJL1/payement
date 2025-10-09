@@ -9,7 +9,6 @@ import { AdminComponent } from './components/admin/admin.component';
 import { DashboardComponent } from './components/admin/dashboard/dashboard.component';
 import { AccountingComponent } from './components/admin/accounting/accounting.component';
 import { WalletMngComponent } from './components/admin/wallet-mng/wallet-mng.component';
-import { ProductsComponent } from './components/admin/products/products.component';
 import { ProfilingComponent } from './components/admin/profiling/profiling.component';
 import { CustomerMngComponent } from './components/admin/customer-mng/customer-mng.component';
 import { PendingComponent } from './components/wallet/pending/pending.component';
@@ -21,6 +20,8 @@ import { OperationsComponent } from './components/admin/operations/operations.co
 import { TransferComponent } from './components/wallet/transfer/transfer.component';
 import { QrScannerComponent } from './components/wallet/qr-scanner/qr-scanner.component';
 import { MoneyTransferComponent } from './components/wallet/money-transfer/money-transfer.component';
+import { CustomerProductsComponent } from './components/wallet/customer-products/customer-products.component';
+import { AdminProductsComponent } from './components/admin/admin-products/admin-products.component';
 
 export const routes: Routes = [
 
@@ -57,6 +58,7 @@ export const routes: Routes = [
       { path: 'transfer', component: TransferComponent },
       { path: 'qr-scanner', component: QrScannerComponent },
       { path: 'money-transfer', component: MoneyTransferComponent },
+      { path: 'products', component: CustomerProductsComponent },
     ]
   },
   {
@@ -70,10 +72,10 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'accounting', component: AccountingComponent },
       { path: 'wallets', component: WalletMngComponent },
-      { path: 'products', component: ProductsComponent },
       { path: 'profiling', component: ProfilingComponent },
       { path: 'customers', component: CustomerMngComponent },
       { path: 'operations', component: OperationsComponent },
+      { path: 'products', component:AdminProductsComponent},
     ]
   }
 ];

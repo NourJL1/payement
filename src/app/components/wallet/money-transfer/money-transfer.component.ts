@@ -41,21 +41,59 @@ export class MoneyTransferComponent implements OnInit {
     this.loadWallet();
   }
 
-  loadLinkedAccounts(): void {
-    this.isLoading = true;
-    this.http.get<Account[]>(`${environment.apiUrl}/api/accounts`)
+// In money-transfer.component.ts
+loadLinkedAccounts(): void {
+  this.isLoading = true;
+  
+  // Check if we have a wallet with an account list
+  if (this.wallet && this.wallet.accountList && this.wallet.accountList.aliCode) {
+    // Fetch accounts by account list ID (which is linked to the wallet)
+    this.http.get<Account[]>(`${environment.apiUrl}/api/accounts/account-list/${this.wallet.accountList.aliCode}`)
       .subscribe({
         next: (accounts) => {
           this.linkedAccounts = accounts;
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading accounts:', error);
-          this.errorMessage = 'Failed to load linked accounts';
-          this.isLoading = false;
+          console.error('Error loading linked accounts:', error);
+          // Fallback to all accounts if specific endpoint fails
+          this.loadAllAccountsAsFallback();
         }
       });
+  } else {
+    // Wait for wallet to load first, then try again
+    setTimeout(() => {
+      if (this.wallet && this.wallet.accountList) {
+        this.loadLinkedAccounts(); // Try again
+      } else {
+        this.loadAllAccountsAsFallback();
+      }
+    }, 500);
   }
+}
+
+// Fallback method if the specific endpoint doesn't work
+private loadAllAccountsAsFallback(): void {
+  this.http.get<Account[]>(`${environment.apiUrl}/api/accounts`)
+    .subscribe({
+      next: (accounts) => {
+        // Filter accounts manually by checking if they belong to the wallet's account list
+        if (this.wallet && this.wallet.accountList && this.wallet.accountList.aliCode) {
+          this.linkedAccounts = accounts.filter(account => 
+            account.accountList?.aliCode === this.wallet?.accountList?.aliCode
+          );
+        } else {
+          this.linkedAccounts = accounts;
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading accounts:', error);
+        this.errorMessage = 'Failed to load linked accounts';
+        this.isLoading = false;
+      }
+    });
+}
 
   // NEW: Try using cached wallet (from overview), otherwise fallback to customer-code lookup
   loadWallet(): void {

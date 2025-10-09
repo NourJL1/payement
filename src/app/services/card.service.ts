@@ -42,8 +42,7 @@ export class CardService {
     );
   }
 
-  create(card: any): Observable<Card> {
-  // Prepare the data for backend - exclude carCode and ensure proper structure
+create(card: any): Observable<Card> {
   const cardData = {
     carNumb: card.carNumb,
     carLabe: card.carLabe,
@@ -53,13 +52,20 @@ export class CardService {
     carAmount: card.carAmount,
     carPlafond: card.carPlafond,
     carPlafondPeriod: card.carPlafondPeriod
-    // Explicitly exclude carCode to let database auto-generate it
   };
   
   return this.http.post<Card>(this.apiUrl, cardData, { withCredentials: true, headers: this.getHeaders(true) }).pipe(
     map(createdCard => new Card(createdCard)),
     catchError(error => {
       console.error('create: Error:', error);
+      
+      // Enhanced error handling for duplicates
+      if (error.status === 400 || error.status === 409 || 
+          error.error?.message?.includes('already exists') ||
+          error.message?.includes('already exists')) {
+        return throwError(() => new Error('This card number is already registered in the system'));
+      }
+      
       return throwError(() => new Error(error.error?.message || 'Failed to create card'));
     })
   );
