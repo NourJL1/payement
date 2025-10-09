@@ -33,7 +33,7 @@ export class CardService {
   }
 
   getAll(): Observable<Card[]> {
-    return this.http.get<Card[]>(this.apiUrl, { headers: this.getHeaders(true) }).pipe(
+    return this.http.get<Card[]>(this.apiUrl, { withCredentials: true, headers: this.getHeaders(true) }).pipe(
       map(cards => cards.map(card => new Card(card))),
       catchError(error => {
         console.error('getAll: Error:', error);
@@ -56,7 +56,7 @@ export class CardService {
     // Explicitly exclude carCode to let database auto-generate it
   };
   
-  return this.http.post<Card>(this.apiUrl, cardData, { headers: this.getHeaders(true) }).pipe(
+  return this.http.post<Card>(this.apiUrl, cardData, { withCredentials: true, headers: this.getHeaders(true) }).pipe(
     map(createdCard => new Card(createdCard)),
     catchError(error => {
       console.error('create: Error:', error);
@@ -66,7 +66,7 @@ export class CardService {
 }
 
   update(carCode: number, card: Card): Observable<Card> {
-    return this.http.put<Card>(`${this.apiUrl}/${carCode}`, card, { headers: this.getHeaders(true) }).pipe(
+    return this.http.put<Card>(`${this.apiUrl}/${carCode}`, card, { withCredentials: true, headers: this.getHeaders(true) }).pipe(
       map(updatedCard => new Card(updatedCard)),
       catchError(error => {
         console.error('update: Error:', error);
@@ -76,7 +76,7 @@ export class CardService {
   }
 
   delete(carCode: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${carCode}`, { headers: this.getHeaders(true) }).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/${carCode}`, { withCredentials: true, headers: this.getHeaders(true) }).pipe(
       catchError(error => {
         console.error('delete: Error:', error);
         return throwError(() => new Error('Failed to delete card'));
@@ -85,7 +85,7 @@ export class CardService {
   }
 
   searchCards(searchWord: string): Observable<Card[]> {
-    return this.http.get<Card[]>(`${this.apiUrl}/search?word=${encodeURIComponent(searchWord)}`, { headers: this.getHeaders(true) }).pipe(
+    return this.http.get<Card[]>(`${this.apiUrl}/search?word=${encodeURIComponent(searchWord)}`, { withCredentials: true, headers: this.getHeaders(true) }).pipe(
       map(cards => cards.map(card => new Card(card))),
       catchError(error => {
         console.error('searchCards: Error:', error);

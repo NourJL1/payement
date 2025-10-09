@@ -13,26 +13,26 @@ export class FeesService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Fees[]> {
-    return this.http.get<Fees[]>(this.apiUrl);
+    return this.http.get<Fees[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<Fees> {
-    return this.http.get<Fees>(`${this.apiUrl}/${id}`);
+    return this.http.get<Fees>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  create(fees: Fees, options?: { headers?: any }): Observable<Fees> {
-    return this.http.post<Fees>(this.apiUrl, fees, options);
+  create(fees: Fees): Observable<Fees> {
+    return this.http.post<Fees>(this.apiUrl, fees, { withCredentials: true });
   }
 
-  update(id: number, fees: Fees, options?: { headers?: any }): Observable<Fees> {
-    return this.http.put<Fees>(`${this.apiUrl}/${id}`, fees, options);
+  update(id: number, fees: Fees): Observable<Fees> {
+    return this.http.put<Fees>(`${this.apiUrl}/${id}`, fees, { withCredentials: true });
   }
 
-  delete(id: number, options?: { headers?: any }): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, options);
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   search(word: string): Observable<Fees[]> {
-    return this.http.get<Fees[]>(`${this.apiUrl}/search?word=${word}`);
+    return this.http.get<Fees[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }
 }

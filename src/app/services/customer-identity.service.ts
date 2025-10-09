@@ -18,29 +18,29 @@ export class CustomerIdentityService {
   };
 
   getAll(): Observable<CustomerIdentity[]> {
-    return this.http.get<CustomerIdentity[]>(this.apiUrl);
+    return this.http.get<CustomerIdentity[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<CustomerIdentity> {
-    return this.http.get<CustomerIdentity>(`${this.apiUrl}/${id}`);
+    return this.http.get<CustomerIdentity>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   existsByCidNum(num:  string){
-    return this.http.get<boolean>(`${this.apiUrl}/existsByCidNum/${num}`)
+    return this.http.get<boolean>(`${this.apiUrl}/existsByCidNum/${num}`, { withCredentials: true })
   }
 
   create(customerIdentity: CustomerIdentity): Observable<CustomerIdentity> {
-    return this.http.post<CustomerIdentity>(this.apiUrl, customerIdentity, this.httpOptions);
+    return this.http.post<CustomerIdentity>(this.apiUrl, customerIdentity, { withCredentials: true });
   }
 
   update(id: number, customerIdentity: CustomerIdentity): Observable<CustomerIdentity> {
-    return this.http.put<CustomerIdentity>(`${this.apiUrl}/${id}`, customerIdentity, this.httpOptions);
+    return this.http.put<CustomerIdentity>(`${this.apiUrl}/${id}`, customerIdentity, { withCredentials: true });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.httpOptions);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   search(word: string): Observable<CustomerIdentity[]> {
-    return this.http.get<CustomerIdentity[]>(`${this.apiUrl}/search?word=${word}`);
+    return this.http.get<CustomerIdentity[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }}

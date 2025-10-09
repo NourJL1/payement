@@ -12,27 +12,27 @@ export class FeeRuleTypeService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(options?: { headers: HttpHeaders }): Observable<FeeRuleType[]> {
-    return this.http.get<FeeRuleType[]>(this.apiUrl, options);
+  getAll(): Observable<FeeRuleType[]> {
+    return this.http.get<FeeRuleType[]>(this.apiUrl, { withCredentials: true });
   }
 
-  getById(id: number, options?: { headers: HttpHeaders }): Observable<FeeRuleType> {
-    return this.http.get<FeeRuleType>(`${this.apiUrl}/${id}`, options);
+  getById(id: number): Observable<FeeRuleType> {
+    return this.http.get<FeeRuleType>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  create(feeRuleType: FeeRuleType, options?: { headers: HttpHeaders }): Observable<FeeRuleType> {
-    return this.http.post<FeeRuleType>(this.apiUrl, feeRuleType, options);
+  create(feeRuleType: FeeRuleType): Observable<FeeRuleType> {
+    return this.http.post<FeeRuleType>(this.apiUrl, feeRuleType, { withCredentials: true });
   }
 
-  update(id: number, feeRuleType: FeeRuleType, options?: { headers: HttpHeaders }): Observable<FeeRuleType> {
-    return this.http.put<FeeRuleType>(`${this.apiUrl}/${id}`, feeRuleType, options);
+  update(id: number, feeRuleType: FeeRuleType): Observable<FeeRuleType> {
+    return this.http.put<FeeRuleType>(`${this.apiUrl}/${id}`, feeRuleType, { withCredentials: true });
   }
 
-  delete(id: number, options?: { headers: HttpHeaders }): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, options);
+  delete(id: number, ): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  search(word: string, options?: { headers: HttpHeaders }): Observable<FeeRuleType[]> {
-    return this.http.get<FeeRuleType[]>(`${this.apiUrl}/search?word=${word}`, options);
+  search(word: string, ): Observable<FeeRuleType[]> {
+    return this.http.get<FeeRuleType[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }
 }

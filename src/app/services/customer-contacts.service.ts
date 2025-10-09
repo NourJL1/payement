@@ -18,25 +18,25 @@ private apiUrl = `${environment.apiUrl}/api/customer-contacts`;
   };
 
   getAll(): Observable<CustomerContacts[]> {
-    return this.http.get<CustomerContacts[]>(this.apiUrl);
+    return this.http.get<CustomerContacts[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<CustomerContacts> {
-    return this.http.get<CustomerContacts>(`${this.apiUrl}/${id}`);
+    return this.http.get<CustomerContacts>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   create(contact: CustomerContacts): Observable<CustomerContacts> {
-    return this.http.post<CustomerContacts>(this.apiUrl, contact, this.httpOptions);
+    return this.http.post<CustomerContacts>(this.apiUrl, contact, { withCredentials: true });
   }
 
   update(id: number, contact: CustomerContacts): Observable<CustomerContacts> {
-    return this.http.put<CustomerContacts>(`${this.apiUrl}/${id}`, contact, this.httpOptions);
+    return this.http.put<CustomerContacts>(`${this.apiUrl}/${id}`, contact, { withCredentials: true });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.httpOptions);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   search(word: string): Observable<CustomerContacts[]> {
-    return this.http.get<CustomerContacts[]>(`${this.apiUrl}/search?word=${word}`);
+    return this.http.get<CustomerContacts[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }}

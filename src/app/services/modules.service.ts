@@ -13,34 +13,34 @@ export class ModuleService {
 
   // Get all modules
   getAll() {
-    return this.http.get<Module[]>(`${this.apiUrl}`)
+    return this.http.get<Module[]>(`${this.apiUrl}`, { withCredentials: true })
   }
 
   // Get a module by its code
   getById(code: number) {
-    return this.http.get<Module>(`${this.apiUrl}/${code}`)
+    return this.http.get<Module>(`${this.apiUrl}/${code}`, { withCredentials: true })
   }
 
   getByIdentifier(identifier: string) {
-    return this.http.get<Module>(`${this.apiUrl}/getByIdentifier/${identifier}`);
+    return this.http.get<Module>(`${this.apiUrl}/getByIdentifier/${identifier}`, { withCredentials: true });
   }
 
   // Create a new module
   create(module: Module) {
-    return this.http.post<Module>(`${this.apiUrl}`, module)
+    return this.http.post<Module>(`${this.apiUrl}`, module, { withCredentials: true })
   }
 
   // Update an existing module
   update(code: number, moduleDetails: Module) {
-    return this.http.put<Module>(`${this.apiUrl}/${code}`, moduleDetails)
+    return this.http.put<Module>(`${this.apiUrl}/${code}`, moduleDetails, { withCredentials: true })
   }
 
   // Delete a module
   delete(code: number) {
-    return this.http.delete(`${this.apiUrl}/${code}`)
+    return this.http.delete(`${this.apiUrl}/${code}`, { withCredentials: true })
   }
 
   search(criteria: any) {
-    return this.http.get<Module[]>(`${this.apiUrl}/search?word=${criteria}`);
+    return this.http.get<Module[]>(`${this.apiUrl}/search?word=${criteria}`, { withCredentials: true });
   }
 }

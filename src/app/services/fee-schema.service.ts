@@ -12,27 +12,27 @@ export class FeeSchemaService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(options?: { headers: HttpHeaders }): Observable<FeeSchema[]> {
-    return this.http.get<FeeSchema[]>(this.apiUrl, options);
+  getAll(): Observable<FeeSchema[]> {
+    return this.http.get<FeeSchema[]>(this.apiUrl, { withCredentials: true });
   }
 
-  getById(id: number, options?: { headers: HttpHeaders }): Observable<FeeSchema> {
-    return this.http.get<FeeSchema>(`${this.apiUrl}/${id}`, options);
+  getById(id: number): Observable<FeeSchema> {
+    return this.http.get<FeeSchema>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  create(feeSchema: FeeSchema, options?: { headers: HttpHeaders }): Observable<FeeSchema> {
-    return this.http.post<FeeSchema>(this.apiUrl, feeSchema, options);
+  create(feeSchema: FeeSchema): Observable<FeeSchema> {
+    return this.http.post<FeeSchema>(this.apiUrl, feeSchema, { withCredentials: true });
   }
 
-  update(id: number, feeSchema: FeeSchema, options?: { headers: HttpHeaders }): Observable<FeeSchema> {
-    return this.http.put<FeeSchema>(`${this.apiUrl}/${id}`, feeSchema, options);
+  update(id: number, feeSchema: FeeSchema): Observable<FeeSchema> {
+    return this.http.put<FeeSchema>(`${this.apiUrl}/${id}`, feeSchema, { withCredentials: true });
   }
 
-  delete(id: number, options?: { headers: HttpHeaders }): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, options);
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  search(word: string, options?: { headers: HttpHeaders }): Observable<FeeSchema[]> {
-    return this.http.get<FeeSchema[]>(`${this.apiUrl}/search?word=${word}`, options);
+  search(word: string): Observable<FeeSchema[]> {
+    return this.http.get<FeeSchema[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }
 }

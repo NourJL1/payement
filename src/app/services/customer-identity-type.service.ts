@@ -18,25 +18,25 @@ private apiUrl = `${environment.apiUrl}/api/customer-identity-type`;
   };
 
   getAll(): Observable<CustomerIdentityType[]> {
-    return this.http.get<CustomerIdentityType[]>(this.apiUrl);
+    return this.http.get<CustomerIdentityType[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<CustomerIdentityType> {
-    return this.http.get<CustomerIdentityType>(`${this.apiUrl}/${id}`);
+    return this.http.get<CustomerIdentityType>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   create(identityType: CustomerIdentityType): Observable<CustomerIdentityType> {
-    return this.http.post<CustomerIdentityType>(this.apiUrl, identityType, this.httpOptions);
+    return this.http.post<CustomerIdentityType>(this.apiUrl, identityType, { withCredentials: true });
   }
 
   update(id: number, identityType: CustomerIdentityType): Observable<CustomerIdentityType> {
-    return this.http.put<CustomerIdentityType>(`${this.apiUrl}/${id}`, identityType, this.httpOptions);
+    return this.http.put<CustomerIdentityType>(`${this.apiUrl}/${id}`, identityType, { withCredentials: true });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.httpOptions);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   search(word: string): Observable<CustomerIdentityType[]> {
-    return this.http.get<CustomerIdentityType[]>(`${this.apiUrl}/search?word=${word}`);
+    return this.http.get<CustomerIdentityType[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }}

@@ -18,27 +18,27 @@ export class OperationDetailsService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<OperationDetails[]> {
-    return this.http.get<OperationDetails[]>(this.apiUrl);
+    return this.http.get<OperationDetails[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<OperationDetails> {
-    return this.http.get<OperationDetails>(`${this.apiUrl}/${id}`);
+    return this.http.get<OperationDetails>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   create(operationDetails: OperationDetails): Observable<OperationDetails> {
-    return this.http.post<OperationDetails>(this.apiUrl, operationDetails, this.httpOptions);
+    return this.http.post<OperationDetails>(this.apiUrl, operationDetails, { withCredentials: true });
   }
 
   update(id: number, operationDetails: OperationDetails): Observable<OperationDetails> {
-    return this.http.put<OperationDetails>(`${this.apiUrl}/${id}`, operationDetails, this.httpOptions);
+    return this.http.put<OperationDetails>(`${this.apiUrl}/${id}`, operationDetails, { withCredentials: true });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.httpOptions);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   search(word: string): Observable<OperationDetails[]> {
-    return this.http.get<OperationDetails[]>(`${this.apiUrl}/search?word=${word}`);
+    return this.http.get<OperationDetails[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }
 
 // Add this method for getting transactions by customer and wallet
@@ -48,7 +48,7 @@ export class OperationDetailsService {
       .set('walIden', walIden)
       .set('hours', hours.toString());
 
-    return this.http.get<OperationDetails[]>(`${this.apiUrl}/recent-by-customer-wallet`, { params }).pipe(
+    return this.http.get<OperationDetails[]>(`${this.apiUrl}/recent-by-customer-wallet`, { withCredentials: true, params }).pipe(
       tap(response => {
         console.log('Transactions loaded:', response);
       }),
@@ -61,7 +61,7 @@ export class OperationDetailsService {
 
   // Add this method as fallback - get all transactions for customer
   getTransactionsByCustomer(cusCode: number): Observable<OperationDetails[]> {
-    return this.http.get<OperationDetails[]>(`${this.apiUrl}/by-customer/${cusCode}`).pipe(
+    return this.http.get<OperationDetails[]>(`${this.apiUrl}/by-customer/${cusCode}`, { withCredentials: true }).pipe(
       catchError(error => {
         console.error('Error loading customer transactions:', error);
         return throwError(error);
@@ -70,7 +70,7 @@ export class OperationDetailsService {
   }
   // Récupérer toutes les transactions d'un wallet par son identifiant
 getTransactionsByWallet(walIden: string): Observable<OperationDetails[]> {
-  return this.http.get<OperationDetails[]>(`${this.apiUrl}/by-wallet/${walIden}`).pipe(
+  return this.http.get<OperationDetails[]>(`${this.apiUrl}/by-wallet/${walIden}`, { withCredentials: true }).pipe(
     tap(response => console.log('Transactions wallet:', response)),
     catchError(error => {
       console.error('Erreur chargement transactions wallet:', error);

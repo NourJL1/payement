@@ -24,25 +24,25 @@ export class BankService {
   }
 
   create(bank: Bank): Observable<Bank> {
-    return this.http.post<Bank>(this.apiUrl, bank, this.getHttpOptions());
+    return this.http.post<Bank>(this.apiUrl, bank, { withCredentials: true });
   }
 
   update(id: number, bank: Bank): Observable<Bank> {
-    return this.http.put<Bank>(`${this.apiUrl}/${id}`, bank, this.getHttpOptions());
+    return this.http.put<Bank>(`${this.apiUrl}/${id}`, bank, { withCredentials: true });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.getHttpOptions());
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   getById(id: number): Observable<Bank> {
-    return this.http.get<Bank>(`${this.apiUrl}/${id}`, this.getHttpOptions());
+    return this.http.get<Bank>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   getAll(): Observable<Bank[]> {
-    return this.http.get<Bank[]>(this.apiUrl, this.getHttpOptions());
+    return this.http.get<Bank[]>(this.apiUrl, { withCredentials: true });
   }
 
   searchBanks(searchWord: string): Observable<Bank[]> {
-    return this.http.get<Bank[]>(`${this.apiUrl}/search?word=${searchWord}`, this.getHttpOptions());
+    return this.http.get<Bank[]>(`${this.apiUrl}/search?word=${searchWord}`, { withCredentials: true });
   }}

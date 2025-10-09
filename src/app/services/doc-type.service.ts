@@ -18,25 +18,25 @@ private apiUrl = `${environment.apiUrl}/api/doc-type`;
   };
 
   getAll(): Observable<DocType[]> {
-    return this.http.get<DocType[]>(this.apiUrl);
+    return this.http.get<DocType[]>(this.apiUrl, { withCredentials: true });
   }
 
   getById(id: number): Observable<DocType> {
-    return this.http.get<DocType>(`${this.apiUrl}/${id}`);
+    return this.http.get<DocType>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   create(docType: DocType): Observable<DocType> {
-    return this.http.post<DocType>(this.apiUrl, docType, this.httpOptions);
+    return this.http.post<DocType>(this.apiUrl, docType, { withCredentials: true });
   }
 
   update(id: number, docType: DocType): Observable<DocType> {
-    return this.http.put<DocType>(`${this.apiUrl}/${id}`, docType, this.httpOptions);
+    return this.http.put<DocType>(`${this.apiUrl}/${id}`, docType, { withCredentials: true });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.httpOptions);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   search(word: string): Observable<DocType[]> {
-    return this.http.get<DocType[]>(`${this.apiUrl}/search?word=${word}`);
+    return this.http.get<DocType[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true });
   }}

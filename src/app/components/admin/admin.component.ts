@@ -1,8 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from "@angular/router";
 import { CommonModule } from '@angular/common';
-import { Customer, CustomerService } from '../../services/customer.service';
-import { UserService } from '../../services/user.service';
+import { CustomerService } from '../../services/customer.service';
 import { MenuOption } from '../../entities/menu-option';
 import { AuthService } from '../../services/auth.service';
 import { UserProfilesService } from '../../services/user-profiles.service';
@@ -12,6 +11,7 @@ import { UserProfileMenuOptionsService } from '../../services/user-profile-menu-
 import { Module } from '../../entities/module';
 import { UserProfile } from '../../entities/user-profile';
 import { UserProfileMenuOption } from '../../entities/user-profile-menu-option';
+import { Customer } from '../../entities/customer';
 
 @Component({
   selector: 'app-admin',
@@ -22,6 +22,7 @@ import { UserProfileMenuOption } from '../../entities/user-profile-menu-option';
 export class AdminComponent implements OnInit {
 
   constructor(private router: Router,
+    private authService: AuthService,
     private userProfileService: UserProfilesService,
     private upmoService: UserProfileMenuOptionsService,
     private customerService: CustomerService) { }
@@ -32,12 +33,20 @@ export class AdminComponent implements OnInit {
     this.showNotificationList = !this.showNotificationList;
   }
 
-  ngOnInit(): void {
+  private intervalId: any;
 
+  ngOnInit(): void {
     this.loadUserProfile(parseInt(localStorage.getItem("profileCode")!))
 
     this.getNewCustomers()
-    setInterval(() => this.getNewCustomers(), 30000); // check every 30s
+    this.intervalId = setInterval(() => this.getNewCustomers(), 30000);
+  }
+
+  ngOnDestroy(): void {
+    // Clear the interval when component is destroyed
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 
   isCollapsed = false;
@@ -79,6 +88,16 @@ export class AdminComponent implements OnInit {
   logout() {
     localStorage.clear();
     this.router.navigate(['/home']);
+    this.authService.logout().subscribe(
+        (response) => {
+          // Handle the text response
+          console.log(response); // Should log "Logged out"
+        },
+        (error) => {
+          // Handle errors
+          console.error('Logout error:', error);
+        }
+      );
   }
 
   newCustomers: Customer[] = []

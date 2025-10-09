@@ -35,7 +35,7 @@ export class WalletService {
   }
 
   getAll(): Observable<Wallet[]> {
-    return this.http.get<Wallet[]>(this.apiUrl, { headers: this.getHeaders() })/* .pipe(
+    return this.http.get<Wallet[]>(this.apiUrl, { withCredentials: true, headers: this.getHeaders() })/* .pipe(
       map(wallets => wallets.map(wallet => new Wallet({
         walCode: wallet.walCode,
         walIden: wallet.walIden,
@@ -70,7 +70,7 @@ export class WalletService {
   }
 
   getWalletCount(): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/count`, { headers: this.getHeaders() }).pipe(
+    return this.http.get<number>(`${this.apiUrl}/count`, { withCredentials: true, headers: this.getHeaders() }).pipe(
       catchError(error => {
         console.error('Error fetching wallet count:', error);
         return throwError(() => new Error('Failed to fetch wallet count'));
@@ -78,11 +78,11 @@ export class WalletService {
     );
   }
   getActiveWalletCount(): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/count/active`, { headers: this.getHeaders() });
+    return this.http.get<number>(`${this.apiUrl}/count/active`, { withCredentials: true, headers: this.getHeaders() });
   }
 
   getPendingWalletCount(): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/count/pending`, { headers: this.getHeaders() });
+    return this.http.get<number>(`${this.apiUrl}/count/pending`, { withCredentials: true, headers: this.getHeaders() });
   }
 
   getWalletStatus(): Observable<WalletStatus> {
@@ -91,7 +91,7 @@ export class WalletService {
       return throwError(() => new Error('No customer code found in localStorage'));
     }
 
-    return this.http.get<any>(`${this.apiUrl}/by-customer/${cusCode}/status`, { headers: this.getHeaders() }).pipe(
+    return this.http.get<any>(`${this.apiUrl}/by-customer/${cusCode}/status`, { withCredentials: true, headers: this.getHeaders() }).pipe(
       map(response => {
         if (!response) throw new Error('No wallet status found');
         return new WalletStatus({
@@ -115,7 +115,7 @@ export class WalletService {
   }
 
   create(wallet: Wallet): Observable<Wallet> {
-    return this.http.post<Wallet>(this.apiUrl, wallet, { headers: this.getHeaders() }).pipe(
+    return this.http.post<Wallet>(this.apiUrl, wallet, { withCredentials: true, headers: this.getHeaders() }).pipe(
       map(createdWallet => new Wallet({
         walCode: createdWallet.walCode,
         walIden: createdWallet.walIden,
@@ -135,7 +135,7 @@ export class WalletService {
   }
 
   update(walCode: number, wallet: Wallet): Observable<Wallet> {
-    return this.http.put<Wallet>(`${this.apiUrl}/${walCode}`, wallet, { headers: this.getHeaders() }).pipe(
+    return this.http.put<Wallet>(`${this.apiUrl}/${walCode}`, wallet, { withCredentials: true, headers: this.getHeaders() }).pipe(
       map(updatedWallet => new Wallet({
         walCode: updatedWallet.walCode,
         walIden: updatedWallet.walIden,
@@ -155,7 +155,7 @@ export class WalletService {
   }
 
   delete(walCode: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${walCode}`, { headers: this.getHeaders() }).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/${walCode}`, { withCredentials: true, headers: this.getHeaders() }).pipe(
       catchError(error => {
         console.error('Error deleting wallet:', error);
         return throwError(() => new Error('Failed to delete wallet'));
@@ -164,7 +164,7 @@ export class WalletService {
   }
 
   getById(walCode: number): Observable<Wallet> {
-    return this.http.get<Wallet>(`${this.apiUrl}/${walCode}`, { headers: this.getHeaders() }).pipe(
+    return this.http.get<Wallet>(`${this.apiUrl}/${walCode}`, { withCredentials: true, headers: this.getHeaders() }).pipe(
       map(wallet => new Wallet({
         walCode: wallet.walCode,
         walIden: wallet.walIden,
@@ -184,12 +184,12 @@ export class WalletService {
   }
 
   search(word: string){
-    return this.http.get<Wallet[]>(`${this.apiUrl}/search?word=${word}`, { headers: this.getHeaders() })
+    return this.http.get<Wallet[]>(`${this.apiUrl}/search?word=${word}`, { withCredentials: true, headers: this.getHeaders() })
   }
 
   // wallet.service.ts
 getWalletCountByCategory(): Observable<{ [key: string]: number }> {
-    return this.http.get<{ [key: string]: number }>(`${this.apiUrl}/count/by-category`, { headers: this.getHeaders() }).pipe(
+    return this.http.get<{ [key: string]: number }>(`${this.apiUrl}/count/by-category`, { withCredentials: true, headers: this.getHeaders() }).pipe(
         catchError(error => {
             console.error('Error fetching wallet counts by category:', error);
             return throwError(() => new Error('Failed to fetch wallet counts by category'));

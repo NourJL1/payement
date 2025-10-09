@@ -31,31 +31,31 @@ export class UserService {
   } */
   // Add this method to fetch total user count
   getTotalUserCount(): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/count`);
+    return this.http.get<number>(`${this.apiUrl}/count`, { withCredentials: true });
   }
 
   getAll() {
-    return this.http.get<User[]>(`${this.apiUrl}`)
+    return this.http.get<User[]>(`${this.apiUrl}`, { withCredentials: true })
   }
 
   getById(code: number) {
-    return this.http.get<User>(`${this.apiUrl}/${code}`)
+    return this.http.get<User>(`${this.apiUrl}/${code}`, { withCredentials: true })
   }
 
   create(user: User) {
-    return this.http.post<User>(`${this.apiUrl}`, user)
+    return this.http.post<User>(`${this.apiUrl}`, user, { withCredentials: true })
   }
 
   update(code: number, user: User) {
-    return this.http.put<User>(`${this.apiUrl}/${code}`, user)
+    return this.http.put<User>(`${this.apiUrl}/${code}`, user, { withCredentials: true })
   }
 
   delete(code: number) {
-    return this.http.delete(`${this.apiUrl}/${code}`)
+    return this.http.delete(`${this.apiUrl}/${code}`, { withCredentials: true })
   }
 
   search(criteria: any) {
-    return this.http.get<User[]>(`${this.apiUrl}/search?word=${criteria}`);
+    return this.http.get<User[]>(`${this.apiUrl}/search?word=${criteria}`, { withCredentials: true });
   }
 }
 

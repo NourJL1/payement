@@ -25,48 +25,38 @@ private apiUrl = `${environment.apiUrl}/api/wallet-category-operation-type-map`;
     return { headers };
   }
 
-  getAll(options?: { headers: HttpHeaders }): Observable<WalletCategoryOperationTypeMap[]> {
+  getAll(): Observable<WalletCategoryOperationTypeMap[]> {
     // console.log('wcotmService.getAll: URL:', `${this.apiUrl}`, 'Options:', options);
     return this.http.get<WalletCategoryOperationTypeMap[]>(
-      `${this.apiUrl}`,
-      options
-    );
+      `${this.apiUrl}`, { withCredentials: true });
   }
 
   getById(id: number): Observable<WalletCategoryOperationTypeMap> {
-    return this.http.get<WalletCategoryOperationTypeMap>(`${this.apiUrl}/${id}`, this.getHttpOptions());
+    return this.http.get<WalletCategoryOperationTypeMap>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-create(wcotm: WalletCategoryOperationTypeMap, options?: { headers: HttpHeaders }): Observable<WalletCategoryOperationTypeMap> {
+create(wcotm: WalletCategoryOperationTypeMap): Observable<WalletCategoryOperationTypeMap> {
   // console.log('wcotmService.create: URL:', this.apiUrl, 'Payload:', wcotm, 'Options:', options);
   return this.http.post<WalletCategoryOperationTypeMap>(
     `${this.apiUrl}`,
-    wcotm,
-    options
-  );
+    wcotm, { withCredentials: true });
 }
 
-  update(id: number, wcotm: WalletCategoryOperationTypeMap, options?: { headers: HttpHeaders }): Observable<WalletCategoryOperationTypeMap> {
+  update(id: number, wcotm: WalletCategoryOperationTypeMap): Observable<WalletCategoryOperationTypeMap> {
     // console.log('wcotmService.update: URL:', `${this.apiUrl}/${id}`, 'Payload:', wcotm, 'Options:', options);
     return this.http.put<WalletCategoryOperationTypeMap>(
       `${this.apiUrl}/${id}`,
-      wcotm,
-      options
-    );
+      wcotm, { withCredentials: true });
   }
 
-  delete(id: number, options?: { headers: HttpHeaders }): Observable<void> {
+  delete(id: number): Observable<void> {
     // console.log('wcotmService.delete: URL:', `${this.apiUrl}/${id}`, 'Options:', options);
     return this.http.delete<void>(
-      `${this.apiUrl}/${id}`,
-      options
-    );
+      `${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  search(term: string, httpOptions: { headers: HttpHeaders }): Observable<WalletCategoryOperationTypeMap[]> {
+  search(term: string): Observable<WalletCategoryOperationTypeMap[]> {
   return this.http.get<WalletCategoryOperationTypeMap[]>(
-    `${this.apiUrl}/search?word=${term}`, 
-    httpOptions
-  );
+    `${this.apiUrl}/search?word=${term}`, { withCredentials: true });
 }
 }

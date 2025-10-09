@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -28,24 +28,27 @@ export class AuthService {
 
   // Add this method to get the current user's wallet ID
   getCurrentUserWalletId(): string {
-  return this.currentUserValue?.wallet?.walIden || '';
-}
+    return this.currentUserValue?.wallet?.walIden || '';
+  }
 
 
   login(username: string, password: string): Observable<any> {
-  return this.http.post<any>(`${this.apiUrl}/login`, { username, password })
-    .pipe(map(user => {
-      // Store the complete user data with wallet information
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      this.currentUserSubject.next(user);
-      return user;
-    }));
-}
+    return this.http.post<any>(`${this.apiUrl}/login`, { username, password }, { withCredentials: true })
+      .pipe(map(user => {
+        // Store the complete user data with wallet information
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+        return user;
+      }));
+  }
 
-  logout(): void {
-    // Remove user from local storage
-    localStorage.removeItem('currentUser');
-    this.currentUserSubject.next(null);
+  logout() {
+    return this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true, responseType: 'text' })
+      .pipe(tap(() => {
+          localStorage.removeItem('currentUser');
+          this.currentUserSubject.next(null);
+        })
+      );
   }
 
   existsByEmail(email: string) {

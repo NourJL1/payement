@@ -22,8 +22,8 @@ export class WalletTypeService {
     return { headers };
   }
 
-  getAll(httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<WalletType[]> {
-    return this.http.get<WalletType[]>(this.apiUrl, httpOptions).pipe(
+  getAll(): Observable<WalletType[]> {
+    return this.http.get<WalletType[]>(this.apiUrl, { withCredentials: true }).pipe(
       catchError(error => {
         console.error('WalletTypeService: getAll - Error:', error, 'Response:', error.error, 'Status:', error.status);
         return throwError(() => new Error(`Failed to fetch wallet types: ${error.status} ${error.statusText} - ${error.error?.message || 'No response body'}`));
@@ -31,9 +31,9 @@ export class WalletTypeService {
     );
   }
 
-  getById(id: number, httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<WalletType> {
+  getById(id: number): Observable<WalletType> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.get<WalletType>(url, httpOptions).pipe(
+    return this.http.get<WalletType>(url, { withCredentials: true }).pipe(
       catchError(error => {
         console.error('WalletTypeService: getById - Error:', error, 'Response:', error.error, 'Status:', error.status);
         return throwError(() => new Error(`Failed to fetch wallet type ${id}: ${error.status} ${error.statusText} - ${error.error?.message || 'No response body'}`));
@@ -41,8 +41,8 @@ export class WalletTypeService {
     );
   }
 
-  create(walletType: WalletType, httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<WalletType> {
-    return this.http.post<WalletType>(this.apiUrl, walletType, httpOptions).pipe(
+  create(walletType: WalletType): Observable<WalletType> {
+    return this.http.post<WalletType>(this.apiUrl, walletType, { withCredentials: true }).pipe(
       catchError(error => {
         console.error('WalletTypeService: create - Error:', error, 'Response:', error.error, 'Status:', error.status);
         return throwError(() => new Error(`Failed to create wallet type: ${error.status} ${error.statusText} - ${error.error?.message || 'No response body'}`));
@@ -50,9 +50,9 @@ export class WalletTypeService {
     );
   }
 
-  update(id: number, walletType: WalletType, httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<WalletType> {
+  update(id: number, walletType: WalletType): Observable<WalletType> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.put<WalletType>(url, walletType, httpOptions).pipe(
+    return this.http.put<WalletType>(url, walletType, { withCredentials: true }).pipe(
       catchError(error => {
         console.error('WalletTypeService: update - Error:', error, 'Response:', error.error, 'Status:', error.status);
         return throwError(() => new Error(`Failed to update wallet type ${id}: ${error.status} ${error.statusText} - ${error.error?.message || 'No response body'}`));
@@ -60,9 +60,9 @@ export class WalletTypeService {
     );
   }
 
-  delete(id: number, httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<void> {
+  delete(id: number): Observable<void> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.delete<void>(url, httpOptions).pipe(
+    return this.http.delete<void>(url, { withCredentials: true }).pipe(
       catchError(error => {
         console.error('WalletTypeService: delete - Error:', error, 'Response:', error.error, 'Status:', error.status);
         return throwError(() => new Error(`Failed to delete wallet type ${id}: ${error.status} ${error.statusText} - ${error.error?.message || 'No response body'}`));
@@ -70,9 +70,9 @@ export class WalletTypeService {
     );
   }
 
-  search(word: string, httpOptions: { headers: HttpHeaders } = this.getHttpOptions()): Observable<WalletType[]> {
+  search(word: string): Observable<WalletType[]> {
     const url = `${this.apiUrl}/search?word=${word}`;
-    return this.http.get<WalletType[]>(url, httpOptions).pipe(
+    return this.http.get<WalletType[]>(url, { withCredentials: true }).pipe(
       catchError(error => {
         console.error('WalletTypeService: search - Error:', error, 'Response:', error.error, 'Status:', error.status);
         return throwError(() => new Error(`Failed to search wallet types: ${error.status} ${error.statusText} - ${error.error?.message || 'No response body'}`));

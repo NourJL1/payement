@@ -155,7 +155,7 @@ export class AccountingComponent implements OnInit {
       this.filteredFeeRuleTypesList = [...this.feeRuleTypesList]; // Show all when search is empty
       this.cdr.detectChanges();
     } else {
-      this.feeRuleTypeService.search(this.searchFeeRuleTypeTerm, this.getHttpOptions()).subscribe({
+      this.feeRuleTypeService.search(this.searchFeeRuleTypeTerm).subscribe({
         next: (searchResults: FeeRuleType[]) => {
           console.log('Search results:', searchResults);
           this.filteredFeeRuleTypesList = searchResults;
@@ -200,7 +200,7 @@ export class AccountingComponent implements OnInit {
       this.filteredFeeSchemasList = [...this.feeSchemasList]; // Show all when search is empty
       this.cdr.detectChanges();
     } else {
-      this.feeSchemaService.search(this.searchFeeSchemaTerm, this.getHttpOptions()).subscribe({
+      this.feeSchemaService.search(this.searchFeeSchemaTerm).subscribe({
         next: (searchResults: FeeSchema[]) => {
           console.log('Search results:', searchResults);
           this.filteredFeeSchemasList = searchResults;
@@ -221,7 +221,7 @@ export class AccountingComponent implements OnInit {
       this.filteredWcotmList = [...this.wcotmList]; // Show all when search is empty
       this.cdr.detectChanges();
     } else {
-      this.wcotmService.search(this.searchWcotmTerm, this.getHttpOptions()).subscribe({
+      this.wcotmService.search(this.searchWcotmTerm).subscribe({
         next: (searchResults: WalletCategoryOperationTypeMap[]) => {
           this.filteredWcotmList = searchResults;
           this.cdr.detectChanges();
@@ -329,7 +329,7 @@ export class AccountingComponent implements OnInit {
   }
 
   loadWalletCategoryOperationTypeMap(): void {
-    this.wcotmService.getAll(this.getHttpOptions()).subscribe({
+    this.wcotmService.getAll().subscribe({
       next: (data: WalletCategoryOperationTypeMap[]) => {
         this.wcotmList = data;
         this.filteredWcotmList = [...data]; // Initialize filtered list
@@ -408,7 +408,7 @@ export class AccountingComponent implements OnInit {
     this.cdr.detectChanges();
   }
   addFee(): void {
-    this.feesService.create(this.newFee, this.getHttpOptions()).subscribe({
+    this.feesService.create(this.newFee).subscribe({
       next: (createdFee: Fees) => {
         this.feesList = [...this.feesList, createdFee]; // Create new array
         this.filteredFeesList = [...this.feesList]; // Update filtered list
@@ -426,7 +426,7 @@ export class AccountingComponent implements OnInit {
 
   updateFee(): void {
     if (this.selectedFee?.feeCode) {
-      this.feesService.update(this.selectedFee.feeCode, this.newFee, this.getHttpOptions()).subscribe({
+      this.feesService.update(this.selectedFee.feeCode, this.newFee).subscribe({
         next: (updatedFee: Fees) => {
           const index = this.feesList.findIndex(f => f.feeCode === updatedFee.feeCode);
           if (index !== -1) {
@@ -448,7 +448,7 @@ export class AccountingComponent implements OnInit {
 
   deleteFee(feeCode: number | undefined): void {
     if (feeCode && confirm('Are you sure you want to delete this fee?')) {
-      this.feesService.delete(feeCode, this.getHttpOptions()).subscribe({
+      this.feesService.delete(feeCode).subscribe({
         next: () => {
           this.feesList = this.feesList.filter(f => f.feeCode !== feeCode);
           this.filteredFeesList = this.filteredFeesList.filter(f => f.feeCode !== feeCode);
@@ -470,7 +470,7 @@ export class AccountingComponent implements OnInit {
   }
 
   addFeeSchema(): void {
-    this.feeSchemaService.create(this.newFeeSchema, this.getHttpOptions()).subscribe({
+    this.feeSchemaService.create(this.newFeeSchema).subscribe({
       next: (createdFeeSchema: FeeSchema) => {
         // Create new arrays instead of mutating existing ones
         this.feeSchemasList = [...this.feeSchemasList, createdFeeSchema];
@@ -489,7 +489,7 @@ export class AccountingComponent implements OnInit {
 
   updateFeeSchema(): void {
     if (this.selectedFeeSchema?.fscCode) {
-      this.feeSchemaService.update(this.selectedFeeSchema.fscCode, this.newFeeSchema, this.getHttpOptions()).subscribe({
+      this.feeSchemaService.update(this.selectedFeeSchema.fscCode, this.newFeeSchema).subscribe({
         next: (updatedFeeSchema: FeeSchema) => {
           const index = this.feeSchemasList.findIndex(f => f.fscCode === updatedFeeSchema.fscCode);
           if (index !== -1) {
@@ -518,7 +518,7 @@ export class AccountingComponent implements OnInit {
 
   deleteFeeSchema(fscCode: number | undefined): void {
     if (fscCode && confirm('Are you sure you want to delete this fee schema?')) {
-      this.feeSchemaService.delete(fscCode, this.getHttpOptions()).subscribe({
+      this.feeSchemaService.delete(fscCode).subscribe({
         next: () => {
           // Filter both lists
           this.feeSchemasList = this.feeSchemasList.filter(f => f.fscCode !== fscCode);
@@ -534,7 +534,7 @@ export class AccountingComponent implements OnInit {
   }
 
   addFeeRuleType(): void {
-    this.feeRuleTypeService.create(this.newFeeRuleType, this.getHttpOptions()).subscribe({
+    this.feeRuleTypeService.create(this.newFeeRuleType).subscribe({
       next: (createdFeeRuleType: FeeRuleType) => {
         this.feeRuleTypesList = [...this.feeRuleTypesList, createdFeeRuleType];
         this.filteredFeeRuleTypesList = [...this.filteredFeeRuleTypesList, createdFeeRuleType]; // Add to filtered list
@@ -560,7 +560,7 @@ export class AccountingComponent implements OnInit {
 
   updateFeeRuleType(): void {
     if (this.selectedFeeRuleType?.frtCode) {
-      this.feeRuleTypeService.update(this.selectedFeeRuleType.frtCode, this.newFeeRuleType, this.getHttpOptions()).subscribe({
+      this.feeRuleTypeService.update(this.selectedFeeRuleType.frtCode, this.newFeeRuleType).subscribe({
         next: (updatedFeeRuleType: FeeRuleType) => {
           // Update main list
           const index = this.feeRuleTypesList.findIndex(t => t.frtCode === updatedFeeRuleType.frtCode);
@@ -593,7 +593,7 @@ export class AccountingComponent implements OnInit {
   // In deleteFeeRuleType()
   deleteFeeRuleType(frtCode: number | undefined): void {
     if (frtCode && confirm('Are you sure you want to delete this fee rule type?')) {
-      this.feeRuleTypeService.delete(frtCode, this.getHttpOptions()).subscribe({
+      this.feeRuleTypeService.delete(frtCode).subscribe({
         next: () => {
           this.feeRuleTypesList = this.feeRuleTypesList.filter(t => t.frtCode !== frtCode);
           this.filteredFeeRuleTypesList = this.filteredFeeRuleTypesList.filter(t => t.frtCode !== frtCode); // Remove from filtered list
@@ -614,7 +614,7 @@ export class AccountingComponent implements OnInit {
       this.showErrorMessage('Please fill in all required fields.');
       return;
     }
-    this.feeRuleService.create(this.newFeeRule, this.getHttpOptions()).subscribe({
+    this.feeRuleService.create(this.newFeeRule).subscribe({
       next: (createdFeeRule: FeeRule) => {
         // console.log('addFeeRule: Fee rule added:', createdFeeRule);
         this.feeRulesList.push(createdFeeRule);
@@ -645,7 +645,7 @@ export class AccountingComponent implements OnInit {
       return;
     }
     if (this.selectedFeeRule?.fruCode) {
-      this.feeRuleService.update(this.selectedFeeRule.fruCode, this.newFeeRule, this.getHttpOptions()).subscribe({
+      this.feeRuleService.update(this.selectedFeeRule.fruCode, this.newFeeRule).subscribe({
         next: (updatedFeeRule: FeeRule) => {
           // console.log('updateFeeRule: Fee rule updated:', updatedFeeRule);
           const index = this.feeRulesList.findIndex(r => r.fruCode === updatedFeeRule.fruCode);
@@ -672,7 +672,7 @@ export class AccountingComponent implements OnInit {
   deleteFeeRule(fruCode: number | undefined): void {
     // console.log('deleteFeeRule: fruCode:', fruCode);
     if (fruCode && confirm('Are you sure you want to delete this fee rule?')) {
-      this.feeRuleService.delete(fruCode, this.getHttpOptions()).subscribe({
+      this.feeRuleService.delete(fruCode).subscribe({
         next: () => {
           // console.log('deleteFeeRule: Success, fruCode:', fruCode);
           this.feeRulesList = this.feeRulesList.filter(r => r.fruCode !== fruCode);
@@ -693,7 +693,7 @@ export class AccountingComponent implements OnInit {
       this.showErrorMessage('Please fill in all required fields, including Fee Schema.');
       return;
     }
-    this.operationTypeService.create(this.newOperationType, this.getHttpOptions()).subscribe({
+    this.operationTypeService.create(this.newOperationType).subscribe({
       next: (createdOperationType: OperationType) => {
         // console.log('addOperationType: Operation type added:', createdOperationType);
         this.operationTypesList = [...this.operationTypesList, createdOperationType];
@@ -724,7 +724,7 @@ export class AccountingComponent implements OnInit {
       return;
     }
     if (this.selectedOperationType?.optCode) {
-      this.operationTypeService.update(this.selectedOperationType.optCode, this.newOperationType, this.getHttpOptions()).subscribe({
+      this.operationTypeService.update(this.selectedOperationType.optCode, this.newOperationType).subscribe({
         next: (updatedOperationType: OperationType) => {
           // console.log('updateOperationType: Operation type updated:', updatedOperationType);
           const index = this.operationTypesList.findIndex(t => t.optCode === updatedOperationType.optCode);
@@ -751,7 +751,7 @@ export class AccountingComponent implements OnInit {
   deleteOperationType(typeCode: number | undefined): void {
     // console.log('deleteOperationType: typeCode:', typeCode);
     if (typeCode && confirm('Are you sure you want to delete this operation type?')) {
-      this.operationTypeService.delete(typeCode, this.getHttpOptions()).subscribe({
+      this.operationTypeService.delete(typeCode).subscribe({
         next: () => {
           // console.log('deleteOperationType: Success, typeCode:', typeCode);
           this.operationTypesList = this.operationTypesList.filter(t => t.optCode !== typeCode);
@@ -772,7 +772,7 @@ export class AccountingComponent implements OnInit {
       this.showErrorMessage('Please fill in all required fields, including Fee Schema.');
       return;
     }
-    this.wotmService.create(this.newWotm, this.getHttpOptions()).subscribe({
+    this.wotmService.create(this.newWotm).subscribe({
       next: (createdWotm: WalletOperationTypeMap) => {
         // console.log('addWotm: wotm added:', createdWotm);
         this.wotmList = [...this.wotmList, createdWotm];
@@ -803,7 +803,7 @@ export class AccountingComponent implements OnInit {
       return;
     }
     if (this.selectedWotm?.wotmCode) {
-      this.wotmService.update(this.selectedWotm.wotmCode, this.newWotm, this.getHttpOptions()).subscribe({
+      this.wotmService.update(this.selectedWotm.wotmCode, this.newWotm).subscribe({
         next: (updatedWotm: WalletOperationTypeMap) => {
           // console.log('updateWotm: Mapping updated:', updatedWotm);
           const index = this.wotmList.findIndex(wotm => wotm.wotmCode === updatedWotm.wotmCode);
@@ -830,7 +830,7 @@ export class AccountingComponent implements OnInit {
   deleteWotm(wotmCode: number | undefined): void {
     // console.log('deleteOperationType: wotm:', wotmCode);
     if (wotmCode && confirm('Are you sure you want to delete this mapping?')) {
-      this.wotmService.delete(wotmCode, this.getHttpOptions()).subscribe({
+      this.wotmService.delete(wotmCode).subscribe({
         next: () => {
           // console.log('deleteOperationType: Success, wotmCode:', wotmCode);
           this.wotmList = this.wotmList.filter(wotm => wotm.wotmCode !== wotmCode);
@@ -853,7 +853,7 @@ export class AccountingComponent implements OnInit {
       return;
     }
 
-    this.wcotmService.create(this.newWcotm, this.getHttpOptions()).subscribe({
+    this.wcotmService.create(this.newWcotm).subscribe({
       next: (createdWcotm: WalletCategoryOperationTypeMap) => {
         this.wcotmList = [...this.wcotmList, createdWcotm];
 
@@ -890,7 +890,7 @@ export class AccountingComponent implements OnInit {
       return;
     }
 
-    this.wcotmService.update(this.selectedWcotm.id, this.newWcotm, this.getHttpOptions()).subscribe({
+    this.wcotmService.update(this.selectedWcotm.id, this.newWcotm).subscribe({
       next: (updatedWcotm: WalletCategoryOperationTypeMap) => {
         // Update main list
         const index = this.wcotmList.findIndex(w => w.id === updatedWcotm.id);
@@ -934,7 +934,7 @@ export class AccountingComponent implements OnInit {
 
   deleteWcotm(id: number | undefined): void {
     if (id && confirm('Are you sure you want to delete this mapping?')) {
-      this.wcotmService.delete(id, this.getHttpOptions()).subscribe({
+      this.wcotmService.delete(id).subscribe({
         next: () => {
           this.wcotmList = this.wcotmList.filter(w => w.id !== id);
           this.filteredWcotmList = this.filteredWcotmList.filter(w => w.id !== id);
@@ -956,7 +956,7 @@ export class AccountingComponent implements OnInit {
       this.showErrorMessage('Please fill in all required fields.');
       return;
     }
-    this.periodicityService.create(this.newPeriodicity, this.getHttpOptions()).subscribe({
+    this.periodicityService.create(this.newPeriodicity).subscribe({
       next: (createdPeriodicity: Periodicity) => {
         // console.log('addPeriodicity: Periodicity added:', createdPeriodicity);
         this.periodicitiesList.push(createdPeriodicity);
@@ -987,7 +987,7 @@ export class AccountingComponent implements OnInit {
       return;
     }
     if (this.selectedPeriodicity?.perCode) {
-      this.periodicityService.update(this.selectedPeriodicity.perCode, this.newPeriodicity, this.getHttpOptions()).subscribe({
+      this.periodicityService.update(this.selectedPeriodicity.perCode, this.newPeriodicity).subscribe({
         next: (updatedPeriodicity: Periodicity) => {
           // console.log('updatePeriodicity: Periodicity updated:', updatedPeriodicity);
           const index = this.periodicitiesList.findIndex(p => p.perCode === updatedPeriodicity.perCode);
@@ -1014,7 +1014,7 @@ export class AccountingComponent implements OnInit {
   deletePeriodicity(perCode: number | undefined): void {
     // console.log('deletePeriodicity: perCode:', perCode);
     if (perCode && confirm('Are you sure you want to delete this periodicity?')) {
-      this.periodicityService.delete(perCode, this.getHttpOptions()).subscribe({
+      this.periodicityService.delete(perCode).subscribe({
         next: () => {
           // console.log('deletePeriodicity: Success, perCode:', perCode);
           this.periodicitiesList = this.periodicitiesList.filter(p => p.perCode !== perCode);
