@@ -65,6 +65,10 @@
           "defaultConfiguration": "production"
         },
         "serve": {
+          "options": {
+            "ssl": true,
+            "sslKey": "C:/Users/nourj/OneDrive/Bureau/ssl/gateway.key",
+            "sslCert": "C:/Users/nourj/OneDrive/Bureau/ssl/gateway.crt"},
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
