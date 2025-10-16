@@ -65,15 +65,12 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "options": {
-            "ssl": true,
-            "sslKey": "C:/Users/nourj/OneDrive/Bureau/ssl/gateway.key",
-            "sslCert": "C:/Users/nourj/OneDrive/Bureau/ssl/gateway.crt"},
+
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "ssl": true,
-            "sslKey": "../ssl/gateway.key",
-            "sslCert": "../ssl/gateway.crt",
+            "sslKey": "certs/localhost-key.pem",
+            "sslCert": "certs/localhost.pem",
             "port": 4200,
             "allowedHosts": ["all"],
             "host": "0.0.0.0",
