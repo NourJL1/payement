@@ -65,8 +65,8 @@ export class WalletService {
   }
 
   getWalletByCustomerCode(cusCode: number): Observable<Wallet> {
-    console.log(`${this.apiUrl}/by-customer-code/${cusCode}`)
-    return this.http.get<Wallet>(`${this.apiUrl}/by-customer-code/${cusCode}`, {withCredentials: true});
+    console.log(`${this.apiUrl}/by-customer-code/${cusCode}`, {withCredentials: true})
+    return this.http.get<Wallet>(`${this.apiUrl}/by-customer-code/${cusCode}`);
   }
 
   getWalletCount(): Observable<number> {
